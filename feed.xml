@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DuckWare — Curated Software for Builders</title>
+    <link>https://mirarr-app.github.io/duckware/</link>
+    <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Jun 2026 12:00:00 GMT</lastBuildDate>
+    <pubDate>Sun, 21 Jun 2026 12:00:00 GMT</pubDate>
+    <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Mirarr: FOSS Movie Client</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/mirarr.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/mirarr.html</guid>
+      <pubDate>Sun, 21 Jun 2026 12:00:00 GMT</pubDate>
+      <description>A clean, native, and platform-agnostic client designed to query and manage media watchlists. Runs natively on Android, iOS, Windows, and Linux with full privacy and zero telemetry tracking.</description>
+    </item>
+  </channel>
+</rss>
