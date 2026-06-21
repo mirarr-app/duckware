@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mirarr Showcase — DuckWare</title>
+  <meta name="description" content="A detailed audit and showcase of Mirarr, the open-source cross-platform movie client.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <svg class="nav-logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.29 9.29c-.39.39-1.02.39-1.41 0L12 9.41l-1.88 1.88c-.39.39-1.02.39-1.41 0a.996.996 0 0 1 0-1.41L10.59 8 8.71 6.12a.996.996 0 1 1 1.41-1.41L12 6.59l1.88-1.88c.39-.39 1.02-.39 1.41 0s.39 1.02 0 1.41L13.41 8l1.88 1.88c.38.39.38 1.03 0 1.41z"/>
+        </svg>
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="../#showcases" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>mirarr-app/mirarr</span>
+        <span>•</span>
+        <span>June 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #01</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        Mirarr: FOSS Movie App
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        Watch movies and Arr — natively across Android, Windows, Linux, and iOS.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://github.com/mirarr-app/mirarr" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+        <a href="https://github.com/mirarr-app/mirarr/releases" class="btn-secondary-ghost" target="_blank" rel="noopener">Downloads</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Desktop Screenshots Grid -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Desktop Interface</h3>
+        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+              </div>
+              <div class="mockup-title">mirarr-desktop-1.png</div>
+              <div style="width: 36px;"></div>
+            </div>
+            <img src="mirarr/386850551-e65dd5ca-bd2f-443f-9cd7-d162c9c7245f.png" alt="Mirarr Desktop Interface Main" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+              </div>
+              <div class="mockup-title">mirarr-desktop-2.png</div>
+              <div style="width: 36px;"></div>
+            </div>
+            <img src="mirarr/386850534-6997a0fa-fa88-4cf7-9096-f87f5ccaffc7.png" alt="Mirarr Desktop Interface Search" style="width: 100%; height: auto; display: block;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Mobile Screenshots Grid -->
+      <section style="margin-bottom: var(--space-5xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Mobile Layout</h3>
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: var(--space-lg);">
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">feed.jpg</div>
+            </div>
+            <img src="mirarr/386850596-1e9b5380-581a-470e-a434-a6a62fc2ccbe.jpg" alt="Mirarr Mobile Feed" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">details.jpg</div>
+            </div>
+            <img src="mirarr/386850607-7beb0804-b33f-4976-b95e-771316eedee8.jpg" alt="Mirarr Mobile Details" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">ratings.jpg</div>
+            </div>
+            <img src="mirarr/386850609-fbdfc3f2-8e38-4787-9a47-bc67df8af172.jpg" alt="Mirarr Mobile Ratings" style="width: 100%; height: auto; display: block;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Review Details -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Mirarr?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Mirarr is a fully open-source movie and TV show client designed for speed, flexibility, and absolute privacy. Written to run natively across major platforms, it wraps media metadata, ratings, and playback indexes into a unified, responsive interface.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            Unlike standard commercial streaming catalog tools, Mirarr operates with zero tracking or telemetry. It fetches listings directly from community-trusted resources, giving developers and FOSS enthusiasts an clean interface devoid of promotional fluff.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architecture & Key Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Multi-Platform Adaptability</span>
+              <p class="text-body-sm">
+                Built from the ground up to target Android, iOS (for side-loading), Windows, and Linux. The responsive desktop views rearrange cleanly into a thumb-optimized layout on mobile devices.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">TMDB & OMDB Integration</span>
+              <p class="text-body-sm">
+                Connects directly to the TMDB API to manage watchlists, favorites, and ratings. The authentication process is handled locally via secure tokens directly with TMDB, keeping user metadata local and non-custodial.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Custom Styling Cues</span>
+              <p class="text-body-sm">
+                For films and series with distinct cinematic flair, the app supports custom stylistic profiles. The community can suggest or request unique stylesheets directly through the issue tracker to match individual movie aesthetics.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Installation & Setup</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Mirarr is distributed as raw build archives and compiled binaries on the official release index. Arch Linux users can install directly via the AUR:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">bash</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-comment"># Install via AUR helper</span><br>
+              <span class="token-cmd">yay -S mirarr-bin</span>
+            </div>
+          </div>
+          <p class="text-body-sm" style="color: var(--color-mute);">
+            Note: Linux installations require the <code class="text-code-md" style="background-color: var(--color-canvas-soft); padding: 2px 4px; border-radius: var(--radius-sm);">xdg-user-dirs</code> package to correctly reference local directories. iOS sideloads are distributed as compiled IPA bundles.
+          </p>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="../#showcases" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A warm developer curated catalog celebrating software craft. No tracking, no ads.
+        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="../#showcases" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="#" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="#" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Soli Deo gloria</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
