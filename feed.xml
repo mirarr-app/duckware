@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>DuckWare — Curated Software for Builders</title>
+    <title>DuckWare — Curated Cool Software</title>
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
@@ -15,6 +15,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/mirarr.html</guid>
       <pubDate>Sun, 21 Jun 2026 12:00:00 GMT</pubDate>
       <description>A clean, native, and platform-agnostic client designed to query and manage media watchlists. Runs natively on Android, iOS, Windows, and Linux with full privacy and zero telemetry tracking.</description>
+    </item>
+
+    <item>
+      <title>ffmpeg-webCLI: Local Video Editor</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/ffmpeg-webCLI.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/ffmpeg-webCLI.html</guid>
+      <pubDate>Sun, 21 Jun 2026 12:00:00 GMT</pubDate>
+      <description>A browser-based video converter and operations dashboard powered by FFmpeg WebAssembly. Process operations (trim, rotate, crop, compress) entirely inside your browser with absolute privacy.</description>
     </item>
   </channel>
 </rss>
