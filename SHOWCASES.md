@@ -1,0 +1,1 @@
+when asked to submit a new post. follow the design pattern of DESIGN.md. make a new html designed for that app showcase only. you shouldnt copy paste the text provided for the app. its a showcase. right whats needed 
