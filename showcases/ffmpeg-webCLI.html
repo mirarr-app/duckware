@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ffmpeg-webCLI Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of ffmpeg-webCLI, a browser-based video editor running entirely in WebAssembly.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <svg class="nav-logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.29 9.29c-.39.39-1.02.39-1.41 0L12 9.41l-1.88 1.88c-.39.39-1.02.39-1.41 0a.996.996 0 0 1 0-1.41L10.59 8 8.71 6.12a.996.996 0 1 1 1.41-1.41L12 6.59l1.88-1.88c.39-.39 1.02-.39 1.41 0s.39 1.02 0 1.41L13.41 8l1.88 1.88c.38.39.38 1.03 0 1.41z"/>
+        </svg>
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="../#showcases" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>tejaswigowda/ffmpeg-webCLI</span>
+        <span>•</span>
+        <span>June 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #02</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        ffmpeg-webCLI
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        A serverless, offline-first video editor running entirely in WebAssembly.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://tejaswigowda.com/ffmpeg-webCLI/" class="btn-primary" target="_blank" rel="noopener">Launch Live App</a>
+        <a href="https://github.com/tejaswigowda/ffmpeg-webCLI" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Primary Feature Mockup -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Dashboard Interface</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">ffmpeg-webcli-dashboard.png</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <img src="https://github.com/tejaswigowda/ffmpeg-webCLI/raw/main/demos/features.png" alt="ffmpeg-webCLI Dashboard and Features" style="width: 100%; height: auto; display: block;">
+        </div>
+      </section>
+
+      <!-- Operation Demos Grid -->
+      <section style="margin-bottom: var(--space-5xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Core Operations in Action</h3>
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: var(--space-lg);">
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">gif-maker.gif</div>
+            </div>
+            <img src="https://github.com/tejaswigowda/ffmpeg-webCLI/raw/main/demos/makegif.gif" alt="GIF Maker Operation" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">rotate-mirror.gif</div>
+            </div>
+            <img src="https://github.com/tejaswigowda/ffmpeg-webCLI/raw/main/demos/invert.gif" alt="Video Rotation and Mirroring" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">raw-cli.gif</div>
+            </div>
+            <img src="https://github.com/tejaswigowda/ffmpeg-webCLI/raw/main/demos/raw.gif" alt="Raw Command Terminal Console" style="width: 100%; height: auto; display: block;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is ffmpeg-webCLI?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            ffmpeg-webCLI is a browser-native media editing tool that executes the compiled `ffmpeg.wasm` binary inside web background workers. It brings the full, scriptable power of command-line ffmpeg directly to standard browsers, letting users trim, convert, filter, crop, and chain operations on media files without servers.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            By running completely client-side, the app offers a privacy-centric alternative to cloud video convertors. The files never leave the machine. There is no buffering queue, subscription wall, or file size upload limit except the local hardware threshold.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Key Strengths & Audit Highlights</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Privacy-First Local Processing</span>
+              <p class="text-body-sm">
+                Cloud conversion services are subject to data breaches, surveillance, and tracking. By running the WebAssembly core locally on your device, your sensitive clips, audios, and screen captures remain confidential and secure.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Zero Re-Encoding Quality Loss (Stack Mode)</span>
+              <p class="text-body-sm">
+                Standard web utilities re-encode your video on every single change. ffmpeg-webCLI features an "Operation Chaining" stack mode that aggregates crop, adjust, resize, and grayscale filters into a single complex filter string, running a single encoding pass to avoid generation loss.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Offline-First PWA Support</span>
+              <p class="text-body-sm">
+                Bundled with a robust service worker that caches the 31 MB WebAssembly core, the tool works completely offline. It also implements the Screen Wake Lock API to prevent devices from sleeping or locking during lengthy video processing queues.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Raw FFmpeg Recipe Example</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            In addition to pre-set sliders, the dashboard features a direct command line. You can compose and execute custom argument arrays directly against the file system. For example, chaining a crop with brightness adjustment:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">ffmpeg complex command</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-comment"># Chain crop, adjust brightness/contrast, and output H.264 mp4</span><br>
+              <span class="token-cmd">ffmpeg -i input.mp4 -vf "crop=1280:720:0:0,eq=brightness=0:contrast=1:saturation=0" -c:v libx264 -preset fast -c:a aac output.mp4</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="../#showcases" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A warm developer curated catalog celebrating software craft. No tracking, no ads.
+        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="../#showcases" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="#" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Soli Deo gloria</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
