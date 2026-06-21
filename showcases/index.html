@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Showcases — DuckWare</title>
+  <meta name="description" content="A curated directory of exceptional open source utilities and developer tools, ordered chronologically.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <svg class="nav-logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.29 9.29c-.39.39-1.02.39-1.41 0L12 9.41l-1.88 1.88c-.39.39-1.02.39-1.41 0a.996.996 0 0 1 0-1.41L10.59 8 8.71 6.12a.996.996 0 1 1 1.41-1.41L12 6.59l1.88-1.88c.39-.39 1.02-.39 1.41 0s.39 1.02 0 1.41L13.41 8l1.88 1.88c.38.39.38 1.03 0 1.41z"/>
+        </svg>
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Catalog Band -->
+  <main class="content-band" id="showcases" style="padding-top: var(--space-5xl);">
+    <div class="container">
+      <div class="section-header" style="margin-bottom: var(--space-4xl);">
+        <h1 class="text-display-md" style="font-size: 40px; margin-bottom: var(--space-sm);">Showcases Catalog</h1>
+        <p class="text-body-md" style="margin-top: var(--space-md); color: var(--color-mute);">
+          Hand-picked open source releases and developer utilities, ordered descending from latest release.
+        </p>
+      </div>
+
+      <!-- Showcases Grid (Ordered Descending) -->
+      <div class="grid" style="grid-template-columns: 1fr; gap: var(--space-2xl); max-width: 900px; margin: 0 auto;">
+        
+        <!-- Showcase Card 2: ffmpeg-webCLI (LATEST on top) -->
+        <a href="ffmpeg-webCLI.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+            <img src="https://github.com/tejaswigowda/ffmpeg-webCLI/raw/main/demos/features.png" alt="ffmpeg-webCLI Dashboard Preview" style="width: 100%; height: auto; display: block;">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
+              <span>tejaswigowda/ffmpeg-webCLI</span>
+              <span>•</span>
+              <span style="color: var(--color-body-strong);">Showcase #02 (Latest)</span>
+            </div>
+            <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">
+              ffmpeg-webCLI: Local Video Editor
+            </h3>
+            <p class="text-body-sm" style="color: var(--color-body); line-height: 1.6;">
+              A browser-based video converter and operations dashboard powered by FFmpeg WebAssembly. Process operations (trim, rotate, crop, compress) entirely inside your browser with absolute privacy.
+            </p>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">WebAssembly</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Offline-First</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Utility</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Showcase Card 1: Mirarr -->
+        <a href="mirarr.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+            <img src="mirarr/386850551-e65dd5ca-bd2f-443f-9cd7-d162c9c7245f.png" alt="Mirarr Desktop Preview" style="width: 100%; height: auto; display: block;">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
+              <span>mirarr-app/mirarr</span>
+              <span>•</span>
+              <span style="color: var(--color-body-strong);">Showcase #01</span>
+            </div>
+            <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">
+              Mirarr: FOSS Movie Client
+            </h3>
+            <p class="text-body-sm" style="color: var(--color-body); line-height: 1.6;">
+              A clean, native, and platform-agnostic client designed to query and manage media watchlists. Runs natively on Android, iOS, Windows, and Linux with full privacy and zero telemetry tracking.
+            </p>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">FOSS</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Cross-Platform</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Media</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A warm developer curated catalog celebrating software craft. No tracking, no ads.
+        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="#" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Soli Deo gloria</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
