@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DuckWare — Curated Software for Builders</title>
+  <meta name="description" content="A quietly confident showcase platform for exceptional developer tools, open-source utilities, and beautiful software.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter, DM Mono, and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Sticky Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo" id="nav-logo">
+        <svg class="nav-logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <!-- Stylized minimal duck silhouette -->
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.29 9.29c-.39.39-1.02.39-1.41 0L12 9.41l-1.88 1.88c-.39.39-1.02.39-1.41 0a.996.996 0 0 1 0-1.41L10.59 8 8.71 6.12a.996.996 0 1 1 1.41-1.41L12 6.59l1.88-1.88c.39-.39 1.02-.39 1.41 0s.39 1.02 0 1.41L13.41 8l1.88 1.88c.38.39.38 1.03 0 1.41z"/>
+        </svg>
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="#showcases" class="nav-link">Showcases</a>
+        <a href="#submit" class="nav-link">Submit Software</a>
+        <a href="#about" class="nav-link">About</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="#subscribe-section" class="btn-primary">Get Updates</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-band">
+    <div class="container hero-layout">
+      <div class="hero-content">
+        <h1 class="text-display-xl hero-title">
+          Curating the finest software <br><span class="font-serif">on the internet.</span>
+        </h1>
+        <p class="text-body-lg hero-description">
+          We explore, audit, and showcase exceptional developer tools, libraries, and open-source applications. Quietly confident software, built for builders.
+        </p>
+        <div class="hero-cta-group">
+          <a href="#showcases" class="btn-primary">Browse Catalog</a>
+          <a href="#submit" class="btn-secondary-ghost">Submit Yours</a>
+        </div>
+      </div>
+      
+      <!-- Terminal Mockup inside Hero -->
+      <div class="hero-mockups">
+        <div class="card-mockup" style="min-height: 220px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">duckware.sh — terminal</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <div class="mockup-body text-code" id="terminal-content">
+            <span class="token-comment"># Query the DuckWare curator API</span><br>
+            <span class="line-num">1</span><span class="token-cmd">curl -s https://duckware.dev/api/latest</span><br>
+            <span class="line-num">2</span><span class="token-success">Fetching latest curated software releases...</span><br>
+            <span class="line-num">3</span><span class="token-accent">----------------------------------------------------</span><br>
+            <span class="line-num">4</span><span class="token-arg">✓ warp-terminal  - agentic dev shell with warm oklch canvas</span><br>
+            <span class="line-num">5</span><span class="token-arg">✓ linear-clone   - ultra-fast canvas-based task planner</span><br>
+            <span class="line-num">6</span><span class="token-arg">✓ sqlite-wasm    - local-first browser-embedded SQL database</span><br>
+            <span class="line-num">7</span><br>
+            <span class="line-num">8</span><span class="token-cmd">duckware --info</span><span class="cursor"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Partner/Ecosystem strip -->
+  <section class="content-band" style="padding: var(--space-xl) 0; border-bottom: 1px solid var(--space-hairline); background-color: rgba(56, 51, 48, 0.2);">
+    <div class="container">
+      <div class="logo-grid">
+        <!-- Partner SVG 1: GitHub -->
+        <div class="partner-logo-tile" title="GitHub">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+        </div>
+        <!-- Partner SVG 2: Rust/Cargo -->
+        <div class="partner-logo-tile" title="Rust/Cargo">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 12.18c0 .248-.007.49-.022.73l2.25.96a.5.5 0 0 1 .2.55l-.75 2.25a.5.5 0 0 1-.49.34l-2.45-.1c-.244.423-.538.808-.875 1.15l1.32 2.07a.5.5 0 0 1-.13.62l-1.8 1.5a.5.5 0 0 1-.61-.04l-1.83-1.64a7.973 7.973 0 0 1-1.423.473l.26 2.44a.5.5 0 0 1-.4.53l-2.3.4a.5.5 0 0 1-.53-.4l-.26-2.44a7.995 7.995 0 0 1-1.42-.472l-1.84 1.64a.5.5 0 0 1-.61.04l-1.8-1.5a.5.5 0 0 1-.13-.62l1.32-2.07a8.03 8.03 0 0 1-.875-1.15l-2.45.1a.5.5 0 0 1-.49-.34l-.75-2.25a.5.5 0 0 1 .2-.55l2.25-.96A8.04 8.04 0 0 1 5.022 12c0-.248.007-.49.022-.73l-2.25-.96a.5.5 0 0 1-.2-.55l.75-2.25A.5.5 0 0 1 3.84 7.2l2.45.1c.244-.423.538-.808.875-1.15l-1.32-2.07a.5.5 0 0 1 .13-.62l1.8-1.5a.5.5 0 0 1 .61.04l1.83 1.64c.45-.19.927-.35 1.423-.473L11.08.43a.5.5 0 0 1 .4-.53l2.3-.4a.5.5 0 0 1 .53.4l.26 2.44c.496.123.972.283 1.42.472l1.84-1.64a.5.5 0 0 1 .61-.04l1.8 1.5a.5.5 0 0 1 .13.62l-1.32 2.07c.337.342.63.727.875 1.15l2.45-.1c.28 0 .49.19.49.34l.75 2.25c.08.23-.03.49-.2.55l-2.25.96c.015.24.022.482.022.73zM12 5.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13z"/>
+          </svg>
+        </div>
+        <!-- Partner SVG 3: NPM -->
+        <div class="partner-logo-tile" title="NPM">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 7.334v9.332h7.998v-1.332h5.334v1.332H24V7.334H0zm22.666 8H18.67v-5.334h-2.67v5.334H9.332v-6.666h13.334v6.666zm-17.334 0H2.666v-5.334H4V14H5.332V9.998h1.332v5.336z"/>
+          </svg>
+        </div>
+        <!-- Partner SVG 4: Go -->
+        <div class="partner-logo-tile" title="Go / Golang">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.97 10.37c.1-.47.28-.9.57-1.28.32-.42.74-.75 1.25-.97.5-.22 1.07-.33 1.7-.33 1.03 0 1.84.28 2.45.85.6.56.96 1.34 1.07 2.33h-1.92c-.08-.48-.24-.87-.47-1.15-.24-.28-.59-.42-1.07-.42-.48 0-.85.16-1.12.48s-.42.8-.45 1.43c-.02.48.06.89.23 1.23.17.34.42.6.75.78.33.18.73.27 1.2.27.53 0 .93-.14 1.2-.42.27-.28.43-.69.48-1.23H5.5v-1.52h3.9c.02.22.03.48.03.8 0 .97-.22 1.75-.67 2.37-.45.62-1.08 1.08-1.9 1.4-.82.32-1.78.48-2.9.48-.95 0-1.78-.15-2.5-.45a4.7 4.7 0 0 1-1.85-1.28c-.5-.55-.87-1.2-1.1-1.97-.23-.77-.32-1.61-.27-2.54zm12.35 1.48c0 1-.19 1.82-.57 2.47-.38.65-.9 1.15-1.57 1.5-.67.35-1.43.52-2.3.52-1.25 0-2.22-.38-2.92-1.15-.7-.77-1.05-1.85-1.05-3.25 0-.98.18-1.82.55-2.5.37-.68.88-1.2 1.55-1.55.67-.35 1.43-.53 2.3-.53 1.27 0 2.25.39 2.95 1.17.7.78 1.06 1.88 1.06 3.32zm-2.02 0c0-.85-.14-1.5-.43-1.95-.28-.45-.72-.68-1.3-.68-.58 0-1.02.23-1.3.68-.28.45-.43 1.1-.43 1.95 0 .87.15 1.53.45 1.97.3.44.74.66 1.32.66s1.02-.22 1.3-.66c.29-.44.43-1.1.43-1.97z"/>
+          </svg>
+        </div>
+        <!-- Partner SVG 5: Docker -->
+        <div class="partner-logo-tile" title="Docker">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.983 11.078h2.119c.102 0 .186-.092.186-.205V9.002c0-.113-.084-.205-.186-.205h-2.119c-.103 0-.186.092-.186.205v1.87c0 .114.083.206.186.206zm-2.916 0h2.119c.102 0 .186-.092.186-.205V9.002c0-.113-.084-.205-.186-.205h-2.119c-.103 0-.186.092-.186.205v1.87c0 .114.083.206.186.206zm-2.916 0h2.119c.103 0 .186-.092.186-.205V9.002c0-.113-.083-.205-.186-.205H8.151c-.103 0-.186.092-.186.205v1.87c0 .114.083.206.186.206zm-2.916 0h2.119c.103 0 .186-.092.186-.205V9.002c0-.113-.083-.205-.186-.205H5.235c-.103 0-.186.092-.186.205v1.87c0 .114.083.206.186.206zm2.916-2.916h2.119c.103 0 .186-.092.186-.205V6.086c0-.113-.083-.205-.186-.205H8.151c-.103 0-.186.092-.186.205v1.87c0 .114.083.206.186.206zm-2.916 0h2.119c.103 0 .186-.092.186-.205V6.086c0-.113-.083-.205-.186-.205H5.235c-.103 0-.186.092-.186.205v1.87c0 .114.083.206.186.206zm2.916-2.916h2.119c.103 0 .186-.092.186-.205V3.17c0-.113-.083-.205-.186-.205H8.151c-.103 0-.186.092-.186.205v1.87c0 .114.083.206.186.206zm2.916 5.832h2.119c.102 0 .186-.092.186-.205V6.086c0-.113-.084-.205-.186-.205h-2.119c-.103 0-.186.092-.186.205v1.87c0 .114.083.206.186.206zm11.135 1.655c-.11-.383-.34-.73-.674-.954-.336-.226-.732-.303-1.127-.22-.054.01-.1.033-.146.068-.046.035-.078.083-.092.138-.073.284-.208.544-.396.764-.188.22-.423.395-.69.513-.27.12-.562.179-.856.175-.295-.004-.586-.07-.852-.2-.55-.26-.91-.785-1.01-1.39-.028-.18-.088-.352-.178-.51s-.21-.29-.356-.39c-.31-.212-.686-.31-1.06-.277h-.01c-.156.012-.312.008-.468-.013V12.92h7.625c.16 0 .313-.042.45-.122a1.002 1.002 0 0 0 .36-.367c.338-.567.433-1.246.262-1.878zM2.067 12.92c-.015.068-.022.138-.022.208 0 2.222.916 4.303 2.58 5.86a8.887 8.887 0 0 0 5.485 2.45c.123.013.245-.046.3-.153.056-.107.042-.236-.035-.33l-1.072-1.312c-.08-.098-.204-.15-.33-.142-2.316.143-4.526-.826-5.918-2.587A7.327 7.327 0 0 1 1.95 13.06c-.013-.122-.093-.228-.21-.274-.118-.046-.252-.016-.34.075a.998.998 0 0 0-.222.366c.28.326.592.62.932.88l-.043-.187z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Showcase Section (Prepared Empty State) -->
+  <main class="content-band" id="showcases">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="text-display-md">The Catalog</h2>
+        <p class="text-body-md">
+          A hand-picked collection of software that pushes the boundaries of craft and usability.
+        </p>
+      </div>
+
+      <!-- Empty State Card -->
+      <div class="ex-empty-state-card">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/>
+        </svg>
+        <h3 class="text-display-sm">Inaugural Showcase Under Audit</h3>
+        <p class="empty-state-caption">
+          Our first software showcase is currently undergoing full review and performance benchmarking. Subscribe to be notified the minute it drops.
+        </p>
+        
+        <!-- Newsletter signup directly inside empty state -->
+        <div class="subscribe-group" id="subscribe-section" style="margin-top: var(--space-md); width: 100%; display: flex; justify-content: center;">
+          <form class="text-input-group" id="subscribe-form">
+            <input type="email" class="text-input" placeholder="builder@domain.com" required aria-label="Email Address">
+            <button type="submit" class="btn-primary">Notify Me</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Premium Testimonial Section -->
+  <section class="content-band" style="background-color: rgba(56, 51, 48, 0.1);">
+    <div class="container">
+      <div class="testimonial-card">
+        <blockquote class="testimonial-quote">
+          "Finally, a curation engine that cuts through the noise of B2B SaaS marketing copy. DuckWare is like the reading-mode editor for software discovery. Quiet layout, clean typography, great choices."
+        </blockquote>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SC</div>
+          <div class="testimonial-meta">
+            <span class="testimonial-name">Sarah Chen</span>
+            <span class="testimonial-role">Principal Platform Engineer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Submit Software Section -->
+  <section class="content-band" id="submit">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="text-display-md">Submit Cool Software</h2>
+        <p class="text-body-md">
+          Are you building or using something fast, local-first, or exceptionally well-crafted? Let us audit it.
+        </p>
+      </div>
+
+      <div class="card-content" style="max-width: 600px; margin: 0 auto;">
+        <form id="submit-form" style="display: flex; flex-direction: column; gap: var(--space-xl);">
+          <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+            <label class="text-body-sm-strong" for="project-name">Project Name</label>
+            <input type="text" id="project-name" class="text-input" placeholder="e.g., SQLite-Wasm" required>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+            <label class="text-body-sm-strong" for="project-url">Repository or Website URL</label>
+            <input type="url" id="project-url" class="text-input" placeholder="https://github.com/..." required>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+            <label class="text-body-sm-strong" for="project-desc">Why is this software special?</label>
+            <textarea id="project-desc" class="text-input" style="min-height: 100px; resize: vertical;" placeholder="Tell us about its performance, architecture, or design details..." required></textarea>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+            <label class="text-body-sm-strong" for="submitter-email">Your Email</label>
+            <input type="email" id="submitter-email" class="text-input" placeholder="dev@example.com" required>
+          </div>
+
+          <button type="submit" class="btn-primary" style="align-self: flex-start; margin-top: var(--space-sm);">Submit for Audit</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Press & About Section -->
+  <section class="content-band" id="about">
+    <div class="container" style="max-width: 800px;">
+      <div class="section-header">
+        <h2 class="text-display-md">Coverage & Careers</h2>
+        <p class="text-body-md">
+          How people are reading about our curation and how you can join the curation engine.
+        </p>
+      </div>
+
+      <div style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Press coverage</h3>
+        
+        <a href="#" class="press-row">
+          <span class="text-body-md-strong">Hacker News: Introducing DuckWare, a Minimalist Curation Engine</span>
+          <span class="press-row-meta">June 2026</span>
+        </a>
+        
+        <a href="#" class="press-row">
+          <span class="text-body-md-strong">Lobsters: Curation is the new search — why hand-picked lists are back</span>
+          <span class="press-row-meta">May 2026</span>
+        </a>
+      </div>
+
+      <div>
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Open Positions</h3>
+        
+        <a href="#" class="job-row">
+          <span>Lead Developer Tool Curator</span>
+          <span class="job-row-meta">Remote / Contract</span>
+        </a>
+        
+        <a href="#" class="job-row">
+          <span>Frontend UI Engineer (Vanilla CSS specialist)</span>
+          <span class="job-row-meta">Remote / Full-time</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="#" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A warm developer curated catalog celebrating software craft. No tracking, no ads.
+        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="#showcases" class="footer-link">Showcases</a></li>
+          <li><a href="#submit" class="footer-link">Submit Software</a></li>
+          <li><a href="#about" class="footer-link">About & Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="#" class="footer-link">RSS Feed</a></li>
+          <li><a href="#" class="footer-link">Newsletter</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="#" class="footer-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer-link">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Soli Deo gloria</span>
+    </div>
+  </footer>
+
+  <!-- Notification Toast -->
+  <div class="notification-toast" id="toast">
+    <svg style="width: 20px; height: 20px; fill: #a3d6a9;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+    </svg>
+    <span class="text-body-sm-strong" id="toast-message">Subscription confirmed. Welcome onboard.</span>
+  </div>
+
+  <!-- Client JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>
