@@ -377,6 +377,21 @@ body {
   border-color: var(--color-body);
 }
 
+.showcase-list-card {
+  text-decoration: none;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .showcase-list-card {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+}
+
 /* Card Mockup (Terminal) */
 .card-mockup {
   background-color: var(--color-canvas-soft);
