@@ -24,5 +24,13 @@
       <pubDate>Sun, 21 Jun 2026 12:00:00 GMT</pubDate>
       <description>A browser-based video converter and operations dashboard powered by FFmpeg WebAssembly. Process operations (trim, rotate, crop, compress) entirely inside your browser with absolute privacy.</description>
     </item>
+
+    <item>
+      <title>ZenNotes: Local Markdown Workspace</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/zennotes.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/zennotes.html</guid>
+      <pubDate>Sun, 21 Jun 2026 12:00:00 GMT</pubDate>
+      <description>A keyboard-first notes manager built on local Markdown files. Integrates Vim motions, multi-runtime desktop/web builds, plain-text CSV databases, and a native Model Context Protocol (MCP) server.</description>
+    </item>
   </channel>
 </rss>
