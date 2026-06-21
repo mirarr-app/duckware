@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenNotes Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of ZenNotes, the keyboard-first local Markdown notes app with Vim motions and MCP server.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
+      <div style="flex-grow: 1;">
+        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+          <span>ZenNotes/zennotes</span>
+          <span>•</span>
+          <span>June 2026</span>
+          <span>•</span>
+          <span style="color: var(--color-body-strong);">Showcase #03</span>
+        </div>
+        
+        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px; display: flex; align-items: center; gap: var(--space-md);">
+          ZenNotes
+        </h1>
+        
+        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+          Keyboard-first local Markdown notes with Vim motions, databases, and MCP integration.
+        </p>
+
+        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+          <a href="https://zennotes.org/" class="btn-primary" target="_blank" rel="noopener">Visit Website</a>
+          <a href="https://github.com/ZenNotes/zennotes" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+        </div>
+      </div>
+      
+      <!-- Brand Icon Badge -->
+      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
+        <img src="https://github.com/ZenNotes/zennotes/raw/main/apps/desktop/build/icon.png" alt="ZenNotes Icon" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is ZenNotes?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            ZenNotes is a local-first, keyboard-centric note workspace designed to help developers write and organize plain Markdown vaults. Rather than trapping content inside proprietary databases, ZenNotes acts as a performant browser and editor overlay directly on ordinary <code>.md</code> text files on disk.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            It features Vim keybindings, CodeMirror 6 live preview editing, outline jumps, LaTeX math, and Mermaid diagrams. It also introduces Notion-style tables and boards overlays directly over plain <code>.csv</code> files, blending databases with flat-file structure.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Multi-Runtime Portability</span>
+              <p class="text-body-sm">
+                ZenNotes ships from a monorepo containing a shared React core. It deploys natively as an Electron-packaged desktop client (signed and notarized for macOS/Windows/Linux), as a self-hosted Go-backend web client, or as a Docker container, making it ideal for home servers and private LAN networks.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Obsidian-Friendly & Asset Agnostic</span>
+              <p class="text-body-sm">
+                Recognizes standard Markdown linkages, loose image assets, daily/weekly notes directories, and embeds. It interfaces naturally with existing Obsidian-style flat vaults, resolving images and wiki-links directly at the root folder.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Built-in MCP Integration</span>
+              <p class="text-body-sm">
+                A standout feature for AI pair-programming: the app includes a first-party Model Context Protocol (MCP) server. This exposes vault utilities (list, search, read, write, and task checks) directly to compatible AI models (Claude Code, Claude Desktop, Codex) to let assistants interact directly with your notes.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Command Line Companion</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            The desktop app registers a companion <code>zen</code> CLI, facilitating terminal searches, edit commands, and Raycast launcher search extensions natively on macOS:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">terminal</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-comment"># Query the local note vault from your CLI</span><br>
+              <span class="token-cmd">zen search "mcp server"</span><br>
+              <span class="token-success">Found 2 matches in daily-notes/2026-06-21.md</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Installation</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Installers for macOS and Windows are attached to GitHub releases. Linux users can install natively or via the AUR:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">bash</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-comment"># Install on Arch / Manjaro via AUR</span><br>
+              <span class="token-cmd">yay -S zennotes-bin</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A warm developer curated catalog celebrating software craft. No tracking, no ads.
+        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Soli Deo gloria</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
