@@ -64,14 +64,44 @@
     </div>
   </header>
 
-  <!-- Showcase Section (Minimal, Ready for first showcase) -->
+  <!-- Showcase Section (Catalog) -->
   <main class="content-band" id="showcases">
     <div class="container">
-      <div class="section-header" style="margin-bottom: 0;">
+      <div class="section-header" style="margin-bottom: var(--space-4xl);">
         <h2 class="text-display-md">Showcases</h2>
         <p class="text-body-md" style="margin-top: var(--space-md); color: var(--color-mute);">
-          The curation engine is currently auditing early submissions. The first showcase will be published here soon.
+          Hand-picked open source releases and developer utilities, audited for performance and craft.
         </p>
+      </div>
+
+      <!-- Showcases Grid -->
+      <div class="grid" style="grid-template-columns: 1fr; gap: var(--space-2xl); max-width: 900px; margin: 0 auto;">
+        
+        <!-- Showcase Card 1: Mirarr -->
+        <a href="showcases/mirarr.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+            <img src="showcases/mirarr/386850551-e65dd5ca-bd2f-443f-9cd7-d162c9c7245f.png" alt="Mirarr Desktop Preview" style="width: 100%; height: auto; display: block;">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
+              <span>mirarr-app/mirarr</span>
+              <span>•</span>
+              <span style="color: var(--color-body-strong);">Showcase #01</span>
+            </div>
+            <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">
+              Mirarr: FOSS Movie Client
+            </h3>
+            <p class="text-body-sm" style="color: var(--color-body); line-height: 1.6;">
+              A clean, native, and platform-agnostic client designed to query and manage media watchlists. Runs natively on Android, iOS, Windows, and Linux with full privacy and zero telemetry tracking.
+            </p>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">FOSS</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Cross-Platform</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Media</span>
+            </div>
+          </div>
+        </a>
+
       </div>
     </div>
   </main>
