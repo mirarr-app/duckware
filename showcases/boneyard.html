@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boneyard Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of Boneyard, the pixel-perfect, build-time auto-generated skeleton loading framework.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
+      <div style="flex-grow: 1;">
+        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+          <span>0xGF/boneyard</span>
+          <span>•</span>
+          <span>June 23, 2026</span>
+          <span>•</span>
+          <span style="color: var(--color-body-strong);">Showcase #04</span>
+        </div>
+        
+        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px; display: flex; align-items: center; gap: var(--space-md);">
+          Boneyard
+        </h1>
+        
+        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+          Pixel-perfect skeleton loading screens, automatically extracted from your real UI.
+        </p>
+
+        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+          <a href="https://github.com/0xGF/boneyard" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+          <a href="https://www.npmjs.com/package/boneyard-js" class="btn-secondary-ghost" target="_blank" rel="noopener">NPM Package</a>
+        </div>
+      </div>
+      
+      <!-- Brand Icon Badge -->
+      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
+        <img src="https://github.com/0xGF/boneyard/raw/main/boneyard-logo.gif" alt="Boneyard Logo" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Primary Feature Mockup/Visual -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Visual Identity</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); max-width: 450px; margin: 0 auto;">
+          <img src="https://github.com/0xGF/boneyard/raw/main/boneyard-logo.gif" alt="Boneyard Banner animation" style="width: 100%; height: auto; display: block; border-radius: var(--radius-sm);">
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Boneyard?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Hand-tuned loading screens are a maintenance nightmare. Designers tweak layouts, and developers spend hours updating custom gray bars and shimmer offsets, leading to layout shifts when loaded content snaps into place. <strong>Boneyard</strong> resolves this by programmatically extracting skeletons directly from your production UI layout.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            It functions by visiting your running application using a headless browser at build time, snapshotting coordinates and layout geometry of marked elements across custom viewports, and generating a portable registry file. When data loads, it transitions seamlessly without shifting a single pixel.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Decoupled Build-Time Extraction</span>
+              <p class="text-body-sm">
+                Boneyard’s Vite plugin and CLI instrument your dev environments transparently. The headless engine crawls designated components (e.g. <code>Skeleton name="..."</code>) at multiple responsive breakpoints to construct the layout map. Your production client is left with zero measurement overhead.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Multi-Framework Native Adapters</span>
+              <p class="text-body-sm">
+                Whether you use React (with Suspense compatibility), Vue, Svelte 5, Angular, Preact, or React Native, Boneyard uses a unified <code>.bones.json</code> configuration. The structural schemas are entirely swappable across client ecosystems.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Native Accessibility & Dynamic Text Scaling</span>
+              <p class="text-body-sm">
+                For mobile applications built in React Native, Boneyard captures shapes at default font settings, but automatically recalculates bone scaling and positioning at runtime. Skeletons adjust seamlessly to users' customized OS text size layouts.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Integration Pattern</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Integrating Boneyard into your application is straightforward. Below is an example of wrapping a query boundary using React:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">React Component</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-comment">// Wrap asynchronous UI structures with a Skeleton boundary</span><br>
+              <span class="token-cmd">import { Skeleton } from 'boneyard-js/react'</span><br><br>
+              <span class="token-cmd">function BlogPage() {</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;const { data, isLoading } = useFetch('/api/post')</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;return (</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;&nbsp;&nbsp;&lt;Skeleton name="blog-card" loading={isLoading}&gt;</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{data && &lt;BlogCard data={data} /&gt;}</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Skeleton&gt;</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;)</span><br>
+              <span class="token-cmd">}</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">CLI Build Workflow</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Run the extraction tool to crawl layouts and generate the static schemas:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">bash</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-comment"># Captures skeleton screens from running UI and saves to registry</span><br>
+              <span class="token-cmd">npx boneyard-js build --out ./src/bones</span><br>
+              <span class="token-success">Captured 4 skeleton screens across 3 breakpoints (375px, 768px, 1280px).</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>

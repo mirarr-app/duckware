@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 21 Jun 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Sun, 21 Jun 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Tue, 23 Jun 2026 00:30:00 GMT</lastBuildDate>
+    <pubDate>Tue, 23 Jun 2026 00:30:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -31,6 +31,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/zennotes.html</guid>
       <pubDate>Sun, 21 Jun 2026 12:00:00 GMT</pubDate>
       <description>A keyboard-first notes manager built on local Markdown files. Integrates Vim motions, multi-runtime desktop/web builds, plain-text CSV databases, and a native Model Context Protocol (MCP) server.</description>
+    </item>
+
+    <item>
+      <title>Boneyard: Headless Skeleton Generator</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/boneyard.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/boneyard.html</guid>
+      <pubDate>Tue, 23 Jun 2026 00:30:00 GMT</pubDate>
+      <description>An offline-first loader framework that automatically extracts pixel-perfect skeleton screens from your real UI layout at build time, with zero production runtime layout measurements.</description>
     </item>
   </channel>
 </rss>
