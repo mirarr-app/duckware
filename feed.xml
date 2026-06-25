@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 25 Jun 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Wed, 25 Jun 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Wed, 25 Jun 2026 18:00:00 GMT</lastBuildDate>
+    <pubDate>Wed, 25 Jun 2026 18:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -47,6 +47,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/podroid.html</guid>
       <pubDate>Wed, 25 Jun 2026 12:00:00 GMT</pubDate>
       <description>A rootless Android app that boots a real Alpine Linux virtual machine — not a chroot workaround. Run Podman, Docker, and LXC containers, SSH in from a laptop, and launch GUI desktop apps from your phone.</description>
+    </item>
+
+    <item>
+      <title>portless: Named Local Dev URLs</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/portless.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/portless.html</guid>
+      <pubDate>Wed, 25 Jun 2026 18:00:00 GMT</pubDate>
+      <description>A local dev proxy that swaps ephemeral port numbers for stable, memorable hostnames. HTTPS with HTTP/2, monorepo routing, and agent-friendly environment variables — zero config to start.</description>
     </item>
   </channel>
 </rss>
