@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>portless Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of portless, the local dev proxy that replaces port numbers with stable named .localhost URLs.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>vercel-labs/portless</span>
+        <span>•</span>
+        <span>June 25, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #06</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        portless
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        Stable, named local URLs for dev servers — built for humans and coding agents alike.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://www.npmjs.com/package/portless" class="btn-primary" target="_blank" rel="noopener">Install via npm</a>
+        <a href="https://github.com/vercel-labs/portless" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Primary Feature Mockup -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">The Core Idea</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); max-width: 600px;">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">package.json</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <div class="mockup-body" style="font-size: 14px; line-height: 1.8;">
+            <span class="token-comment">// Before</span><br>
+            <span class="token-cmd">"dev": "next dev"</span> <span class="token-comment">// http://localhost:3000</span><br><br>
+            <span class="token-comment">// After</span><br>
+            <span class="token-cmd">"dev": "portless run next dev"</span> <span class="token-success">// https://myapp.localhost</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is portless?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Local development is littered with ephemeral port numbers — <code>localhost:3000</code>, <code>localhost:5173</code>, <code>localhost:4567</code>. They shift between projects, collide across monorepos, and mean nothing to a browser bookmark or an AI agent trying to open your app.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>portless</strong> from Vercel Labs sits in front of your dev server as a lightweight reverse proxy. It assigns each app a memorable hostname like <code>https://myapp.localhost</code>, handles HTTPS with HTTP/2 out of the box, and injects a <code>PORTLESS_URL</code> environment variable so both humans and automated tooling always know where to look.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">HTTPS Proxy with Zero Ceremony</span>
+              <p class="text-body-sm">
+                On first run, portless generates a local certificate authority, trusts it in your OS keychain, and binds port 443. Browsers get clean HTTPS with HTTP/2 multiplexing — no certificate warnings, no manual mkcert setup. The proxy auto-starts when you launch an app and remembers its configuration across reboots.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Framework-Aware Port Injection</span>
+              <p class="text-body-sm">
+                Most frameworks respect the <code>PORT</code> environment variable automatically. For those that ignore it — Vite, Astro, Angular, Expo — portless detects the toolchain and injects the correct <code>--port</code> and <code>--host</code> flags. You run one command; the plumbing happens invisibly.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Monorepo, Worktree, and Sharing Modes</span>
+              <p class="text-body-sm">
+                A single <code>portless.json</code> at the repo root can route every workspace package. Git worktrees get automatic subdomain prefixes so parallel branches never collide. Optional Tailscale, Funnel, and ngrok integrations expose the same stable URLs to teammates or the public internet without reconfiguring your app.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Getting Started</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Install globally, name your app, and run your existing dev command through the proxy:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">terminal</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">npm install -g portless</span><br>
+              <span class="token-cmd">portless myapp next dev</span><br>
+              <span class="token-success">→ https://myapp.localhost</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Monorepo Routing</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            For multi-package repos, a root config maps each workspace to its own subdomain. Run from the repo root to start everything, or cd into a single package:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">portless.json</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">{</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;"apps": {</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;&nbsp;&nbsp;"apps/web": { "name": "myapp" },</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;&nbsp;&nbsp;"apps/api": { "name": "api.myapp" }</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;}</span><br>
+              <span class="token-cmd">}</span><br><br>
+              <span class="token-comment"># https://myapp.localhost + https://api.myapp.localhost</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
