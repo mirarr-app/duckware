@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Podroid Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of Podroid, the rootless Android app that boots a real Alpine Linux VM for containers and desktop apps.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
+      <div style="flex-grow: 1;">
+        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+          <span>ExTV/Podroid</span>
+          <span>•</span>
+          <span>June 25, 2026</span>
+          <span>•</span>
+          <span style="color: var(--color-body-strong);">Showcase #05</span>
+        </div>
+        
+        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px; display: flex; align-items: center; gap: var(--space-md);">
+          Podroid
+        </h1>
+        
+        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+          A pocket-sized Alpine Linux VM on Android — containers, terminals, and GUI desktops without root.
+        </p>
+
+        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+          <a href="https://github.com/ExTV/Podroid/releases/latest" class="btn-primary" target="_blank" rel="noopener">Download APK</a>
+          <a href="https://github.com/ExTV/Podroid" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+        </div>
+      </div>
+      
+      <!-- Brand Icon Badge -->
+      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
+        <img src="https://github.com/ExTV/Podroid/raw/main/docs/logo.png" alt="Podroid Logo" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- App Screenshots Grid -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Mobile Interface</h3>
+        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+              </div>
+              <div class="mockup-title">01-home-idle.png</div>
+              <div style="width: 36px;"></div>
+            </div>
+            <img src="https://github.com/ExTV/Podroid/raw/main/docs/screenshots/01-home-idle.png" alt="Podroid home screen before VM start" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+              </div>
+              <div class="mockup-title">02-home-running.png</div>
+              <div style="width: 36px;"></div>
+            </div>
+            <img src="https://github.com/ExTV/Podroid/raw/main/docs/screenshots/02-home-running.png" alt="Podroid home screen with VM running" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+              </div>
+              <div class="mockup-title">03-terminal-fastfetch.png</div>
+              <div style="width: 36px;"></div>
+            </div>
+            <img src="https://github.com/ExTV/Podroid/raw/main/docs/screenshots/03-terminal-fastfetch.png" alt="Podroid built-in terminal showing Alpine system info" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+              </div>
+              <div class="mockup-title">04-quick-settings.png</div>
+              <div style="width: 36px;"></div>
+            </div>
+            <img src="https://github.com/ExTV/Podroid/raw/main/docs/screenshots/04-quick-settings.png" alt="Podroid terminal quick settings with themes and fonts" style="width: 100%; height: auto; display: block;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Podroid?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Most "Linux on Android" solutions are user-space hacks — chroots, proot layers, or Termux wrappers that approximate a server environment. <strong>Podroid</strong> takes a different path: it boots a genuine Alpine Linux virtual machine with its own kernel, giving you container tooling that behaves the way it would on bare metal.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            The result is a rootless Android app that turns any arm64 phone running Android 8 or newer into a portable dev box. Podman, Docker, and LXC ship pre-installed. An integrated terminal, X11 desktop viewer, SSH access, and port forwarding close the gap between a pocket device and a full Linux workstation.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Real Virtualization, Not Emulation Theater</span>
+              <p class="text-body-sm">
+                Podroid runs Alpine on a custom kernel via QEMU, with hardware-accelerated AVF on supported pKVM devices. Because the guest is a proper VM rather than a filesystem overlay, container runtimes, networking stacks, and privilege models work exactly as they would on a dedicated Linux host.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Containers Ready at First Boot</span>
+              <p class="text-body-sm">
+                Podman, Docker, and LXC arrive pre-configured inside the guest image. Spin up services, test deployments, or run ad-hoc workloads from the in-app terminal the moment the VM reports ready — no manual package hunting or daemon setup required.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Full-Stack Mobile Linux Experience</span>
+              <p class="text-body-sm">
+                Beyond CLI work, Podroid ships an xterm-256color terminal with over a hundred color themes, USB passthrough, SSH server support, guest-to-Android bridging, and a built-in X11 viewer for running GUI desktop applications with touch, keyboard, mouse, and audio input.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Getting Started</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Install the APK, tap <strong>Start VM</strong>, and wait for the ready signal. From there the guest shell opens immediately to a familiar Alpine environment:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">alpine shell</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-comment"># Run containers without any extra setup</span><br>
+              <span class="token-cmd">podman run --rm alpine echo "hello from a container"</span><br>
+              <span class="token-cmd">docker run -d -p 8080:80 nginx</span><br><br>
+              <span class="token-comment"># Forward a guest port to your phone and LAN</span><br>
+              <span class="token-cmd">podroid-forward add 8080 8080 tcp</span><br><br>
+              <span class="token-comment"># SSH in from a laptop on the same network</span><br>
+              <span class="token-cmd">ssh root@&lt;phone-ip&gt; -p 9922</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Building from Source</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            The entire stack — custom kernel, root filesystem, QEMU backend, and Android APK — can be rebuilt from a single script. Docker and the Android SDK/NDK are the main toolchain prerequisites:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">bash</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">git clone https://github.com/ExTV/Podroid.git</span><br>
+              <span class="token-cmd">cd Podroid</span><br>
+              <span class="token-cmd">./build-all.sh all</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
