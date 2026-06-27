@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>restic Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of restic, the fast and secure backup program with deduplication, encryption, and broad storage backend support.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>restic/restic</span>
+        <span>•</span>
+        <span>June 27, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #07</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        restic
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        Encrypted, deduplicated backups that treat restore as seriously as save.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://restic.readthedocs.io/en/latest/" class="btn-primary" target="_blank" rel="noopener">Read Documentation</a>
+        <a href="https://github.com/restic/restic" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Primary Feature Mockup -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Typical Workflow</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); max-width: 650px;">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">bash</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <div class="mockup-body" style="font-size: 14px; line-height: 1.8;">
+            <span class="token-cmd">restic init --repo sftp:user@backuphost:/data</span><br>
+            <span class="token-cmd">restic -r sftp:user@backuphost:/data backup ~/work</span><br>
+            <span class="token-success">snapshot 40dc1520 saved · 1.582 GiB in 0:29</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is restic?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Most backup tools either feel like an afterthought or demand a dedicated server stack. <strong>restic</strong> is a single Go binary that runs on Linux, macOS, Windows, and the BSDs — no daemon, no agent fleet, no proprietary cloud lock-in.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            You point it at a repository (local disk, SFTP, S3, Backblaze B2, Azure, GCS, or anything rclone supports), take encrypted snapshots on a schedule, and restore individual files or entire trees when disaster strikes. The design philosophy is blunt: backups should be frictionless enough to run daily, and restores should be provable before you need them.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Encryption Against Untrusted Storage</span>
+              <p class="text-body-sm">
+                Every blob is encrypted client-side before it leaves your machine. restic assumes the remote backend is hostile — shared hosting, cloud buckets, or admin-accessible servers — and uses cryptography to guarantee confidentiality and integrity. Your password is the only key; lose it and the data is gone, by design.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Incremental Snapshots with Deduplication</span>
+              <p class="text-body-sm">
+                Content-defined chunking splits files into variable-size pieces so that even small edits do not re-upload entire files. Duplicate chunks are stored once across snapshots, keeping repository growth proportional to actual change — not total data volume. Restores pull only the blocks needed for the files you request.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Backend-Agnostic by Design</span>
+              <p class="text-body-sm">
+                Native support covers local paths, SFTP, REST servers, Amazon S3, MinIO, OpenStack Swift, Backblaze B2, Azure Blob, and Google Cloud Storage. Anything else routes through rclone. Swap backends without changing your backup workflow — the repository format stays the same.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Restore and Browse</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            When recovery time matters, restic offers two paths: targeted file restore or FUSE mount to browse snapshot history like a filesystem:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">bash</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-comment"># List snapshots and restore a single file</span><br>
+              <span class="token-cmd">restic -r /backup snapshots</span><br>
+              <span class="token-cmd">restic -r /backup restore latest --target /recovery --include report.pdf</span><br><br>
+              <span class="token-comment"># Or mount the repo and browse interactively</span><br>
+              <span class="token-cmd">restic -r /backup mount /mnt/restic</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Verify Before You Need It</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            A backup you cannot restore is worse than no backup at all. restic ships with integrity checks and reproducible release binaries (since v0.6.1), so you can audit that your repository is healthy and that published builds match the source:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">bash</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">restic -r /backup check</span><br>
+              <span class="token-success">using temporary cache · no errors were found</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
