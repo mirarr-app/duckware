@@ -51,7 +51,44 @@
       <!-- Showcases Grid (Ordered Descending) -->
       <div class="grid" style="grid-template-columns: 1fr; gap: var(--space-2xl); max-width: 900px; margin: 0 auto;">
         
-        <!-- Showcase Card 6: portless (LATEST on top) -->
+        <!-- Showcase Card 7: restic (LATEST on top) -->
+        <a href="restic.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+            <div class="mockup-header">
+              <div class="mockup-controls">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+              </div>
+              <div class="mockup-title">bash</div>
+              <div style="width: 36px;"></div>
+            </div>
+            <div class="mockup-body" style="font-size: 13px; line-height: 1.7;">
+              <span class="token-cmd">restic backup ~/work</span><br>
+              <span class="token-success">snapshot saved · encrypted &amp; deduplicated</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
+              <span>restic/restic</span>
+              <span>•</span>
+              <span style="color: var(--color-body-strong);">Showcase #07 (Latest)</span>
+            </div>
+            <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">
+              restic: Secure Incremental Backups
+            </h3>
+            <p class="text-body-sm" style="color: var(--color-body); line-height: 1.6;">
+              A single-binary backup program with client-side encryption, content-defined deduplication, and native support for S3, SFTP, B2, Azure, and dozens more backends via rclone.
+            </p>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Backup</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Encryption</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Cross-Platform</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Showcase Card 6: portless -->
         <a href="portless.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
           <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
             <div class="mockup-header">
@@ -72,7 +109,7 @@
             <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
               <span>vercel-labs/portless</span>
               <span>•</span>
-              <span style="color: var(--color-body-strong);">Showcase #06 (Latest)</span>
+              <span style="color: var(--color-body-strong);">Showcase #06</span>
             </div>
             <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">
               portless: Named Local Dev URLs
