@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>httpSMS Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of httpSMS, the open-source service that turns your Android phone into an SMS gateway with a simple HTTP API.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>NdoleStudio/httpsms</span>
+        <span>•</span>
+        <span>July 2, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #09</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        httpSMS
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        Your Android phone, exposed as a programmable SMS gateway over HTTP.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://httpsms.com/" class="btn-primary" target="_blank" rel="noopener">Visit httpSMS</a>
+        <a href="https://github.com/NdoleStudio/httpsms" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Primary Feature Visual -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Platform Overview</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">httpsms-header.png</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <img src="https://user-images.githubusercontent.com/4196457/194767449-f12d84a0-22f1-4787-afb2-17398fb459f6.png" alt="httpSMS platform header showing SMS gateway workflow" style="width: 100%; height: auto; display: block;">
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is httpSMS?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Commercial SMS APIs work well in the US and Europe, but many regions cannot buy virtual phone numbers at all. Developers in those markets are left stitching together brittle workarounds or paying for gateways that do not support their local carriers. <strong>httpSMS</strong> takes a different approach: your own Android handset becomes the gateway.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            Install the Android app, pair it with the service, and send SMS messages by calling a straightforward HTTP API. Inbound texts arriving on the phone are forwarded to a webhook you configure. The entire stack — API server, web dashboard, and mobile client — is open source and self-hostable.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Real SIM, Real Delivery</span>
+              <p class="text-body-sm">
+                Messages go out through your phone's native SMS stack, not a rented short code. That means local carrier rates, local number identity, and delivery to numbers that commercial APIs often cannot reach. Your Android device stays online and the API queues outbound messages until the app picks them up via push notification.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Bidirectional HTTP Integration</span>
+              <p class="text-body-sm">
+                Outbound is a single REST call — POST your message body, from number, and recipient. Inbound SMS events are delivered to your webhook endpoint as they arrive on the handset, so you can build two-way flows like OTP verification, appointment reminders, or alert systems without polling.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Full-Stack Open Source</span>
+              <p class="text-body-sm">
+                The monorepo ships three components: a Go API backend, an Android companion app, and a Nuxt/Vuetify web dashboard for managing phones, API keys, and message history. Docker Compose brings the server side up locally, and the hosted version at httpsms.com is available if you prefer not to run your own infrastructure.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Sending a Message</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            The API accepts a JSON payload and returns immediately while the Android app handles delivery asynchronously:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">curl</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">curl -X POST https://api.httpsms.com/v1/messages/send \</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;-H "x-api-key: YOUR_API_KEY" \</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;-H "Content-Type: application/json" \</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;-d '{"content": "Hello!", "from": "+1234567890", "to": "+0987654321"}'</span><br><br>
+              <span class="token-success">202 Accepted — message queued for delivery</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Self-Hosting</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Run the full stack on your own infrastructure with Docker Compose. Configure Firebase credentials for push notifications and you have a private SMS gateway:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">bash</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">git clone https://github.com/NdoleStudio/httpsms.git</span><br>
+              <span class="token-cmd">cp web/.env.docker web/.env</span><br>
+              <span class="token-cmd">cp api/.env.docker api/.env</span><br>
+              <span class="token-cmd">docker compose up --build</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
