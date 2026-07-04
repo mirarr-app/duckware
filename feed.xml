@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 04 Jul 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Fri, 04 Jul 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Fri, 04 Jul 2026 18:00:00 GMT</lastBuildDate>
+    <pubDate>Fri, 04 Jul 2026 18:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -87,6 +87,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/gallery-dl.html</guid>
       <pubDate>Fri, 04 Jul 2026 12:00:00 GMT</pubDate>
       <description>A cross-platform CLI that downloads image galleries and collections from hundreds of hosting sites. Deep JSON configuration, programmable filenames, and cookie or OAuth authentication for private content.</description>
+    </item>
+
+    <item>
+      <title>omaTUNES: Native Wayland Music Player</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/omatunes.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/omatunes.html</guid>
+      <pubDate>Fri, 04 Jul 2026 18:00:00 GMT</pubDate>
+      <description>A lightweight Rust music player for Hyprland and Omarchy rices. Local-library playback with live theme sync — no streaming services, no cloud dependencies, minimal resource footprint.</description>
     </item>
   </channel>
 </rss>
