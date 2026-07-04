@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 02 Jul 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Wed, 02 Jul 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Fri, 04 Jul 2026 12:00:00 GMT</lastBuildDate>
+    <pubDate>Fri, 04 Jul 2026 12:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -79,6 +79,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/httpsms.html</guid>
       <pubDate>Wed, 02 Jul 2026 12:00:00 GMT</pubDate>
       <description>Turn your Android phone into a programmable SMS gateway. Send messages via a REST API, receive inbound texts through webhooks, and self-host the full stack when virtual numbers are not an option.</description>
+    </item>
+
+    <item>
+      <title>gallery-dl: Universal Gallery Downloader</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/gallery-dl.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/gallery-dl.html</guid>
+      <pubDate>Fri, 04 Jul 2026 12:00:00 GMT</pubDate>
+      <description>A cross-platform CLI that downloads image galleries and collections from hundreds of hosting sites. Deep JSON configuration, programmable filenames, and cookie or OAuth authentication for private content.</description>
     </item>
   </channel>
 </rss>

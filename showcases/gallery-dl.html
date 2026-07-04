@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gallery-dl Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of gallery-dl, the cross-platform command-line tool for downloading image galleries from hundreds of hosting sites.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>mikf/gallery-dl</span>
+        <span>•</span>
+        <span>July 4, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #10</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        gallery-dl
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        One command to archive image galleries from hundreds of sites — with the config depth of a proper Unix tool.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://gdl-org.github.io/docs/configuration.html" class="btn-primary" target="_blank" rel="noopener">Read Documentation</a>
+        <a href="https://codeberg.org/mikf/gallery-dl" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Primary Feature Mockup -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Typical Usage</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); max-width: 700px;">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">bash</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <div class="mockup-body" style="font-size: 14px; line-height: 1.8;">
+            <span class="token-cmd">gallery-dl "https://danbooru.donmai.us/posts?tags=bonocho"</span><br>
+            <span class="token-success">./danbooru/bonocho/1234567.jpg</span><br>
+            <span class="token-success">./danbooru/bonocho/1234568.jpg</span><br>
+            <span class="token-comment"># 847 files saved to disk</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is gallery-dl?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            If <code>yt-dlp</code> is the standard for pulling video from the web, <strong>gallery-dl</strong> occupies the same niche for still images and comics. It is a Python command-line program that accepts a URL, identifies the hosting site, and downloads every image in a gallery or collection — paginated albums, manga chapters, artist portfolios, and tagged search results included.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            The project maintains extractors for a vast and growing list of image hosts, from mainstream platforms to niche communities. It runs on Linux, macOS, and Windows, ships as a pip package or standalone executable, and rewards power users with granular configuration that rivals tools ten times its age.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Extractor-per-Site Architecture</span>
+              <p class="text-body-sm">
+                Each supported host gets a dedicated extractor module that understands its pagination, metadata, and media URLs. When a site changes its API, only that extractor needs updating — the core download engine, filename logic, and archive system stay untouched. The supported-sites list spans art communities, booru-style boards, manga readers, and social platforms.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Filename Templates and Archive Control</span>
+              <p class="text-body-sm">
+                Output paths are fully programmable via format strings — embed artist names, tags, chapter numbers, or timestamps directly into directory structures. Built-in archive databases skip already-downloaded files across runs, and chapter filters let you grab only the range you need (e.g. chapters 10–20 in French).
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Flexible Authentication</span>
+              <p class="text-body-sm">
+                Private galleries and rate-limited sites are handled through username/password pairs, browser cookie import (<code>--cookies-from-browser firefox</code>), or OAuth flows for platforms like Flickr, DeviantArt, and Pixiv. Credentials live in a JSON config file so scheduled runs do not need interactive prompts.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Installation</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Install from PyPI, grab a standalone binary, or use your system package manager — Homebrew, Scoop, Snap, and Nix all ship it:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">bash</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">python -m pip install -U gallery-dl</span><br>
+              <span class="token-comment"># or: brew install gallery-dl</span><br>
+              <span class="token-comment"># or: scoop install gallery-dl</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Configuration</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Per-site settings merge from a JSON config file found in standard XDG paths. Override download directories, set default filename formats, and store credentials in one place:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">config.json</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">{</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;"extractor": {</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;&nbsp;&nbsp;"base-directory": "~/Downloads/galleries",</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;&nbsp;&nbsp;"archive": "~/Downloads/gdl-archive.sqlite3"</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;}</span><br>
+              <span class="token-cmd">}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
