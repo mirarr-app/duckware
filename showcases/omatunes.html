@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>omaTUNES Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of omaTUNES, the lightweight Rust music player built for Hyprland and Omarchy with live theme integration.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
+      <div style="flex-grow: 1;">
+        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+          <span>Balthazzahr/omatunes</span>
+          <span>•</span>
+          <span>July 4, 2026</span>
+          <span>•</span>
+          <span style="color: var(--color-body-strong);">Showcase #11</span>
+        </div>
+        
+        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+          omaTUNES
+        </h1>
+        
+        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+          A native Wayland music player that lives in your local library and breathes your rice.
+        </p>
+
+        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+          <a href="https://github.com/Balthazzahr/omatunes" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+          <a href="https://omarchy.org/" class="btn-secondary-ghost" target="_blank" rel="noopener">Omarchy</a>
+        </div>
+      </div>
+      
+      <!-- Brand Icon Badge -->
+      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
+        <img src="https://github.com/Balthazzahr/omatunes/raw/master/assets/OmaTUNES%20Logo%20Transparent.png" alt="omaTUNES Logo" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Main UI Screenshot -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Player Interface</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">Main UI.png</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <img src="https://github.com/Balthazzahr/omatunes/raw/master/assets/Main%20UI.png" alt="omaTUNES main player interface on Hyprland" style="width: 100%; height: auto; display: block;">
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is omaTUNES?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Most desktop music players were designed for GNOME or KDE and feel out of place on a tiling Wayland compositor. <strong>omaTUNES</strong> is a Rust-native player written for the Hyprland ecosystem — local files only, no streaming services, no account logins, no background sync daemons eating RAM.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            It is a customized fork of <a href="https://github.com/sheep-farm/lavanda" target="_blank" rel="noopener">lavanda</a> by Balthazzahr, tuned specifically for <a href="https://omarchy.org/" target="_blank" rel="noopener">Omarchy</a> rices. Point it at your music folder and it handles playback with minimal chrome, leaving your workflow and window layout untouched.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Wayland-Native and Lightweight</span>
+              <p class="text-body-sm">
+                Built in Rust for direct Wayland rendering — no XWayland shim, no Electron shell. The player stays small on disk and in memory, which matters when you are running a compositor, terminal multiplexer, and a dozen other tools on the same machine.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Live Omarchy Theme Sync</span>
+              <p class="text-body-sm">
+                omaTUNES follows the active Omarchy theme automatically. Switch your rice and the player's accent colors update in real time — no manual palette editing or config file restarts required to keep the UI consistent with the rest of your desktop.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Offline-First Local Library</span>
+              <p class="text-body-sm">
+                Playback comes entirely from files on disk. There are no external API dependencies, no telemetry, and no network calls — just fast, predictable audio from a library you already own. Ideal for air-gapped setups or anyone who wants music playback without a cloud middleman.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
