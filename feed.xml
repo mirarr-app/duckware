@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 04 Jul 2026 18:00:00 GMT</lastBuildDate>
-    <pubDate>Fri, 04 Jul 2026 18:00:00 GMT</pubDate>
+    <lastBuildDate>Fri, 04 Jul 2026 22:00:00 GMT</lastBuildDate>
+    <pubDate>Fri, 04 Jul 2026 22:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -95,6 +95,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/omatunes.html</guid>
       <pubDate>Fri, 04 Jul 2026 18:00:00 GMT</pubDate>
       <description>A lightweight Rust music player for Hyprland and Omarchy rices. Local-library playback with live theme sync — no streaming services, no cloud dependencies, minimal resource footprint.</description>
+    </item>
+
+    <item>
+      <title>mapcn: React Map Components</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/mapcn.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/mapcn.html</guid>
+      <pubDate>Fri, 04 Jul 2026 22:00:00 GMT</pubDate>
+      <description>Free, open-source map components for React built on MapLibre GL. shadcn/ui-compatible, theme-aware, and installable with a single CLI command — markers, routes, and controls included.</description>
     </item>
   </channel>
 </rss>
