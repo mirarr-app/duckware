@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>autobrr Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of autobrr, the modern download automation tool for torrents and Usenet with real-time IRC indexer monitoring.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>autobrr/autobrr</span>
+        <span>•</span>
+        <span>July 7, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #13</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        autobrr
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        Catch torrents the moment they drop — IRC-speed automation for your entire download stack.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://autobrr.com/" class="btn-primary" target="_blank" rel="noopener">Read Documentation</a>
+        <a href="https://github.com/autobrr/autobrr" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Dashboard Screenshot -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Dashboard Interface</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">front-dark.png</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <img src="https://github.com/autobrr/autobrr/raw/develop/.github/images/front-dark.png" alt="autobrr dashboard showing filters and release monitoring" style="width: 100%; height: auto; display: block;">
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is autobrr?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Private tracker users know the race: new releases appear, and the first seeders build ratio fastest. Tools like Radarr and Sonarr poll RSS feeds on a schedule — useful, but too slow to join the initial swarm on competitive indexers. Legacy automation scripts like autodl-irssi solved this with IRC, but they are brittle, hard to configure, and show their age.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>autobrr</strong> modernizes that workflow into a single self-hosted application. It watches indexer IRC announce channels in real time, matches releases against your filters, and dispatches torrent files to qBittorrent, Deluge, Radarr, Sonarr, or a watch folder — all through a clean web UI with both dark and light themes.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Real-Time IRC Announce Monitoring</span>
+              <p class="text-body-sm">
+                Indexers broadcast new uploads to IRC the instant they hit the site. autobrr sits in those channels and reacts in milliseconds — not on the next RSS poll cycle. That speed difference is what separates early seeders from everyone still refreshing a feed.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Filter-Driven Automation</span>
+              <p class="text-body-sm">
+                Each filter is a rule set: match on release name, size, category, indexer, or regex patterns, then trigger an action. Actions can push to a download client, forward to Radarr or Sonarr for library import, or drop a torrent into a watch folder. Complex workflows that used to require multiple tools now live in one place.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Unified Torrent and Usenet Stack</span>
+              <p class="text-body-sm">
+                autobrr draws from the best ideas in trackarr, autodl-irssi, and flexget, then unifies torrent and Usenet automation under one roof. Whether you maintain ratio on private trackers or automate a Usenet pipeline, the same filter-and-action model applies across both ecosystems.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">How a Filter Works</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            A typical setup monitors an indexer's IRC channel, matches incoming announces, and routes approved releases to your media stack:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">filter flow</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-comment"># IRC announce arrives from indexer</span><br>
+              <span class="token-cmd">→ Filter: match "2160p" + category "Movies"</span><br>
+              <span class="token-cmd">→ Action: send to Radarr + qBittorrent</span><br>
+              <span class="token-success">✓ Release grabbed · seeding within seconds</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>

@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Fri, 04 Jul 2026 22:00:00 GMT</lastBuildDate>
-    <pubDate>Fri, 04 Jul 2026 22:00:00 GMT</pubDate>
+    <lastBuildDate>Mon, 07 Jul 2026 12:00:00 GMT</lastBuildDate>
+    <pubDate>Mon, 07 Jul 2026 12:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -103,6 +103,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/mapcn.html</guid>
       <pubDate>Fri, 04 Jul 2026 22:00:00 GMT</pubDate>
       <description>Free, open-source map components for React built on MapLibre GL. shadcn/ui-compatible, theme-aware, and installable with a single CLI command — markers, routes, and controls included.</description>
+    </item>
+
+    <item>
+      <title>autobrr: Download Automation Hub</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/autobrr.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/autobrr.html</guid>
+      <pubDate>Mon, 07 Jul 2026 12:00:00 GMT</pubDate>
+      <description>Modern torrent and Usenet automation with real-time IRC indexer monitoring. Filter-driven workflows that push releases to qBittorrent, Radarr, Sonarr, or watch folders the moment they drop.</description>
     </item>
   </channel>
 </rss>
