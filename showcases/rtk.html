@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>rtk Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of rtk, the Rust CLI proxy that compresses dev command output to cut LLM token usage by 60-90%.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
+      <div style="flex-grow: 1;">
+        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+          <span>rtk-ai/rtk</span>
+          <span>•</span>
+          <span>July 8, 2026</span>
+          <span>•</span>
+          <span style="color: var(--color-body-strong);">Showcase #14</span>
+        </div>
+        
+        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+          rtk
+        </h1>
+        
+        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+          A transparent CLI proxy that shrinks command output before it floods your LLM context.
+        </p>
+
+        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+          <a href="https://www.rtk-ai.app/" class="btn-primary" target="_blank" rel="noopener">Visit Website</a>
+          <a href="https://github.com/rtk-ai/rtk" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+        </div>
+      </div>
+      
+      <!-- Brand Icon Badge -->
+      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
+        <img src="https://avatars.githubusercontent.com/u/258253854?v=4" alt="rtk logo" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Primary Feature Mockup -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">The Core Idea</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); max-width: 650px;">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">agent session</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <div class="mockup-body" style="font-size: 14px; line-height: 1.8;">
+            <span class="token-comment"># Without rtk — raw git diff floods context</span><br>
+            <span class="token-cmd">git diff</span> <span class="token-comment">→ 10,000 tokens</span><br><br>
+            <span class="token-comment"># With rtk — filtered, structured summary</span><br>
+            <span class="token-cmd">rtk git diff</span> <span class="token-success">→ 2,500 tokens (-75%)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is rtk?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Coding agents like Claude Code spend a large fraction of their context window on command output — verbose test logs, thousand-line diffs, directory listings, linter reports. You pay for every token whether the model needs it or not. <strong>rtk</strong> (Rust Token Killer) sits between your shell and the agent as a transparent proxy, intercepting stdout from common dev commands and returning a compressed, structured version that preserves what matters.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            It is a single Rust binary with no runtime dependencies, supports over 100 commands out of the box, and adds less than 10ms of overhead per invocation. In a typical 30-minute agent session, users report roughly 80% fewer tokens consumed across git, test, lint, and filesystem operations.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Command-Aware Compression</span>
+              <p class="text-body-sm">
+                rtk does not apply generic gzip-style shrinking. Each supported command — <code>git diff</code>, <code>cargo test</code>, <code>rg</code>, <code>pytest</code>, <code>docker ps</code>, and dozens more — has a tailored filter that extracts signal and discards noise. A test run returns pass/fail summaries instead of full stack traces; a diff returns changed hunks instead of entire files.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Drop-In Proxy, Zero Workflow Change</span>
+              <p class="text-body-sm">
+                Prefix commands with <code>rtk</code> or configure your agent to route through it automatically. The underlying tool still runs normally — rtk only transforms what comes back. No plugins, no API keys, no changes to your project. Install via Homebrew or a one-line curl script and you are running in seconds.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Single Binary, Native Speed</span>
+              <p class="text-body-sm">
+                Written in Rust and shipped as one self-contained executable, rtk avoids the dependency chains that make other dev tools fragile to install. Sub-10ms per-call overhead means compression pays for itself immediately — the tokens you save on a single <code>cargo test</code> output dwarf the proxy cost.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Installation</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Install via Homebrew on macOS or the quick-install script on Linux:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">bash</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">brew install rtk</span><br><br>
+              <span class="token-comment"># or on Linux/macOS</span><br>
+              <span class="token-cmd">curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
