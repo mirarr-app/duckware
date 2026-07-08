@@ -51,7 +51,44 @@
       <!-- Showcases Grid (Ordered Descending) -->
       <div class="grid" style="grid-template-columns: 1fr; gap: var(--space-2xl); max-width: 900px; margin: 0 auto;">
         
-        <!-- Showcase Card 13: autobrr (LATEST on top) -->
+        <!-- Showcase Card 14: rtk (LATEST on top) -->
+        <a href="rtk.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+            <div class="mockup-header">
+              <div class="mockup-controls">
+                <span class="mockup-dot red"></span>
+                <span class="mockup-dot yellow"></span>
+                <span class="mockup-dot green"></span>
+              </div>
+              <div class="mockup-title">agent session</div>
+              <div style="width: 36px;"></div>
+            </div>
+            <div class="mockup-body" style="font-size: 13px; line-height: 1.7;">
+              <span class="token-cmd">rtk git diff</span><br>
+              <span class="token-success">10,000 → 2,500 tokens (-75%)</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
+              <span>rtk-ai/rtk</span>
+              <span>•</span>
+              <span style="color: var(--color-body-strong);">Showcase #14 (Latest)</span>
+            </div>
+            <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">
+              rtk: LLM Token Compression Proxy
+            </h3>
+            <p class="text-body-sm" style="color: var(--color-body); line-height: 1.6;">
+              A single Rust binary that sits between your shell and coding agents, filtering command output before it hits the context window. Cuts token usage 60–90% on git, test, lint, and filesystem commands with under 10ms overhead.
+            </p>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">CLI</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Rust</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">AI Tools</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Showcase Card 13: autobrr -->
         <a href="autobrr.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
           <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
             <img src="https://github.com/autobrr/autobrr/raw/develop/.github/images/front-dark.png" alt="autobrr dashboard preview" style="width: 100%; height: auto; display: block;">
@@ -60,7 +97,7 @@
             <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
               <span>autobrr/autobrr</span>
               <span>•</span>
-              <span style="color: var(--color-body-strong);">Showcase #13 (Latest)</span>
+              <span style="color: var(--color-body-strong);">Showcase #13</span>
             </div>
             <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">
               autobrr: Download Automation Hub
