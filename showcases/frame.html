@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frame Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of Frame, the native Rust desktop app for FFmpeg media conversion with a GPUI interface.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
+      <div style="flex-grow: 1;">
+        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+          <span>66HEX/frame</span>
+          <span>•</span>
+          <span>July 9, 2026</span>
+          <span>•</span>
+          <span style="color: var(--color-body-strong);">Showcase #15</span>
+        </div>
+        
+        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+          Frame
+        </h1>
+        
+        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+          FFmpeg's full power behind a native desktop UI — no Electron, no guesswork.
+        </p>
+
+        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+          <a href="https://github.com/66HEX/frame" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+        </div>
+      </div>
+      
+      <!-- Brand Icon Badge -->
+      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
+        <img src="https://github.com/66HEX/frame/raw/master/icon.png" alt="Frame icon" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Application Preview -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Desktop Interface</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+          <div class="mockup-header">
+            <div class="mockup-controls">
+              <span class="mockup-dot red"></span>
+              <span class="mockup-dot yellow"></span>
+              <span class="mockup-dot green"></span>
+            </div>
+            <div class="mockup-title">preview.png</div>
+            <div style="width: 36px;"></div>
+          </div>
+          <img src="https://github.com/66HEX/frame/raw/master/preview.png" alt="Frame application preview showing FFmpeg conversion interface" style="width: 100%; height: auto; display: block;">
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Frame?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            FFmpeg is the undisputed engine for media conversion, but its CLI surface area is enormous — hundreds of flags across video codecs, audio streams, image sequences, subtitle tracks, and metadata containers. Most GUI wrappers either hide that complexity behind useless presets or ship as sluggish Electron shells that wrap a subprocess call.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>Frame</strong> takes a different approach: a native desktop app written in Rust with a GPUI-CE front end, backed by a reusable conversion core that handles source probing, argument generation, compatibility validation, task control, and progress parsing. You get granular control over every FFmpeg parameter without memorizing flag syntax.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Reusable Rust Conversion Core</span>
+              <p class="text-body-sm">
+                The FFmpeg logic lives in a dedicated Rust library separate from the UI layer. Source files are probed for stream compatibility before conversion starts, arguments are generated programmatically, and progress is parsed from FFmpeg's output in real time. The core can be reused or extended without touching the interface code.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Granular Stream Control</span>
+              <p class="text-body-sm">
+                Frame exposes settings for video, audio, image, subtitle, and metadata streams individually — not just container format and bitrate sliders. Transcode a video while remapping audio channels, burn in subtitles, strip metadata, or convert an image sequence, all from the same interface with validation before the job runs.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Native GPUI Performance</span>
+              <p class="text-body-sm">
+                Built on GPUI-CE rather than a web view, Frame renders as a true native desktop application. That means lower memory footprint, responsive UI during long encodes, and no Chromium dependency bundled into your media toolchain.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
