@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 08 Jul 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Tue, 08 Jul 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Wed, 09 Jul 2026 12:00:00 GMT</lastBuildDate>
+    <pubDate>Wed, 09 Jul 2026 12:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -119,6 +119,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/rtk.html</guid>
       <pubDate>Tue, 08 Jul 2026 12:00:00 GMT</pubDate>
       <description>A single Rust binary that sits between your shell and coding agents, filtering command output before it hits the context window. Cuts token usage 60–90% on git, test, lint, and filesystem commands with under 10ms overhead.</description>
+    </item>
+
+    <item>
+      <title>Frame: Native FFmpeg GUI</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/frame.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/frame.html</guid>
+      <pubDate>Wed, 09 Jul 2026 12:00:00 GMT</pubDate>
+      <description>A Rust desktop app for FFmpeg media conversion with a GPUI interface. Granular control over video, audio, subtitle, and metadata streams — backed by a reusable conversion core with probing, validation, and live progress parsing.</description>
     </item>
   </channel>
 </rss>
