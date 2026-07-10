@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Styling Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of qr-code-styling, the JavaScript library for generating branded, styled QR codes with embedded logos.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>kozakdenys/qr-code-styling</span>
+        <span>•</span>
+        <span>July 10, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #16</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        QR Code Styling
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        Branded QR codes in the browser — logos, colors, and dot styles without a backend.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://github.com/kozakdenys/qr-code-styling" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+        <a href="https://www.npmjs.com/package/qr-code-styling" class="btn-secondary-ghost" target="_blank" rel="noopener">npm Package</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Example QR Codes Grid -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Styled Output Examples</h3>
+        <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: var(--space-lg);">
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">facebook_example.png</div>
+            </div>
+            <img src="https://github.com/kozakdenys/qr-code-styling/raw/master/src/assets/facebook_example_new.png" alt="Styled Facebook QR code example" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">qr_code_example.png</div>
+            </div>
+            <img src="https://github.com/kozakdenys/qr-code-styling/raw/master/src/assets/qr_code_example.png" alt="Custom styled QR code example" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">telegram_example.png</div>
+            </div>
+            <img src="https://github.com/kozakdenys/qr-code-styling/raw/master/src/assets/telegram_example_new.png" alt="Styled Telegram QR code example" style="width: 100%; height: auto; display: block;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is QR Code Styling?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Default QR generators produce identical black-and-white squares that look identical regardless of brand. For marketing pages, event tickets, or app onboarding flows, you want codes that carry your visual identity — rounded dots, gradient fills, corner styling, and a centered logo — without sending data to a third-party API.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>qr-code-styling</strong> is a client-side JavaScript library that renders fully customized QR codes in the browser. Configure dot shapes, colors, background images, and embedded logos through a simple options object, then export to canvas or SVG for download or inline display.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Deep Visual Customization</span>
+              <p class="text-body-sm">
+                Control every visual layer independently: dot style (square, rounded, classy, extra-rounded), corner square and dot shapes, gradient fills, background color or image, and margin sizing. The result reads as a designed asset, not a generic barcode pasted onto your page.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Logo Embedding with Error Correction</span>
+              <p class="text-body-sm">
+                Drop a brand logo into the center of the code and the library handles the error-correction math so the QR remains scannable. Adjust logo size, margin, and cross-origin settings without manually tuning redundancy levels or worrying about unreadable output.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Framework-Agnostic, Client-Side Only</span>
+              <p class="text-body-sm">
+                Works in any JavaScript environment — vanilla JS, React, Vue, Angular, or Node.js for server-side rendering. No external API calls, no rate limits, no dependency on a hosted QR service. Generate codes entirely in your app and export as PNG, SVG, or raw canvas data.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Basic Usage</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Instantiate with your data and style options, append to the DOM, and download or update on the fly:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">index.js</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">import QRCodeStyling from "qr-code-styling"</span><br><br>
+              <span class="token-cmd">const qr = new QRCodeStyling({</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;width: 300, height: 300,</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;data: "https://example.com",</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;image: "/logo.png",</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;dotsOptions: { color: "#4267b2", type: "rounded" }</span><br>
+              <span class="token-cmd">})</span><br><br>
+              <span class="token-cmd">qr.append(document.getElementById("canvas"))</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
