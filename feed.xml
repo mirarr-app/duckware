@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 10 Jul 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Thu, 10 Jul 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Thu, 10 Jul 2026 18:00:00 GMT</lastBuildDate>
+    <pubDate>Thu, 10 Jul 2026 18:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -135,6 +135,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/qr-code-styling.html</guid>
       <pubDate>Thu, 10 Jul 2026 12:00:00 GMT</pubDate>
       <description>A client-side JavaScript library for generating styled QR codes with embedded logos, custom dot shapes, and gradient fills. Export to canvas or SVG — no backend or third-party API required.</description>
+    </item>
+
+    <item>
+      <title>Ternlight: On-Device Embeddings</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/ternlight.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/ternlight.html</guid>
+      <pubDate>Thu, 10 Jul 2026 18:00:00 GMT</pubDate>
+      <description>A WebAssembly embedding engine that ships model, tokenizer, and SIMD inference in a single 5–7 MB bundle. Embed text on CPU in milliseconds — semantic search with no API calls, no GPU, and no data leaving the device.</description>
     </item>
   </channel>
 </rss>
