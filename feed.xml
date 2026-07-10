@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 09 Jul 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Wed, 09 Jul 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Thu, 10 Jul 2026 12:00:00 GMT</lastBuildDate>
+    <pubDate>Thu, 10 Jul 2026 12:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -127,6 +127,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/frame.html</guid>
       <pubDate>Wed, 09 Jul 2026 12:00:00 GMT</pubDate>
       <description>A Rust desktop app for FFmpeg media conversion with a GPUI interface. Granular control over video, audio, subtitle, and metadata streams — backed by a reusable conversion core with probing, validation, and live progress parsing.</description>
+    </item>
+
+    <item>
+      <title>QR Code Styling: Branded QR Generator</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/qr-code-styling.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/qr-code-styling.html</guid>
+      <pubDate>Thu, 10 Jul 2026 12:00:00 GMT</pubDate>
+      <description>A client-side JavaScript library for generating styled QR codes with embedded logos, custom dot shapes, and gradient fills. Export to canvas or SVG — no backend or third-party API required.</description>
     </item>
   </channel>
 </rss>
