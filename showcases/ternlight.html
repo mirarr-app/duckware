@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ternlight Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of ternlight, the WebAssembly embedding engine that ships model, tokenizer, and inference in a single 5–7 MB bundle.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>soycaporal/ternlight</span>
+        <span>•</span>
+        <span>July 10, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #17</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        Ternlight
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        Semantic embeddings in a 5–7 MB WASM bundle — search on CPU, no API calls, no GPU.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://github.com/soycaporal/ternlight" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+        <a href="https://ternlight-demo.vercel.app/" class="btn-secondary-ghost" target="_blank" rel="noopener">Live Demo</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Banner Preview -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Project Banner</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
+          <img src="https://github.com/soycaporal/ternlight/raw/main/docs/assets/banner.jpeg" alt="Ternlight project banner" style="width: 100%; height: auto; display: block;">
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Ternlight?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Most semantic search stacks depend on hosted embedding APIs — network latency on every keystroke, usage limits, and data leaving the device. For browser extensions, offline note apps, edge workers, or static sites, that trade-off is hard to justify when all you need is "find the closest matching sentence."
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>ternlight</strong> packs a distilled embedding model, BERT tokenizer, and SIMD inference engine into a single WebAssembly bundle under 7 MB. Embed text on CPU in a few milliseconds, run cosine similarity or nearest-neighbor search locally, and ship two npm tiers — <code>@ternlight/mini</code> for speed and <code>@ternlight/base</code> for quality.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Ternary Weights, Tiny Footprint</span>
+              <p class="text-body-sm">
+                Distilled from all-MiniLM-L6 with BitNet-style quantization-aware training. Every weight is −1, 0, or +1, so inference reduces to adds and subtracts on SIMD vector lanes. The result is a 5–7 MB gzipped WASM file that still tracks the teacher model closely on retrieval benchmarks.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">One Bundle, Zero Runtime Fetch</span>
+              <p class="text-body-sm">
+                Model, tokenizer, and engine ship together — no postinstall download, no separate model registry, no inference microservice. Import from Node, browsers, Cloudflare Workers, Vercel Edge, Deno, or Bun and the package routes to the right loader automatically.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Search-as-You-Type on Device</span>
+              <p class="text-body-sm">
+                At ~2.5–5 ms per embed on CPU, results can appear before a network round-trip would even start. The live demo searches 2,000 documents entirely in the browser — a concrete proof that privacy-sensitive, offline-first, and edge-runtime apps can run real semantic search without calling OpenAI or Hugging Face.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Basic Usage</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Three functions cover the common embedding workflow — embed a string, compare two vectors, or rank a corpus:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">search.js</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">import { embed, cosineSim, similar } from "@ternlight/base"</span><br><br>
+              <span class="token-cmd">cosineSim(</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;embed("reset my password"),</span><br>
+              <span class="token-cmd">&nbsp;&nbsp;embed("I forgot my password")</span><br>
+              <span class="token-cmd">)  // → 0.88</span><br><br>
+              <span class="token-cmd">similar("I want my money back", corpus, { topK: 2 })</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
