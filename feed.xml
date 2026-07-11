@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 10 Jul 2026 18:00:00 GMT</lastBuildDate>
-    <pubDate>Thu, 10 Jul 2026 18:00:00 GMT</pubDate>
+    <lastBuildDate>Sat, 11 Jul 2026 12:00:00 GMT</lastBuildDate>
+    <pubDate>Sat, 11 Jul 2026 12:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -143,6 +143,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/ternlight.html</guid>
       <pubDate>Thu, 10 Jul 2026 18:00:00 GMT</pubDate>
       <description>A WebAssembly embedding engine that ships model, tokenizer, and SIMD inference in a single 5–7 MB bundle. Embed text on CPU in milliseconds — semantic search with no API calls, no GPU, and no data leaving the device.</description>
+    </item>
+
+    <item>
+      <title>Tork: Terminal Torrent Client</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/tork.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/tork.html</guid>
+      <pubDate>Sat, 11 Jul 2026 12:00:00 GMT</pubDate>
+      <description>A keyboard-driven Go CLI for searching torrent indexes, ranking swarms, and managing downloads from one TUI. Includes a built-in browser for official Linux ISOs and local health checks via tork doctor.</description>
     </item>
   </channel>
 </rss>
