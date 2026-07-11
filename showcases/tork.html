@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tork Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of tork, the terminal BitTorrent client for searching indexes, ranking swarms, and downloading Linux ISOs from one keyboard-driven UI.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>melqtx/tork</span>
+        <span>•</span>
+        <span>July 11, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #18</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        Tork
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        A cozy terminal for torrent search, swarm ranking, and one-key Linux ISO downloads.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://github.com/melqtx/tork" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+        <a href="https://github.com/melqtx/tork#install" class="btn-secondary-ghost" target="_blank" rel="noopener">Install Guide</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- UI Screenshots -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Terminal UI</h3>
+        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">home.png</div>
+            </div>
+            <img src="https://github.com/melqtx/tork/raw/main/docs/home.png" alt="Tork home screen with search and Linux ISO destinations" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">results.png</div>
+            </div>
+            <img src="https://github.com/melqtx/tork/raw/main/docs/results.png" alt="Tork search results with swarm rankings" style="width: 100%; height: auto; display: block;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Tork?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            GUI torrent clients bury search, download management, and provider configuration behind tabs and modal dialogs. For developers who live in the terminal — or anyone who just wants to grab an official Ubuntu ISO without wading through sketchy mirrors — a keyboard-driven TUI can be faster and calmer than opening a desktop app.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>tork</strong> is a Go CLI that unifies torrent search, download queueing, and Linux ISO browsing in one terminal interface. Query public indexes and custom Torznab feeds, deduplicate releases, rank by swarm health, preview magnets, and manage active downloads — pause, verify, seed, move, or relink — without leaving the keyboard.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Search, Rank, and Download in One Flow</span>
+              <p class="text-body-sm">
+                Search across Knaben, YTS, Nyaa, and your own RSS or Torznab feeds. Duplicate releases are grouped and ranked by seeders, size, and source quality before you commit. Preview a magnet with one key, queue it with another, then manage the full lifecycle from the downloads screen.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Official Linux ISOs, No Mirror Hunting</span>
+              <p class="text-body-sm">
+                A dedicated ISO browser pulls current official images from Ubuntu, Debian, Fedora, Arch, NixOS, Proxmox, and more. Pick a distro, grab the latest release, and skip the usual round of verifying checksums on third-party mirror sites.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Local Health Checks and Swarm Compass</span>
+              <p class="text-body-sm">
+                Run <code>tork doctor</code> to validate config, disk space, and provider reachability — read-only by default, with optional engine and history recording. The swarm compass tracks source and download health over time locally in <code>~/.tork/health.json</code>, never uploaded anywhere.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Install</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Available via Homebrew, AUR, Nix, or direct Go install. Config lives in <code>~/.tork/</code>; downloads default to <code>~/Downloads/tork</code>.
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">install</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">brew tap melqtx/tap && brew install tork</span><br>
+              <span class="token-cmd">yay -S tork</span><br>
+              <span class="token-cmd">nix run github:melqtx/tork</span><br>
+              <span class="token-cmd">go install github.com/melqtx/tork/cmd/tork@latest</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
