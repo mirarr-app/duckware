@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 12 Jul 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Sun, 12 Jul 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Sun, 12 Jul 2026 18:00:00 GMT</lastBuildDate>
+    <pubDate>Sun, 12 Jul 2026 18:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -159,6 +159,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/deface.html</guid>
       <pubDate>Sun, 12 Jul 2026 12:00:00 GMT</pubDate>
       <description>A Python CLI that detects faces in videos and photos, then applies blur, black boxes, or mosaic filters to each region automatically. Batch entire directories, tune detection thresholds, or run a live webcam demo.</description>
+    </item>
+
+    <item>
+      <title>Witr: Why Is This Running?</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/witr.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/witr.html</guid>
+      <pubDate>Sun, 12 Jul 2026 18:00:00 GMT</pubDate>
+      <description>A Go CLI that traces processes, ports, containers, and file locks back to their causal chain. Includes an interactive TUI with live process, port, and container dashboards.</description>
     </item>
   </channel>
 </rss>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Witr Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of witr, the Go CLI that explains why processes, ports, containers, and services are running on your system.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>pranshuparmar/witr</span>
+        <span>•</span>
+        <span>July 12, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #20</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        Witr
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        Why is this running? — trace processes, ports, and containers back to their cause in one command.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://github.com/pranshuparmar/witr" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+        <a href="https://github.com/pranshuparmar/witr/releases/latest" class="btn-secondary-ghost" target="_blank" rel="noopener">Latest Release</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Example Output -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Example Output</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+          <div class="mockup-header">
+            <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+            <div class="mockup-title">witr node</div>
+          </div>
+          <div class="mockup-body" style="font-size: 13px; line-height: 1.7;">
+            <span class="token-cmd">Target</span>      : node<br><br>
+            <span class="token-cmd">Process</span>     : node (pid 14233)<br>
+            <span class="token-cmd">User</span>        : pm2<br>
+            <span class="token-cmd">Command</span>     : node index.js<br>
+            <span class="token-cmd">Started</span>     : 2 days ago<br><br>
+            <span class="token-success">Why It Exists :</span><br>
+            <span class="token-cmd">&nbsp;&nbsp;systemd (pid 1) → pm2 (pid 5034) → node (pid 14233)</span><br><br>
+            <span class="token-cmd">Source</span>      : pm2<br>
+            <span class="token-cmd">Working Dir</span> : /opt/apps/expense-manager<br>
+            <span class="token-cmd">Sockets</span>     : 127.0.0.1:5001 (TCP | LISTENING)
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Witr?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            You notice a mystery process eating CPU, a port you do not remember opening, or a container that appeared overnight. The usual workflow is a scavenger hunt — <code>ps</code> for the PID, <code>lsof</code> for the socket, <code>systemctl</code> for the unit, <code>docker ps</code> for the container — and then mentally stitching the chain together yourself.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>witr</strong> (Why Is This Running) answers the causality question directly. Query by process name, PID, port, file lock, or container and get a single human-readable report: what is running, how it started, what supervisor or shell chain spawned it, and what context it belongs to. An interactive TUI mode adds live dashboards for processes, ports, containers, and file locks.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Everything Maps to a Causal Chain</span>
+              <p class="text-body-sm">
+                Ports, services, containers, and commands all resolve to PIDs. Once identified, witr walks the ancestry tree back through supervisors, shells, and init systems — surfacing the source (pm2, systemd, Docker Compose, etc.), working directory, git repo, and open sockets in one pass.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Interactive TUI Dashboard</span>
+              <p class="text-body-sm">
+                Run without arguments to launch a four-tab terminal UI: live process list with ancestry side panel, open ports with owning processes, containers across Docker/Podman/K8s/Incus/LXC, and system-wide file locks. Sort, filter, send signals, and renice processes directly from the interface.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Single Static Binary, Everywhere</span>
+              <p class="text-body-sm">
+                Distributed as one Go binary for Linux, macOS, Windows, and FreeBSD. Available via Homebrew, apt, conda, winget, npm, AUR, and a curl install script. Output modes include short ancestry lines, tree views, JSON for scripting, and verbose environment dumps.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Basic Usage</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Query by name, port, PID, or container — or launch the interactive dashboard with no arguments:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">terminal</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">witr node</span><br>
+              <span class="token-cmd">witr --port 5000 --short</span><br>
+              <span class="token-cmd">witr --pid 143895 --tree</span><br>
+              <span class="token-cmd">witr -i</span><br>
+              <span class="token-comment"># interactive TUI dashboard</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
