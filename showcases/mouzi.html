@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mouzi Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of Mouzi, the privacy-first system tray app that automatically organizes your Downloads folder with customizable rules.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
+      <div style="flex-grow: 1;">
+        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+          <span>hsr88/mouzi</span>
+          <span>•</span>
+          <span>July 12, 2026</span>
+          <span>•</span>
+          <span style="color: var(--color-body-strong);">Showcase #21</span>
+        </div>
+        
+        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+          Mouzi
+        </h1>
+        
+        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+          Your downloads, tamed — a silent tray app that sorts files by rule, offline and private.
+        </p>
+
+        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+          <a href="https://github.com/hsr88/mouzi" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+          <a href="https://mouzi.cc/download" class="btn-secondary-ghost" target="_blank" rel="noopener">Download</a>
+        </div>
+      </div>
+
+      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
+        <img src="https://github.com/hsr88/mouzi/raw/main/docs/mouzilogo2-square.png" alt="Mouzi logo" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- UI Screenshots -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">App Screenshots</h3>
+        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">tray popup</div>
+            </div>
+            <img src="https://github.com/hsr88/mouzi/raw/main/docs/screenshots/screenshot2.png" alt="Mouzi tray popup showing recent file actions" style="width: 100%; height: auto; display: block;">
+          </div>
+
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">settings</div>
+            </div>
+            <img src="https://github.com/hsr88/mouzi/raw/main/docs/screenshots/screenshot3.png" alt="Mouzi settings window with sorting rules" style="width: 100%; height: auto; display: block;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Mouzi?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            The Downloads folder is where every installer, PDF, screenshot, and zip file lands — and where most of them stay forever. Manual cleanup works until it does not, and cloud-based organizers trade convenience for sending filenames (or worse) to someone else's server.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>Mouzi</strong> is a free, privacy-first desktop app built with Tauri and Rust that lives in the system tray and quietly sorts watched folders as files arrive. Images, documents, archives, installers, and media each route to dedicated subfolders via customizable rules — with per-folder silent, manual, or paused modes, full undo history, and zero cloud dependency.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Silent Background Organization</span>
+              <p class="text-body-sm">
+                Runs 24/7 at roughly 5 MB RAM, watching folders with the Rust notify crate and applying the first matching rule within seconds of a new file landing. A subtle toast reports how many files were organized — no modal dialogs interrupting your workflow.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Rules Engine with Ignore Patterns</span>
+              <p class="text-body-sm">
+                Default rules cover common file types out of the box. Extend with regex patterns, dynamic path placeholders like <code>{year}/{month}</code>, and per-folder <code>.mouziignore</code> files. Google Takeout archives can be imported and sorted in one step without manual unzip-and-drag.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">100% Offline, Locally Stored</span>
+              <p class="text-body-sm">
+                No telemetry by default, no filename uploads, no cloud sync. Action history lives in a local SQLite database with one-click undo. Available for Windows and Linux as installer, MSI, portable, AppImage, deb, or rpm — with a portable build that leaves no registry trace.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Quick Start</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Install, let Mouzi start with the tray icon, and drop a file into Downloads — it routes to the right subfolder within a couple of seconds:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">workflow</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">1. Install Mouzi → tray icon appears</span><br>
+              <span class="token-cmd">2. Drop invoice.pdf into Downloads/</span><br>
+              <span class="token-success">→ Downloads/Documents/invoice.pdf</span><br><br>
+              <span class="token-cmd">Left-click tray</span> <span class="token-comment"># recent actions & stats</span><br>
+              <span class="token-cmd">Right-click tray</span> <span class="token-comment"># Clean Now, Settings, Quit</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
