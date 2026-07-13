@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Idle Fantasy Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of Idle Fantasy, the free offline idle RPG for Android with 23 skills, 20 dungeons, and no ads or account required.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px;">
+      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+        <span>tristinbaker/IdleFantasy</span>
+        <span>•</span>
+        <span>July 13, 2026</span>
+        <span>•</span>
+        <span style="color: var(--color-body-strong);">Showcase #22</span>
+      </div>
+      
+      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+        Idle Fantasy
+      </h1>
+      
+      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+        Set your hero to work, close the app, come back to loot — a free offline idle RPG for Android.
+      </p>
+
+      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+        <a href="https://github.com/tristinbaker/IdleFantasy" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+        <a href="https://github.com/tristinbaker/IdleFantasy/releases" class="btn-secondary-ghost" target="_blank" rel="noopener">Download APK</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Phone Screenshots -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">In-Game Screenshots</h3>
+        <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap: var(--space-md);">
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
+            <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Idle Fantasy home screen" style="width: 100%; height: auto; display: block;">
+          </div>
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
+            <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="Idle Fantasy dungeons screen" style="width: 100%; height: auto; display: block;">
+          </div>
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
+            <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" alt="Idle Fantasy combat session" style="width: 100%; height: auto; display: block;">
+          </div>
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
+            <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/12.png" alt="Idle Fantasy profile screen" style="width: 100%; height: auto; display: block;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Idle Fantasy?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Most mobile RPGs are built around stamina bars, daily login pressure, and always-on connectivity. If you want a progression game you can dip into on the commute and walk away from without FOMO, the pickings on Android are slim — especially among titles that respect your privacy.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>Idle Fantasy</strong> is a free, open-source idle RPG that runs entirely offline. Pick a skill or dungeon, start a session, and close the app — your hero keeps training for up to an hour via WorkManager. Come back to collect XP and loot, then send them out again. No internet, no account, no ads, and no energy system nagging you to reopen the app.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Deep Skill and Dungeon Progression</span>
+              <p class="text-body-sm">
+                Train 23 skills across gathering, crafting, combat, and support — from Mining and Herblore to Slayer and Mercantile. Explore 20 combat dungeons with distinct enemy rosters and drops, climb an infinite tower gauntlet, and complete over 170 quests including daily resets and long-term cumulative goals.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Guilds, Pets, and Town Systems</span>
+              <p class="text-body-sm">
+                Seventeen guilds with rank progression unlock cross-skill rewards. The Inn hires workers to queue sessions on your behalf, the Church grants timed Prayer blessings, and the Carnival converts skill levels into tickets for exclusive gear. Rare pet drops add permanent passive XP bonuses.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">F-Droid Ready, GPL-3.0</span>
+              <p class="text-body-sm">
+                Built with Kotlin, Jetpack Compose, Room, and Hilt — no Google Play Services dependency. Available via F-Droid repository or direct APK from GitHub Releases. Localized in five languages with Weblate-compatible string resources.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">How It Works</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Start a session, put the phone down, and collect rewards when you return — the core loop is designed around real idle play, not screen-time retention:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">gameplay loop</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">1. Pick a skill or dungeon → start session</span><br>
+              <span class="token-cmd">2. Close the app (hero trains up to 1 hour)</span><br>
+              <span class="token-success">3. Return → collect XP, loot, quest progress</span><br>
+              <span class="token-cmd">4. Craft gear, upgrade buildings, send back out</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>

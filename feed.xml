@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 12 Jul 2026 21:00:00 GMT</lastBuildDate>
-    <pubDate>Sun, 12 Jul 2026 21:00:00 GMT</pubDate>
+    <lastBuildDate>Mon, 13 Jul 2026 12:00:00 GMT</lastBuildDate>
+    <pubDate>Mon, 13 Jul 2026 12:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -175,6 +175,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/mouzi.html</guid>
       <pubDate>Sun, 12 Jul 2026 21:00:00 GMT</pubDate>
       <description>A privacy-first Tauri app that lives in the system tray and automatically sorts Downloads by customizable rules. 100% offline, ~5 MB RAM, with undo history and Google Takeout import.</description>
+    </item>
+
+    <item>
+      <title>Idle Fantasy: Offline Idle RPG</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/idle-fantasy.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/idle-fantasy.html</guid>
+      <pubDate>Mon, 13 Jul 2026 12:00:00 GMT</pubDate>
+      <description>A free, open-source Android idle RPG with 23 skills, 20 dungeons, and 170+ quests. Train while the app is closed, collect loot on return — no internet, no account, no ads, and no stamina bar.</description>
     </item>
   </channel>
 </rss>
