@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Wed, 15 Jul 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Wed, 15 Jul 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Thu, 16 Jul 2026 12:00:00 GMT</lastBuildDate>
+    <pubDate>Thu, 16 Jul 2026 12:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -191,6 +191,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/spritefusion-pixel-snapper.html</guid>
       <pubDate>Wed, 15 Jul 2026 12:00:00 GMT</pubDate>
       <description>A Rust tool that snaps inconsistent AI-generated pixel art to a perfect grid with palette quantization. Available as CLI, WASM module, and web app for game asset pipelines.</description>
+    </item>
+
+    <item>
+      <title>UniClipboard: Encrypted Clipboard Sync</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/uniclipboard.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/uniclipboard.html</guid>
+      <pubDate>Thu, 16 Jul 2026 12:00:00 GMT</pubDate>
+      <description>Real-time clipboard sync across Windows, macOS, and Linux — peer-to-peer with end-to-end encryption, encrypted relay fallback, and no cloud account.</description>
     </item>
   </channel>
 </rss>

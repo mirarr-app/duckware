@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniClipboard Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of UniClipboard, the privacy-first clipboard sync tool with peer-to-peer transport, end-to-end encryption, and no cloud account.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter and Instrument Serif -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
+      <div style="flex-grow: 1;">
+        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+          <span>UniClipboard/UniClipboard</span>
+          <span>•</span>
+          <span>July 16, 2026</span>
+          <span>•</span>
+          <span style="color: var(--color-body-strong);">Showcase #24</span>
+        </div>
+        
+        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+          UniClipboard
+        </h1>
+        
+        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
+          Copy on one device, paste on another — peer-to-peer, encrypted, no cloud account.
+        </p>
+
+        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+          <a href="https://github.com/UniClipboard/UniClipboard" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+          <a href="https://uniclipboard.app" class="btn-secondary-ghost" target="_blank" rel="noopener">Visit Website</a>
+        </div>
+      </div>
+
+      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
+        <img src="https://github.com/UniClipboard/UniClipboard/raw/main/assets/logo.png" alt="UniClipboard logo" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- Demo Screenshot -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Cross-Device Sync</h3>
+        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+          <div class="mockup-header">
+            <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+            <div class="mockup-title">demo.png</div>
+          </div>
+          <img src="https://github.com/UniClipboard/UniClipboard/raw/main/assets/demo.png" alt="UniClipboard desktop and mobile clipboard sync demo" style="width: 100%; height: auto; display: block;">
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is UniClipboard?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Universal clipboard tools either lock you into one vendor's ecosystem or route everything through a cloud service you have to trust. If you run Windows and Linux, want searchable history, or need to verify the encryption yourself, the options narrow fast.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>UniClipboard</strong> syncs text, images, and files across desktops and mobile companions with no account and no central server reading your data. Devices join an encrypted "space" via invitation code and passphrase, connect peer-to-peer when possible, and fall back to a relay that only ever sees ciphertext. History is encrypted at rest with a searchable index that stays encrypted on disk.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">P2P First, Encrypted Relay Fallback</span>
+              <p class="text-body-sm">
+                Desktop devices pair with a one-time public key exchange — no email signup. Direct connections work on the same Wi-Fi or across networks via NAT hole-punching; when that fails, an encrypted relay carries ciphertext only. Connections recover automatically after sleep, Wi-Fi switches, or brief disconnects.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">XChaCha20-Poly1305 and Argon2id</span>
+              <p class="text-body-sm">
+                Payload encryption is independent of transport — a malicious relay cannot decrypt content. Keys derive from your passphrase via Argon2id, with the master key stored in the system keyring and per-space isolation so switching spaces re-encrypts local history under a new key.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Quick Panel, CLI, and Mobile Companion</span>
+              <p class="text-body-sm">
+                A keyboard-shortcut overlay previews text, links, images, and files without leaving your workflow. The <code>uniclip</code> CLI mirrors the GUI for headless servers and scripts. iOS and Android join as companions with QR pairing — share a phone screenshot to your desktop in seconds.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Getting Started</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Create a space on your first device, then invite others with a short-lived code — or use the CLI for terminal workflows:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">terminal</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">curl -fsSL https://uniclipboard.app/install.sh | bash</span><br><br>
+              <span class="token-cmd">uniclip init</span><br>
+              <span class="token-cmd">uniclip invite</span><br>
+              <span class="token-cmd">uniclip join &lt;code&gt;</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
