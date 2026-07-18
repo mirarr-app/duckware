@@ -1,21 +1,40 @@
 ---
 name: add-duckware-showcase
-description: Adds curated DuckWare showcase pages to the static HTML catalog. Creates showcases/<slug>.html with a project-themed detail page, updates showcases/index.html and feed.xml. Use when the user asks to add a showcase, curate a project, or publish a software audit page for duckware.
+description: Adds curated DuckWare showcases. Creates a bespoke HTML page per project at showcases/<slug>.html, plus catalog and RSS entries. Use when the user asks to add a showcase, curate a project, or publish a software audit page for duckware.
 ---
 
 # Add a DuckWare Showcase
 
-DuckWare is a **static HTML site** — no build step, no CMS, no generator. Each showcase is hand-authored across **three files**.
+DuckWare is a **static HTML site** — no build step, no CMS. Each showcase touches **three integration points**. The **detail page is a one-off landing page** designed only for that project.
 
-**New showcases:** the **detail page** gets a unique visual theme tied to the project. The **catalog card** and **RSS item** stay on the shared DuckWare design system.
+## What "same structure" means
+
+**Keep consistent (integration layer):**
+
+| Piece | Rule |
+|-------|------|
+| File path | `showcases/<slug>.html` |
+| Public URL | `https://mirarr-app.github.io/duckware/showcases/<slug>.html` |
+| Catalog card | New entry at top of `showcases/index.html` |
+| RSS item | New `<item>` in `feed.xml` |
+| Metadata | Matching title, description, showcase number, date, `org/repo`, 3 tags |
+
+**Do NOT keep consistent (detail page):**
+
+- Layout, typography, colors, section order, components
+- DuckWare `index.css` as the page foundation
+- Copying `hero-band` / `card-content` / `card-mockup` from older showcases
+- "Template + accent color overrides" — **this is wrong**
+
+Each `showcases/<slug>.html` should look like **a beautiful standalone page** built for that product — as if you designed a microsite for it.
 
 ## Three-file rule (mandatory)
 
 | File | Role |
 |------|------|
-| `showcases/<slug>.html` | Detail page — **unique theme** |
-| `showcases/index.html` | Catalog card at top — **shared style** |
-| `feed.xml` | RSS item — **shared format** |
+| `showcases/<slug>.html` | **Bespoke** detail page (self-contained HTML/CSS) |
+| `showcases/index.html` | Catalog card — shared DuckWare catalog style |
+| `feed.xml` | RSS item — shared format |
 
 ## Workflow
 
@@ -28,121 +47,105 @@ git checkout -b cursor/add-<slug>-showcase-7a08
 
 ### 2. Metadata
 
-Read the top card in `showcases/index.html` for the current latest number → assign **next number**.
+Read top card in `showcases/index.html` → assign **next showcase number**.
 
 | Field | Rule |
 |-------|------|
-| Slug | `showcases/<slug>.html` — lowercase, preserve brand casing when needed (`ffmpeg-webCLI.html`) |
-| Number | Previous latest + 1 |
-| Date | User's `created` date or today |
-| Repo | `org/repo` |
+| Slug | `showcases/<slug>.html` — preserve brand casing when needed (`ffmpeg-webCLI.html`) |
 | Catalog title | `ProjectName: Short Descriptor` |
 | Tags | Exactly 3 pills on catalog card |
+| Date | User `created` date or today |
 
 ### 3. Research
 
-Gather before writing:
+- Repo URL, CTAs, screenshots, logo, default branch for hotlinks
+- Product **personality** — terminal tool, cozy desktop app, game, privacy utility, creative tool, etc.
+- UI cues to echo: fonts, palette, density, motion, metaphor (terminal window, phone frame, blueprint grid…)
 
-- Repo URL, CTAs (releases, docs, live app)
-- Images in `assets/`, `docs/`, fastlane, `.github/` — hotlink from upstream
-- Default branch (`main` vs `master`) for raw URLs
-- **Brand signals** — logo colors, screenshots, project category (CLI, game, privacy, etc.)
+Write **original audit prose**. Do not copy-paste README or clippings.
 
-Write **original audit prose**. Do not copy-paste README or user clippings.
+### 4. Design the bespoke page
 
-### 4. Theme the detail page
+**Start from a blank page.** Do not open `boneyard.html` and tweak colors.
 
-Add after `index.css`:
-
-```html
-<body class="showcase-theme showcase-theme--<slug>">
-```
-
-Scoped `<style>` block in `<head>` — **never edit `index.css` or `app.js` globally**.
+#### Required in every detail page
 
 ```html
-<style>
-  .showcase-theme--<slug> {
-    --showcase-accent: #29adff;
-    --showcase-accent-soft: rgba(41, 173, 255, 0.12);
-    --showcase-hero-bg: linear-gradient(160deg, #1a1a2e, #0f0f1b);
-    --showcase-card-bg: rgba(255, 255, 255, 0.03);
-  }
-  .showcase-theme--<slug> .hero-band { background: var(--showcase-hero-bg); }
-  .showcase-theme--<slug> .btn-primary {
-    background-color: var(--showcase-accent);
-    color: #0f0f1b;
-  }
-  /* Prefix every override with .showcase-theme--<slug> */
-</style>
+<title>{Project} Showcase — DuckWare</title>
+<meta name="description" content="…">
 ```
 
-**Theme levers:** hero background, accent color, card borders/tints, mockup chrome, optional display font for H1/tagline.
+Plus:
 
-**Category hints:**
+- A clear path back to the catalog (`./` or `showcases/index.html` relative link) — **styled to fit the page**, not necessarily DuckWare nav
+- Original editorial content: what it is, why it matters, strengths (≈3), CTAs to source/releases/demo
+- `target="_blank" rel="noopener"` on external links
+- Responsive layout (`viewport` meta, readable on mobile)
 
-| Type | Direction |
-|------|-----------|
-| Terminal / CLI | Dark bg, monospace accents, green/cyan tokens |
-| Privacy / security | Muted palette, restrained accent, high contrast |
-| Mobile / game | Colors from screenshots, screenshot-forward hero |
-| Pixel art / creative | Grid textures, chunky borders, limited palette |
-| Desktop utility | Logo-led, clean product screenshot hero |
+#### How to build it
 
-Pull 2–4 colors from logo/screenshots. Each new showcase must look **distinct** from recent ones.
+- **Self-contained:** inline `<style>` or a `<style>` block with all page CSS. No dependency on `../index.css`.
+- **Optional:** `../app.js` only if you need navbar scroll — most bespoke pages won't need it
+- **Typography:** pick Google Fonts (or system stack) that match the product — not default Inter + Instrument Serif unless intentional
+- **Layout:** invent section structure per project — split hero, bento grid, timeline, comparison panels, device frames, terminal chrome, etc.
+- **Imagery:** hotlink upstream screenshots/logos; build custom UI mockups in HTML/CSS when needed
+- **Polish:** gradients, borders, subtle animation, grid textures, glass panels — whatever serves **this** product
 
-**Fixed on every detail page:** nav links, footer structure, `../index.css`, `../app.js`, required sections, back-to-catalog link.
+#### Design bar
+
+Ask: *"If I removed the DuckWare title suffix, would this still feel like a dedicated landing page for {Project}?"*
+
+If it still looks like the DuckWare catalog with different colors → **redo it**.
+
+#### Category sparks (layout ideas, not palettes to reuse)
+
+| Type | Bespoke direction |
+|------|-------------------|
+| CLI / terminal | Full-page terminal chrome, scanlines, command blocks as hero |
+| Privacy | Minimal trust-forward layout, lock/network motifs, calm whitespace |
+| Game / mobile | Device frame, screenshot carousel, playful type |
+| Pixel / creative | Grid background, crisp pixels, gallery-led |
+| Desktop utility | Product screenshot as hero, feature columns, OS-native feel |
+| Dev library | Code-first hero, API snippet as visual centerpiece |
 
 ### 5. Create `showcases/<slug>.html`
 
+Minimal skeleton — **everything below is illustrative; replace entirely:**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{Project} Showcase — DuckWare</title>
+  <meta name="description" content="…">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=…" rel="stylesheet">
+  <style>
+    /* All page styles here — bespoke to this project */
+  </style>
+</head>
+<body>
+  <!-- Unique layout: nav, hero, sections, footer — all custom -->
+  <a href="./">← All showcases</a>
+  …
+</body>
+</html>
 ```
-<head> … index.css + scoped <style> … </head>
-<body class="showcase-theme showcase-theme--<slug>">
-  Nav → Hero → Main sections → Back to Catalog → Footer → app.js
-```
 
-**Hero (required):** `org/repo • date • Showcase #NN` · H1 · tagline · CTA(s)
-
-**Body (expected):**
-
-- Visual (screenshot / terminal mockup)
-- "What is {Project}?"
-- "Architectural Highlights & Strengths" — 3 `card-content` items
-- Optional: install / CLI mockup
-- Required: `← Back to Catalog` → `./`
-
-Reuse base classes (`hero-band`, `card-mockup`, `token-cmd`, etc.) — theme them via scoped CSS.
+**Do not** `<link rel="stylesheet" href="../index.css">` unless mixing a tiny shared utility — default is **no shared CSS**.
 
 ### 6. Catalog card — `showcases/index.html`
 
-Insert new `<a class="card-content showcase-list-card">` **at top** of grid. **Shared DuckWare style only** — no per-project theme here.
+Insert at **top** of grid. **Shared DuckWare catalog style** — unchanged from before.
 
-Demote previous top card: `#NN (Latest)` → `#NN`.
-
-Preview strategy: logo centered · full screenshot · terminal mockup if no images.
-
-Hotlink pattern:
-
-```
-https://github.com/<org>/<repo>/raw/<branch>/<path>
-```
+Demote previous `#NN (Latest)` → `#NN`.
 
 ### 7. RSS — `feed.xml`
 
-1. Update channel `lastBuildDate` and `pubDate` (RFC 822).
-2. Append `<item>` at end of channel.
-
-`title` and `description` must match the catalog card.
-
-```xml
-<item>
-  <title>ProjectName: Descriptor</title>
-  <link>https://mirarr-app.github.io/duckware/showcases/<slug>.html</link>
-  <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/<slug>.html</guid>
-  <pubDate>Day, DD Mon YYYY HH:MM:SS GMT</pubDate>
-  <description>Same blurb as catalog card.</description>
-</item>
-```
+Update channel dates; append `<item>`. Title + description must match catalog card.
 
 ### 8. Commit and PR
 
@@ -150,32 +153,32 @@ https://github.com/<org>/<repo>/raw/<branch>/<path>
 git add showcases/<slug>.html showcases/index.html feed.xml
 git commit -m "Add showcase #NN: <ProjectName>
 
-<One-line summary>. Detail page uses a project-themed visual style."
+Bespoke detail page plus catalog and RSS integration."
 git push -u origin cursor/add-<slug>-showcase-7a08
 ```
 
-Open **draft PR** to `main`. Note theme direction in PR body.
-
-Live URL: `https://mirarr-app.github.io/duckware/showcases/<slug>.html`
+In PR body, describe the **page concept** (e.g. "full-viewport terminal with green phosphor theme"), not just accent colors.
 
 ## Checklist
 
-- [ ] `showcases/<slug>.html` with `showcase-theme--<slug>` + scoped styles
-- [ ] Theme fits project and differs from recent showcases
-- [ ] Nav/footer readable; structure unchanged
-- [ ] Catalog card at top; `(Latest)` moved from previous card
-- [ ] `feed.xml` dates + item; title/description match catalog
-- [ ] Original prose; images hotlinked; external links use `target="_blank" rel="noopener"`
+- [ ] Detail page is **bespoke** — not DuckWare template with overrides
+- [ ] No `../index.css` dependency (unless explicitly justified)
+- [ ] Layout, fonts, and sections are unique to this project
+- [ ] Title, meta description, back-to-catalog link present
+- [ ] Catalog card at top; previous `(Latest)` demoted
+- [ ] `feed.xml` updated; title/description match catalog
+- [ ] Original prose; hotlinked images; external links safe
 - [ ] Committed, pushed, draft PR
 
 ## Don't
 
-- Edit `index.css`, `app.js`, or landing page for one showcase
-- Theme the catalog grid or RSS
-- Copy README/clipping text verbatim
-- Reuse the same theme palette for every showcase
-- Skip any of the three files
+- Clone `boneyard.html` / `portless.html` and change CSS variables
+- Use `showcase-theme--<slug>` overrides on DuckWare components as the main approach
+- Make every page "hero-band + 3 card-content sections" with different hex codes
+- Theme the catalog or RSS
+- Edit `index.css` globally
+- Skip any of the three integration files
 
 ## More detail
 
-- Theme examples and HTML skeleton: [reference.md](reference.md)
+- Anti-patterns, catalog/RSS snippets: [reference.md](reference.md)
