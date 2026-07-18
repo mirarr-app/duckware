@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>yoinks Showcase — DuckWare</title>
+  <meta name="description" content="A detailed curation showcase of yoinks, the terminal video downloader with an Ink UI, yt-dlp under the hood, and no shady ad-laden web converters.">
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Load Inter, Instrument Serif, and JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet (relative link) -->
+  <link rel="stylesheet" href="../index.css">
+  <style>
+    .showcase-theme--yoinks {
+      --showcase-accent: #a3e635;
+      --showcase-accent-soft: rgba(163, 230, 53, 0.12);
+      --showcase-hero-bg: linear-gradient(165deg, #1f2328 0%, #18181b 55%, #0f0f12 100%);
+      --showcase-card-bg: rgba(255, 255, 255, 0.03);
+      --showcase-border: rgba(163, 230, 53, 0.18);
+    }
+    .showcase-theme--yoinks .hero-band {
+      background: var(--showcase-hero-bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .showcase-theme--yoinks .hero-band::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.02) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.02) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .showcase-theme--yoinks .hero-band .container {
+      position: relative;
+      z-index: 1;
+    }
+    .showcase-theme--yoinks .hero-band h1 {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      letter-spacing: -0.02em;
+    }
+    .showcase-theme--yoinks .hero-band .text-display-serif {
+      color: #d4d4d8;
+    }
+    .showcase-theme--yoinks .showcase-meta {
+      color: #a1a1aa !important;
+    }
+    .showcase-theme--yoinks .btn-primary {
+      background-color: var(--showcase-accent);
+      color: #18181b;
+      border-color: var(--showcase-accent);
+    }
+    .showcase-theme--yoinks .btn-primary:hover {
+      background-color: #bef264;
+      border-color: #bef264;
+    }
+    .showcase-theme--yoinks .card-content {
+      background: var(--showcase-card-bg);
+      border-color: var(--showcase-border);
+    }
+    .showcase-theme--yoinks .card-mockup {
+      border-color: rgba(255, 255, 255, 0.08);
+      background: #0f0f12;
+    }
+    .showcase-theme--yoinks .mockup-body .token-success {
+      color: var(--showcase-accent);
+    }
+    .showcase-theme--yoinks .text-body-sm-strong {
+      color: var(--showcase-accent);
+    }
+  </style>
+</head>
+<body class="showcase-theme showcase-theme--yoinks">
+
+  <!-- Navigation -->
+  <nav class="nav-bar" id="navbar">
+    <div class="nav-container">
+      <a href="../" class="nav-logo" id="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+        <span>duckware</span>
+      </a>
+      
+      <div class="nav-links">
+        <a href="./" class="nav-link">Showcases</a>
+        <a href="../#submit" class="nav-link">Submit Software</a>
+      </div>
+      
+      <div class="nav-right">
+        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
+          <span>GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Showcase Header -->
+  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
+    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
+      <div style="flex-grow: 1;">
+        <div class="showcase-meta text-code" style="margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+          <span>pablostanley/yoinks</span>
+          <span>•</span>
+          <span>July 18, 2026</span>
+          <span>•</span>
+          <span style="color: var(--color-body-strong);">Showcase #25</span>
+        </div>
+        
+        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
+          yoinks
+        </h1>
+        
+        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); font-size: 38px; line-height: 44px;">
+          Paste a link, pick a format, and archive video from 1,800+ sites — no popups, no fake download buttons.
+        </p>
+
+        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
+          <a href="https://github.com/pablostanley/yoinks" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+          <a href="https://www.npmjs.com/package/yoinks" class="btn-secondary-ghost" target="_blank" rel="noopener">Install via npm</a>
+        </div>
+      </div>
+
+      <div class="card-mockup" style="width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.4); flex-shrink: 0; border-radius: var(--radius-md); background: #ffffff;">
+        <img src="https://github.com/pablostanley/yoinks/raw/main/assets/logo-light.svg" alt="yoinks logo" style="width: 100%; height: auto; display: block;">
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Content -->
+  <main class="content-band" style="padding-top: 0;">
+    <div class="container" style="max-width: 900px;">
+      
+      <!-- UI Screenshots -->
+      <section style="margin-bottom: var(--space-4xl);">
+        <h3 class="text-body-sm-strong" style="margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Terminal UI</h3>
+        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">home.png</div>
+            </div>
+            <img src="https://github.com/pablostanley/yoinks/raw/main/assets/home.png" alt="yoinks home screen with URL input and yoink button" style="width: 100%; height: auto; display: block;">
+          </div>
+          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">download-options.png</div>
+            </div>
+            <img src="https://github.com/pablostanley/yoinks/raw/main/assets/download-options.png" alt="yoinks format picker showing resolutions and audio-only mp3 option" style="width: 100%; height: auto; display: block;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Audit & Curation Notes -->
+      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is yoinks?</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
+            Most web-based video downloaders are a minefield of deceptive buttons, redirect chains, and ad overlays. Power users reach for <code>yt-dlp</code> directly, but memorizing format codes and merge flags is not everyone's idea of a good time.
+          </p>
+          <p class="text-body-md" style="line-height: 1.7;">
+            <strong>yoinks</strong> wraps the extraction engine in a full-screen Ink terminal UI: paste a URL from YouTube, X, Instagram, TikTok, or any of 1,800+ supported hosts, browse available resolutions with estimated file sizes, and save to <code>~/Downloads</code>. The experience is interactive when you want it and scriptable flags are on the roadmap — but the core promise is honest downloads without the sketchy web middleman.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Self-Provisioning Download Stack</span>
+              <p class="text-body-sm">
+                On first launch, yoinks fetches a standalone <code>yt-dlp</code> binary into <code>~/.yoinks/bin</code> — no Python install required. If a system copy already exists, it defers to that. For stream merging and MP3 extraction, it prefers <code>ffmpeg</code> on your PATH and falls back to the bundled <code>ffmpeg-static</code> package. The tool arrives ready to run with a single <code>npm install -g</code> or <code>npx</code> invocation.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Full-Screen Ink UI with Dual Input</span>
+              <p class="text-body-sm">
+                Built on React-for-the-terminal via Ink, yoinks takes over the viewport, centers its panels, and restores scrollback on exit. Navigate formats with arrow keys, vim bindings, number shortcuts, or mouse clicks on the yoink button, format list, and footer controls. The <code>auto</code> theme inherits your terminal's native colors; <code>^t</code> cycles through light and dark palettes for the session.
+              </p>
+            </li>
+            <li class="card-content" style="padding: var(--space-lg);">
+              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Informed Format Selection</span>
+              <p class="text-body-sm">
+                Before committing bandwidth, the format picker surfaces resolution labels, codecs, and approximate file sizes side by side — including an audio-only MP3 path. High-resolution streams that require separate video and audio tracks are merged automatically via ffmpeg, so you pick once and yoinks handles the post-processing pipeline.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Getting Started</h2>
+          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
+            Requires Node 18+. Install globally or try instantly without a permanent install:
+          </p>
+          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
+            <div class="mockup-header">
+              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
+              <div class="mockup-title">terminal</div>
+            </div>
+            <div class="mockup-body">
+              <span class="token-cmd">npm install -g yoinks</span><br>
+              <span class="token-comment"># or: npx yoinks</span><br><br>
+              <span class="token-cmd">yoinks https://youtu.be/dQw4w9WgXcQ</span><br>
+              <span class="token-success">~/Downloads/Rick Astley - Never Gonna Give You Up.mp4</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Back to Catalog -->
+      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
+        <a href="./" class="btn-secondary-ghost">
+          ← Back to Catalog
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-layout">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">duckware</a>
+        <p class="footer-description">
+          A catalog of cool software        </p>
+      </div>
+      
+      <div class="footer-column">
+        <span class="footer-title">Navigation</span>
+        <ul class="footer-links">
+          <li><a href="./" class="footer-link">Showcases</a></li>
+          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Community</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <span class="footer-title">Platform</span>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">GitHub Pages</a></li>
+          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <span>© 2026 DuckWare Curator. All rights reserved.</span>
+      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    </div>
+  </footer>
+
+  <!-- Client JavaScript -->
+  <script src="../app.js"></script>
+</body>
+</html>
