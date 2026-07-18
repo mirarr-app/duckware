@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 18 Jul 2026 15:00:00 GMT</lastBuildDate>
-    <pubDate>Sat, 18 Jul 2026 15:00:00 GMT</pubDate>
+    <lastBuildDate>Sat, 18 Jul 2026 15:15:00 GMT</lastBuildDate>
+    <pubDate>Sat, 18 Jul 2026 15:15:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -223,6 +223,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/runtipi.html</guid>
       <pubDate>Sat, 18 Jul 2026 15:00:00 GMT</pubDate>
       <description>A Docker homeserver orchestrator with one-command setup and a web dashboard for one-click installs across a huge self-hosted app library.</description>
+    </item>
+
+    <item>
+      <title>Topgrade: Upgrade All the Things</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/topgrade.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/topgrade.html</guid>
+      <pubDate>Sat, 18 Jul 2026 15:15:00 GMT</pubDate>
+      <description>One command that detects your package managers and upgrades everything — apt, brew, cargo, pip, winget, and dozens more — across local and remote machines.</description>
     </item>
   </channel>
 </rss>

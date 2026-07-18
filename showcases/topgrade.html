@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topgrade Showcase — DuckWare</title>
+  <meta name="description" content="One command that detects your package managers and upgrades everything — apt, brew, cargo, pip, winget, and dozens more — across local and remote machines.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --void: #07080b;
+      --graphite: #0e1016;
+      --panel: #151821;
+      --rail: #1c2030;
+      --ink: #eef1f7;
+      --mute: #8b93a7;
+      --dim: #5c6478;
+      --line: rgba(238, 241, 247, 0.08);
+      --heat: #e8a045;
+      --heat-soft: rgba(232, 160, 69, 0.16);
+      --live: #4ade80;
+      --live-soft: rgba(74, 222, 128, 0.14);
+      --warn: #f87171;
+      --display: "Bricolage Grotesque", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    html { scroll-behavior: smooth; color-scheme: dark; }
+
+    body {
+      font-family: var(--display);
+      background: var(--void);
+      color: var(--ink);
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* —— Atmosphere: forge glow + horizontal upgrade rails —— */
+    .atmosphere {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -10%, var(--heat-soft), transparent 55%),
+        radial-gradient(ellipse 40% 35% at 90% 80%, rgba(74, 222, 128, 0.05), transparent 50%),
+        linear-gradient(180deg, #05060a 0%, var(--void) 40%, #090b10 100%);
+    }
+
+    .atmosphere::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0,
+          transparent 79px,
+          rgba(232, 160, 69, 0.03) 79px,
+          rgba(232, 160, 69, 0.03) 80px
+        );
+      mask-image: linear-gradient(180deg, transparent, black 20%, black 70%, transparent);
+      opacity: 0.7;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* —— Top bar —— */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.1rem 1.5rem;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .back {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--mute);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      padding: 0.45rem 0.75rem;
+      border-radius: 4px;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .back:hover {
+      color: var(--ink);
+      border-color: rgba(232, 160, 69, 0.45);
+      background: var(--heat-soft);
+    }
+
+    .topbar-meta {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--dim);
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .topbar-meta .pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--live);
+      box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.5);
+      animation: pulse-ring 2.2s ease-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.45); }
+      70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+    }
+
+    /* —— Hero —— */
+    .hero {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 0;
+    }
+
+    .brand {
+      font-size: clamp(3.4rem, 11vw, 6.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 0.92;
+      background: linear-gradient(135deg, #fff 20%, var(--heat) 55%, #f5d08a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: brand-shimmer 8s ease-in-out infinite;
+      background-size: 200% 200%;
+    }
+
+    @keyframes brand-shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .tagline {
+      margin-top: 1.1rem;
+      font-size: clamp(1.15rem, 2.6vw, 1.55rem);
+      font-weight: 500;
+      color: var(--ink);
+      max-width: 28ch;
+      letter-spacing: -0.02em;
+    }
+
+    .lede {
+      margin-top: 0.75rem;
+      color: var(--mute);
+      font-size: 1rem;
+      max-width: 42ch;
+      font-weight: 500;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 0.7rem 1.1rem;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--heat);
+      color: #1a1208;
+      box-shadow: 0 0 24px rgba(232, 160, 69, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: #f0b05a;
+      box-shadow: 0 0 32px rgba(232, 160, 69, 0.35);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(232, 160, 69, 0.5);
+      background: var(--heat-soft);
+    }
+
+    /* —— Demo: full-bleed visual plane —— */
+    .demo-plane {
+      margin-top: 2.25rem;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      position: relative;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: #050608;
+    }
+
+    .demo-plane::before {
+      content: "LIVE RUN · topgrade";
+      position: absolute;
+      top: 0.85rem;
+      left: 1.5rem;
+      z-index: 2;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--heat);
+      opacity: 0.85;
+    }
+
+    .demo-plane img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: min(58vh, 520px);
+      object-fit: cover;
+      object-position: top left;
+      opacity: 0.92;
+    }
+
+    .demo-fade {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(7, 8, 11, 0.55) 0%, transparent 18%, transparent 82%, rgba(7, 8, 11, 0.55) 100%),
+        linear-gradient(180deg, transparent 60%, rgba(7, 8, 11, 0.85) 100%);
+    }
+
+    /* —— Convoy rail (package managers) —— */
+    .convoy {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 1rem;
+      overflow: hidden;
+    }
+
+    .convoy-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 1rem;
+    }
+
+    .rail-track {
+      position: relative;
+      display: flex;
+      gap: 0.65rem;
+      padding: 0.85rem 0;
+      overflow: hidden;
+      mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+    }
+
+    .rail-track::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--heat), var(--live), transparent);
+      opacity: 0.35;
+      transform: translateY(-50%);
+    }
+
+    .rail-marquee {
+      display: flex;
+      gap: 0.65rem;
+      animation: convoy-scroll 28s linear infinite;
+      width: max-content;
+    }
+
+    @keyframes convoy-scroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .mgr {
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.45rem 0.8rem;
+      border-radius: 3px;
+      background: var(--rail);
+      border: 1px solid var(--line);
+      color: var(--mute);
+      position: relative;
+      z-index: 1;
+      white-space: nowrap;
+    }
+
+    .mgr.done {
+      color: var(--live);
+      border-color: rgba(74, 222, 128, 0.35);
+      background: var(--live-soft);
+    }
+
+    .mgr.active {
+      color: var(--heat);
+      border-color: rgba(232, 160, 69, 0.55);
+      background: var(--heat-soft);
+      animation: mgr-glow 1.6s ease-in-out infinite;
+    }
+
+    @keyframes mgr-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(232, 160, 69, 0.2); }
+      50% { box-shadow: 0 0 16px 2px rgba(232, 160, 69, 0.25); }
+    }
+
+    /* —— Sections —— */
+    .sections {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+
+    .section-kicker {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--heat);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.15rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+      max-width: 22ch;
+    }
+
+    .section-body {
+      color: var(--mute);
+      font-size: 1.02rem;
+      max-width: 58ch;
+      font-weight: 500;
+    }
+
+    .section-body strong { color: var(--ink); font-weight: 600; }
+
+    /* Strengths as vertical status stack */
+    .status-stack {
+      margin-top: 1.75rem;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      align-items: start;
+      padding: 1.1rem 1.2rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      border-left: 3px solid var(--heat);
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .status-row:nth-child(2) { border-left-color: var(--live); }
+    .status-row:nth-child(3) { border-left-color: #60a5fa; }
+
+    .status-row:hover {
+      background: #1a1e2a;
+    }
+
+    .status-icon {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--dim);
+      padding-top: 0.2rem;
+      min-width: 3.5rem;
+    }
+
+    .status-row h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .status-row p {
+      color: var(--mute);
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+
+    /* Install: command grid */
+    .install-grid {
+      margin-top: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .cmd-block {
+      background: var(--graphite);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0.9rem 1rem;
+      font-family: var(--mono);
+      transition: border-color 0.2s, transform 0.15s;
+    }
+
+    .cmd-block:hover {
+      border-color: rgba(232, 160, 69, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .cmd-block .os {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 0.45rem;
+    }
+
+    .cmd-block code {
+      font-size: 0.78rem;
+      color: var(--heat);
+      word-break: break-word;
+      line-height: 1.45;
+    }
+
+    .cmd-block a:hover code { color: #f5c06e; }
+
+    /* Config / remote split */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 1.35rem 1.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle at 100% 0%, var(--heat-soft), transparent 70%);
+      pointer-events: none;
+    }
+
+    .panel h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .panel p {
+      color: var(--mute);
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+
+    .panel .path-list {
+      margin-top: 1rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--dim);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .panel .path-list span {
+      color: var(--ink);
+    }
+
+    .run-line {
+      margin-top: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 1rem 1.2rem;
+      background: #0a0c12;
+      border: 1px dashed rgba(232, 160, 69, 0.35);
+      border-radius: 6px;
+      font-family: var(--mono);
+    }
+
+    .run-line .prompt {
+      color: var(--live);
+      font-weight: 600;
+    }
+
+    .run-line .cmd {
+      color: var(--ink);
+      font-size: 1.05rem;
+    }
+
+    .run-line .hint {
+      color: var(--dim);
+      font-size: 0.72rem;
+      margin-left: auto;
+    }
+
+    /* Footer */
+    .foot {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      border-top: 1px solid var(--line);
+      padding-top: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--dim);
+    }
+
+    .foot a:hover { color: var(--heat); }
+
+    @media (max-width: 720px) {
+      .split { grid-template-columns: 1fr; }
+      .topbar { padding: 1rem; }
+      .hero { padding: 1rem 1rem 0; }
+      .demo-plane::before { left: 1rem; font-size: 0.58rem; }
+      .run-line .hint { margin-left: 0; }
+      .brand { font-size: clamp(2.8rem, 14vw, 4rem); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rail-marquee, .brand, .mgr.active, .topbar-meta .pulse { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <div class="page">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <div class="topbar-meta">
+        <span class="pulse" aria-hidden="true"></span>
+        <span>topgrade-rs/topgrade</span>
+        <span>·</span>
+        <span>Showcase #28</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <h1 class="brand">Topgrade</h1>
+      <p class="tagline">Upgrade all the things — in one command.</p>
+      <p class="lede">
+        Detects the tools on your machine and runs each package manager the right way,
+        so you stop maintaining a pile of shell one-liners.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/topgrade-rs/topgrade" target="_blank" rel="noopener">View Source</a>
+        <a class="btn btn-ghost" href="https://github.com/topgrade-rs/topgrade/releases" target="_blank" rel="noopener">Releases</a>
+        <a class="btn btn-ghost" href="https://crates.io/crates/topgrade" target="_blank" rel="noopener">crates.io</a>
+      </div>
+    </section>
+
+    <div class="demo-plane">
+      <img
+        src="https://github.com/topgrade-rs/topgrade/raw/main/doc/topgrade_demo.gif?raw=true"
+        alt="Topgrade running a full system upgrade sequence in the terminal"
+        width="1200"
+        height="600"
+      >
+      <div class="demo-fade" aria-hidden="true"></div>
+    </div>
+
+    <div class="convoy">
+      <p class="convoy-label">Upgrade convoy — managers Topgrade knows how to drive</p>
+      <div class="rail-track" aria-hidden="true">
+        <div class="rail-marquee">
+          <span class="mgr done">apt</span>
+          <span class="mgr done">brew</span>
+          <span class="mgr active">cargo</span>
+          <span class="mgr">pip</span>
+          <span class="mgr">npm</span>
+          <span class="mgr">winget</span>
+          <span class="mgr">dnf</span>
+          <span class="mgr">pacman</span>
+          <span class="mgr">snap</span>
+          <span class="mgr">flatpak</span>
+          <span class="mgr">nix</span>
+          <span class="mgr">choco</span>
+          <span class="mgr">scoop</span>
+          <span class="mgr">gem</span>
+          <span class="mgr">uv</span>
+          <span class="mgr">firmware</span>
+          <!-- duplicate for seamless loop -->
+          <span class="mgr done">apt</span>
+          <span class="mgr done">brew</span>
+          <span class="mgr active">cargo</span>
+          <span class="mgr">pip</span>
+          <span class="mgr">npm</span>
+          <span class="mgr">winget</span>
+          <span class="mgr">dnf</span>
+          <span class="mgr">pacman</span>
+          <span class="mgr">snap</span>
+          <span class="mgr">flatpak</span>
+          <span class="mgr">nix</span>
+          <span class="mgr">choco</span>
+          <span class="mgr">scoop</span>
+          <span class="mgr">gem</span>
+          <span class="mgr">uv</span>
+          <span class="mgr">firmware</span>
+        </div>
+      </div>
+    </div>
+
+    <main class="sections">
+      <section>
+        <p class="section-kicker">What it is</p>
+        <h2 class="section-title">A maintained fork that still ships upgrades</h2>
+        <p class="section-body">
+          Topgrade started as a single Rust binary that walks your environment, figures out
+          which updaters you actually have installed, and invokes them in a sensible order.
+          This project is the <strong>actively maintained fork</strong> of the original
+          <code style="font-family:var(--mono);font-size:0.9em;color:var(--heat);">r-darwish/topgrade</code>,
+          keeping the “just run <code style="font-family:var(--mono);font-size:0.9em;color:var(--heat);">topgrade</code>”
+          workflow alive across Linux, macOS, and Windows.
+        </p>
+
+        <div class="run-line">
+          <span class="prompt">$</span>
+          <span class="cmd">topgrade</span>
+          <span class="hint">that’s the whole happy path</span>
+        </div>
+      </section>
+
+      <section>
+        <p class="section-kicker">Why it holds up</p>
+        <h2 class="section-title">Three reasons this stays on the PATH</h2>
+        <div class="status-stack">
+          <article class="status-row">
+            <span class="status-icon">DETECT</span>
+            <div>
+              <h3>Auto-discovers your stack</h3>
+              <p>
+                No curated checklist of managers to remember. Topgrade probes what’s present —
+                from apt and Homebrew to cargo, pip, winget, Nix, Flatpak, and more — then
+                runs only the steps that apply.
+              </p>
+            </div>
+          </article>
+          <article class="status-row">
+            <span class="status-icon">CONFIG</span>
+            <div>
+              <h3>TOML control without friction</h3>
+              <p>
+                Drop a config under your platform’s config dir, merge snippets from
+                <code style="font-family:var(--mono);font-size:0.85em;color:var(--ink);">topgrade.d/</code>,
+                and hook custom commands before, during, or after the built-in steps.
+                First run scaffolds a starter file for you.
+              </p>
+            </div>
+          </article>
+          <article class="status-row">
+            <span class="status-icon">REMOTE</span>
+            <div>
+              <h3>SSH upgrade fan-out</h3>
+              <p>
+                List hosts under <code style="font-family:var(--mono);font-size:0.85em;color:var(--ink);">remote_topgrades</code>
+                and Topgrade will SSH in and run itself there before touching the local machine —
+                with an optional host limit flag when you only want a subset.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <p class="section-kicker">Install</p>
+        <h2 class="section-title">Pick a channel, get the binary</h2>
+        <p class="section-body">
+          Official builds cover cargo, Homebrew, Winget, PyPI, deb-get, AUR, and Fedora Copr.
+          Community packs land on Chocolatey, Scoop, MacPorts, Pacstall, Nix, Alpine, and Void.
+        </p>
+        <div class="install-grid">
+          <a class="cmd-block" href="https://crates.io/crates/topgrade" target="_blank" rel="noopener">
+            <div class="os">Cargo · all platforms</div>
+            <code>cargo install topgrade</code>
+          </a>
+          <a class="cmd-block" href="https://formulae.brew.sh/formula/topgrade" target="_blank" rel="noopener">
+            <div class="os">Homebrew · macOS / Linux</div>
+            <code>brew install topgrade</code>
+          </a>
+          <a class="cmd-block" href="https://winstall.app/apps/topgrade-rs.topgrade" target="_blank" rel="noopener">
+            <div class="os">Winget · Windows</div>
+            <code>winget install topgrade-rs.topgrade</code>
+          </a>
+          <a class="cmd-block" href="https://pypi.org/project/topgrade/" target="_blank" rel="noopener">
+            <div class="os">PyPI · pip / pipx / uv</div>
+            <code>uv tool install topgrade</code>
+          </a>
+          <a class="cmd-block" href="https://aur.archlinux.org/packages/topgrade" target="_blank" rel="noopener">
+            <div class="os">Arch · AUR</div>
+            <code>yay -S topgrade</code>
+          </a>
+          <a class="cmd-block" href="https://github.com/topgrade-rs/topgrade/releases" target="_blank" rel="noopener">
+            <div class="os">Binary · self-updating</div>
+            <code>grab from Releases</code>
+          </a>
+        </div>
+      </section>
+
+      <section>
+        <p class="section-kicker">Config &amp; ops</p>
+        <h2 class="section-title">Where settings live, how remotes join</h2>
+        <div class="split">
+          <div class="panel">
+            <h3>Config paths</h3>
+            <p>
+              Priority wins: the first file found is used even if invalid. On first launch with
+              nothing present, Topgrade writes a starter config automatically.
+            </p>
+            <div class="path-list">
+              <div>1. <span>CONFIG_DIR/topgrade.toml</span></div>
+              <div>2. <span>CONFIG_DIR/topgrade/topgrade.toml</span></div>
+              <div>+ merge <span>CONFIG_DIR/topgrade.d/*</span></div>
+              <div style="margin-top:0.5rem;color:var(--mute);">Windows: %APPDATA% · Unix: ~/.config</div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Remote execution</h3>
+            <p>
+              Declare hostnames in config; Topgrade SSHes out and runs itself remotely first.
+              Narrow the blast radius with <code style="font-family:var(--mono);font-size:0.85em;color:var(--heat);">--remote-host-limit</code>
+              when you don’t want the full fleet.
+            </p>
+            <div class="path-list" style="margin-top:1rem;">
+              <div>example: <span>remote_topgrades = ["nas", "devbox"]</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="section-body" style="margin-top:1.5rem;">
+          Breaking changes bump the major version and land in release notes. MSRV lives in
+          <code style="font-family:var(--mono);font-size:0.9em;color:var(--heat);">Cargo.toml</code>
+          under <code style="font-family:var(--mono);font-size:0.9em;color:var(--heat);">rust-version</code>
+          and only moves on majors. Prefer an
+          <a href="https://github.com/topgrade-rs/topgrade/blob/main/config.example.toml" target="_blank" rel="noopener" style="color:var(--heat);text-decoration:underline;text-underline-offset:3px;">example config</a>
+          as your starting template.
+        </p>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>DuckWare Showcase #28 · July 18, 2026</span>
+      <span>
+        <a href="https://github.com/topgrade-rs/topgrade" target="_blank" rel="noopener">GitHub</a>
+        ·
+        <a href="./">Catalog</a>
+      </span>
+    </footer>
+  </div>
+</body>
+</html>
