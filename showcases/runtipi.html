@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Runtipi Showcase — DuckWare</title>
+  <meta name="description" content="A Docker homeserver orchestrator with one-command setup and a web dashboard for one-click installs across a huge self-hosted app library.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --mist: #eef4f7;
+      --mist-deep: #d7e6ee;
+      --ink: #0f2a32;
+      --ink-soft: #3a5560;
+      --mute: #5f7a86;
+      --line: rgba(15, 42, 50, 0.12);
+      --panel: #ffffff;
+      --teal: #147a6e;
+      --teal-deep: #0d5c53;
+      --amber: #c9782a;
+      --display: "Bricolage Grotesque", system-ui, sans-serif;
+      --body: "Figtree", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--body);
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 90% 60% at 10% -10%, rgba(20, 122, 110, 0.1), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 100% 20%, rgba(201, 120, 42, 0.08), transparent 50%),
+        linear-gradient(180deg, var(--mist) 0%, var(--mist-deep) 50%, #e4eef3 100%);
+      background-attachment: fixed;
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      width: min(1120px, calc(100% - 2rem));
+      margin-inline: auto;
+    }
+
+    /* —— Stage hero —— */
+    .stage {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .stage-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .stage-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 18%;
+      display: block;
+      animation: drift 28s ease-in-out infinite alternate;
+      transform: scale(1.05);
+    }
+
+    .stage-veil {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(238, 244, 247, 0.88) 0%, rgba(238, 244, 247, 0.55) 28%, rgba(15, 42, 50, 0.35) 62%, rgba(15, 42, 50, 0.82) 100%),
+        radial-gradient(ellipse 55% 45% at 20% 70%, rgba(20, 122, 110, 0.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    .stage-top {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1.25rem 0 0;
+    }
+
+    .back {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      letter-spacing: 0.02em;
+      transition: color 0.2s ease;
+    }
+
+    .back:hover { color: var(--teal); }
+
+    .top-links {
+      display: flex;
+      gap: 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+    }
+
+    .top-links a:hover { color: var(--teal-deep); }
+
+    .stage-copy {
+      position: relative;
+      z-index: 2;
+      margin-top: auto;
+      width: min(1120px, calc(100% - 2rem));
+      margin-inline: auto;
+      padding: 2.5rem 0 3.25rem;
+      max-width: 40rem;
+      animation: riseIn 0.9s ease both;
+      color: #f3f8f7;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .brand-mark {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      object-fit: cover;
+      animation: tipSway 5s ease-in-out infinite;
+      transform-origin: 50% 90%;
+    }
+
+    .brand {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(2.9rem, 8vw, 5rem);
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      text-shadow: 0 1px 0 rgba(15, 42, 50, 0.25);
+    }
+
+    .lede {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      line-height: 1.25;
+      color: rgba(243, 248, 247, 0.92);
+      margin-bottom: 0.7rem;
+    }
+
+    .support {
+      font-size: 1.05rem;
+      color: rgba(215, 230, 228, 0.88);
+      max-width: 34rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.15rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--teal);
+      color: #f4fbfa;
+      border: 1px solid var(--teal-deep);
+    }
+
+    .btn-primary:hover { background: var(--teal-deep); }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #f4fbfa;
+      backdrop-filter: blur(6px);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* —— Install ritual —— */
+    .install {
+      padding: 4.5rem 0 3rem;
+    }
+
+    .section-kicker {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: clamp(1.75rem, 3.5vw, 2.4rem);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.65rem;
+    }
+
+    .section-lead {
+      color: var(--mute);
+      font-size: 1.05rem;
+      max-width: 36rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .terminal {
+      background: #10252c;
+      color: #d7ebe6;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(15, 42, 50, 0.35);
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4a6670;
+    }
+
+    .dot:nth-child(1) { background: #c9782a; }
+    .dot:nth-child(2) { background: #147a6e; }
+    .dot:nth-child(3) { background: #5f8a96; }
+
+    .terminal-host {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: #7aa0ab;
+    }
+
+    .terminal-body {
+      padding: 1.25rem 1.35rem 1.5rem;
+      font-family: var(--mono);
+      font-size: clamp(0.82rem, 2vw, 0.95rem);
+      line-height: 1.7;
+      overflow-x: auto;
+    }
+
+    .prompt { color: #7dcfbf; }
+    .cmd { color: #f0f7f5; white-space: nowrap; }
+
+    .caret {
+      display: inline-block;
+      width: 0.55ch;
+      height: 1.1em;
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      background: #7dcfbf;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    /* —— Why it matters —— */
+    .story {
+      padding: 2rem 0 4rem;
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    @media (min-width: 840px) {
+      .story {
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: start;
+      }
+    }
+
+    .story-visual {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .story-visual img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .strengths {
+      display: grid;
+      gap: 1.5rem;
+      padding-top: 0.25rem;
+    }
+
+    .strength h3 {
+      font-family: var(--display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+
+    .strength p {
+      color: var(--mute);
+      font-size: 0.98rem;
+    }
+
+    .strength-num {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--amber);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.35rem;
+    }
+
+    /* —— App lane —— */
+    .lane {
+      padding: 1rem 0 4.5rem;
+    }
+
+    .lane-track {
+      display: flex;
+      gap: 0.75rem;
+      overflow: hidden;
+      mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+    }
+
+    .lane-inner {
+      display: flex;
+      gap: 0.75rem;
+      animation: marquee 32s linear infinite;
+      width: max-content;
+    }
+
+    .chip {
+      flex: 0 0 auto;
+      padding: 0.55rem 0.9rem;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
+    /* —— Closing CTA —— */
+    .close {
+      margin-bottom: 4rem;
+      padding: 2.25rem;
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(20, 122, 110, 0.12), rgba(201, 120, 42, 0.08)),
+        var(--panel);
+      border: 1px solid var(--line);
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    @media (min-width: 720px) {
+      .close {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+      }
+    }
+
+    .close h2 {
+      font-family: var(--display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    .close p { color: var(--mute); max-width: 36rem; }
+
+    .close-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .close .btn-ghost {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--line);
+      color: var(--ink);
+    }
+
+    .close .btn-ghost:hover {
+      border-color: var(--teal);
+      color: var(--teal-deep);
+      background: #fff;
+    }
+
+    footer {
+      padding: 0 0 2.5rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--mute);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      justify-content: space-between;
+    }
+
+    footer a:hover { color: var(--teal); }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes drift {
+      from { transform: scale(1.05) translate3d(0, 0, 0); }
+      to { transform: scale(1.1) translate3d(-1.2%, -0.8%, 0); }
+    }
+
+    @keyframes tipSway {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(2.5deg); }
+    }
+
+    @keyframes blink {
+      0%, 45% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .top-links { display: none; }
+      .stage-copy { padding: 2rem 0 2.5rem; }
+      .close { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <section class="stage" aria-label="Runtipi">
+    <div class="stage-media" aria-hidden="true">
+      <img
+        src="https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png"
+        alt=""
+        width="1600"
+        height="900"
+      >
+    </div>
+    <div class="stage-veil" aria-hidden="true"></div>
+
+    <header class="stage-top">
+      <a class="back" href="./">← All showcases</a>
+      <nav class="top-links" aria-label="Project links">
+        <a href="https://www.runtipi.io/" target="_blank" rel="noopener">Docs</a>
+        <a href="https://demo.runtipi.io/" target="_blank" rel="noopener">Demo</a>
+        <a href="https://github.com/runtipi/runtipi" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </header>
+
+    <div class="stage-copy">
+      <div class="brand-row">
+        <img
+          class="brand-mark"
+          src="https://avatars.githubusercontent.com/u/147710665?v=4"
+          width="52"
+          height="52"
+          alt=""
+        >
+        <h1 class="brand">Runtipi</h1>
+      </div>
+      <p class="lede">A personal homeserver for everyone.</p>
+      <p class="support">
+        One install command, a clean web dashboard, and one-click apps — Docker orchestration without the YAML ritual.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://www.runtipi.io/docs/getting-started/installation" target="_blank" rel="noopener">Get started</a>
+        <a class="btn btn-ghost" href="https://demo.runtipi.io/" target="_blank" rel="noopener">Try the demo</a>
+        <a class="btn btn-ghost" href="https://github.com/runtipi/runtipi" target="_blank" rel="noopener">Source</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="install" id="install">
+      <p class="section-kicker">Getting on the box</p>
+      <h2 class="section-title">One command. Then tipi.local.</h2>
+      <p class="section-lead">
+        Runtipi targets everyday 64-bit Linux hosts. Pipe the installer, land on a dashboard, and stop babysitting compose files for every media stack and utility you want to run.
+      </p>
+      <div class="terminal" role="img" aria-label="Install command: curl -L https://setup.runtipi.io | bash">
+        <div class="terminal-bar">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="dot" aria-hidden="true"></span>
+          <span class="terminal-host">bash — setup.runtipi.io</span>
+        </div>
+        <div class="terminal-body">
+          <span class="prompt">$</span>
+          <span class="cmd"> curl -L https://setup.runtipi.io | bash</span><span class="caret" aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="story" aria-labelledby="why-title">
+      <div>
+        <p class="section-kicker">Why it sticks</p>
+        <h2 class="section-title" id="why-title">Homelab power without the ceremony.</h2>
+        <p class="section-lead" style="margin-bottom: 1.75rem;">
+          Built in TypeScript with NestJS and React, Runtipi sits between raw Docker and heavyweight PaaS — opinionated enough for weekends, open enough for people who still want to edit compose when it matters.
+        </p>
+        <div class="strengths">
+          <article class="strength">
+            <p class="strength-num">01 — install</p>
+            <h3>Click, configure, run</h3>
+            <p>Browse the official store (and community stores), fill the few fields an app needs, and let containers come up with networking handled for you.</p>
+          </article>
+          <article class="strength">
+            <p class="strength-num">02 — control</p>
+            <h3>Dashboard as control room</h3>
+            <p>Watch status, update with one click, back up before you pull the trigger, and keep overrides that survive upgrades.</p>
+          </article>
+          <article class="strength">
+            <p class="strength-num">03 — open</p>
+            <h3>GPL-3.0 and community-shaped</h3>
+            <p>Volunteer-maintained, contribution-friendly, and designed so new apps plug in without rewriting the orchestrator.</p>
+          </article>
+        </div>
+      </div>
+      <figure class="story-visual">
+        <img
+          src="https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/darkmode.png"
+          alt="Runtipi dashboard in dark mode showing installed services"
+          width="1200"
+          height="800"
+          loading="lazy"
+        >
+      </figure>
+    </section>
+
+    <section class="lane" aria-label="Example app categories">
+      <p class="section-kicker">Nearly 300 apps</p>
+      <h2 class="section-title" style="margin-bottom: 1.25rem;">Media, AI, vaults, utilities — same shelf.</h2>
+      <div class="lane-track">
+        <div class="lane-inner">
+          <span class="chip">Media servers</span>
+          <span class="chip">Password managers</span>
+          <span class="chip">AI agents</span>
+          <span class="chip">File sync</span>
+          <span class="chip">Automation</span>
+          <span class="chip">VPN &amp; tunnels</span>
+          <span class="chip">Photo libraries</span>
+          <span class="chip">Monitoring</span>
+          <span class="chip">Notes &amp; wikis</span>
+          <span class="chip">Community stores</span>
+          <span class="chip">Media servers</span>
+          <span class="chip">Password managers</span>
+          <span class="chip">AI agents</span>
+          <span class="chip">File sync</span>
+          <span class="chip">Automation</span>
+          <span class="chip">VPN &amp; tunnels</span>
+          <span class="chip">Photo libraries</span>
+          <span class="chip">Monitoring</span>
+          <span class="chip">Notes &amp; wikis</span>
+          <span class="chip">Community stores</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="close">
+      <div>
+        <h2>Pitch the tent on your hardware.</h2>
+        <p>
+          Read the install guide, poke the public demo, or clone the repo. Runtipi is free, open source, and built for people who want a homeserver that feels finished on day one.
+        </p>
+      </div>
+      <div class="close-actions">
+        <a class="btn btn-primary" href="https://www.runtipi.io/docs/getting-started/installation" target="_blank" rel="noopener">Installation docs</a>
+        <a class="btn btn-ghost" href="https://github.com/runtipi/runtipi-appstore" target="_blank" rel="noopener">App store repo</a>
+      </div>
+    </section>
+
+    <footer>
+      <span>Showcase #27 · runtipi/runtipi · DuckWare</span>
+      <a href="./">Back to catalog</a>
+    </footer>
+  </div>
+</body>
+</html>

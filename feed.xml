@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 18 Jul 2026 14:00:00 GMT</lastBuildDate>
-    <pubDate>Sat, 18 Jul 2026 14:00:00 GMT</pubDate>
+    <lastBuildDate>Sat, 18 Jul 2026 15:00:00 GMT</lastBuildDate>
+    <pubDate>Sat, 18 Jul 2026 15:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -215,6 +215,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/face-looker.html</guid>
       <pubDate>Sat, 18 Jul 2026 14:00:00 GMT</pubDate>
       <description>Generate an AI gaze grid from a single portrait, then drop in a React hook that swaps frames so the face follows the cursor — portfolio headers, avatars, and interactive UI in one pipeline.</description>
+    </item>
+
+    <item>
+      <title>Runtipi: One-Click Homeserver</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/runtipi.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/runtipi.html</guid>
+      <pubDate>Sat, 18 Jul 2026 15:00:00 GMT</pubDate>
+      <description>A Docker homeserver orchestrator with one-command setup and a web dashboard for one-click installs across a huge self-hosted app library.</description>
     </item>
   </channel>
 </rss>
