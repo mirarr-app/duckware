@@ -1,98 +1,121 @@
 # DuckWare Showcase Reference
 
-## File layout
+## Integration vs. design
 
 ```
-/workspace/
-├── feed.xml
-├── index.css          # shared — do not edit per showcase
-├── app.js             # shared — do not edit
-└── showcases/
-    ├── index.html     # catalog — shared style
-    └── <slug>.html    # detail — unique theme
+INTEGRATION (same every time)          DESIGN (unique every time)
+─────────────────────────────          ────────────────────────────
+showcases/<slug>.html exists           Full HTML/CSS crafted for project
+URL in catalog + RSS                   Layout, type, color, motion, sections
+Showcase #NN, title, tags, blurb       Visual metaphor tied to product
+feed.xml <item>                        No DuckWare template reuse
 ```
 
-## Detail page skeleton
+## Anti-pattern: template + tint
+
+**Wrong** — what the old skill produced:
 
 ```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{Project} Showcase — DuckWare</title>
-  <meta name="description" content="…">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../index.css">
-  <style>
-    .showcase-theme--<slug> { /* overrides */ }
-  </style>
-</head>
-<body class="showcase-theme showcase-theme--<slug>">
-  <!-- nav: copy from showcases/boneyard.html -->
+<link rel="stylesheet" href="../index.css">
+<body class="showcase-theme showcase-theme--yoinks">
+  <nav class="nav-bar">…duckware nav…</nav>
   <header class="hero-band">…</header>
-  <main class="content-band">…</main>
-  <!-- back link + footer: copy from showcases/boneyard.html -->
-  <script src="../app.js"></script>
-</body>
-</html>
+  <main class="content-band">
+    <h2>What is yoinks?</h2>
+    <ul><li class="card-content">…</li></ul>
+  </main>
+  <footer class="footer">…duckware footer…</footer>
 ```
 
-## Catalog card skeleton
+Only the accent color and hero gradient changed. **Reject this approach.**
+
+**Right** — bespoke page:
+
+- Custom header (maybe just logo + back link, or product-branded nav)
+- Hero designed around the product (terminal window, phone mockup, split before/after)
+- Sections with names and layout that fit the story — not "Architectural Highlights & Strengths" every time
+- Footer minimal or product-themed
+- All CSS in page `<style>`; fonts chosen for the project
+
+## Bespoke page checklist
+
+| Requirement | Notes |
+|-------------|-------|
+| `<title>… — DuckWare</title>` | SEO + tab label |
+| `<meta name="description">` | Matches catalog blurb closely |
+| Back to catalog | Link to `./` — style it natively |
+| CTAs | Source, releases, demo, docs — as buttons/links fitting the design |
+| Content | Original audit voice; ~3 strengths worth highlighting |
+| Images | Hotlink from repo when possible |
+| Mobile | Readable at 375px width |
+| Accessibility | Sufficient contrast; alt text on images |
+
+## Catalog card (unchanged shared style)
 
 ```html
 <!-- Showcase Card N: ProjectName (LATEST on top) -->
 <a href="<slug>.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-  <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
-    <!-- image or terminal mockup -->
+  <div class="card-mockup" style="…">
+    <!-- preview image or terminal mockup -->
   </div>
   <div style="display: flex; flex-direction: column; gap: var(--space-md);">
-    <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
+    <div class="text-code" style="…">
       <span>org/repo</span><span>•</span>
       <span style="color: var(--color-body-strong);">Showcase #N (Latest)</span>
     </div>
-    <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">Title</h3>
-    <p class="text-body-sm" style="color: var(--color-body); line-height: 1.6;">Blurb.</p>
+    <h3 class="text-display-sm" style="…">ProjectName: Descriptor</h3>
+    <p class="text-body-sm" style="…">Blurb.</p>
     <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
-      <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Tag</span>
+      <span class="text-caption" style="…">Tag1</span>
+      …
     </div>
   </div>
 </a>
 ```
 
-## Theme examples (direction only — do not reuse palettes)
+## RSS item
 
-| Project | Theme idea |
-|---------|------------|
-| tork | Cozy terminal — warm dark brown, soft mockup chrome |
-| ternlight | Cool blue-gray WASM bundle aesthetic |
-| Idle Fantasy | Game gold accent from screenshots |
-| Pixel Snapper | Checkerboard hero, pixel-crisp borders |
-| UniClipboard | Deep navy, trust-forward privacy accent |
-| deface | Before/after split, neutral gray + blur accent |
-| Mouzi | Tray-app clean UI, soft desktop utility feel |
+```xml
+<item>
+  <title>ProjectName: Descriptor</title>
+  <link>https://mirarr-app.github.io/duckware/showcases/<slug>.html</link>
+  <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/<slug>.html</guid>
+  <pubDate>Day, DD Mon YYYY HH:MM:SS GMT</pubDate>
+  <description>Same blurb as catalog card.</description>
+</item>
+```
 
-## Structural references (content, not visual)
+## Bespoke layout ideas (examples)
 
-| Pattern | Example file |
+| Project | Page concept |
 |---------|----------------|
-| Logo badge + screenshots | `showcases/boneyard.html`, `showcases/zennotes.html` |
-| CLI / terminal only | `showcases/portless.html`, `showcases/restic.html` |
-| Screenshot-heavy | `showcases/mirarr.html`, `showcases/ffmpeg-webCLI.html` |
+| yoinks | Full Ink terminal UI as the page chrome; commands as content |
+| tork | Cozy cat ASCII header, warm parchment terminal aesthetic |
+| UniClipboard | Split device sync diagram, encrypted pipe animation |
+| Pixel Snapper | Before/after pixel grid hero, magnifier on details |
+| Idle Fantasy | Phone frame with game screenshots, quest-board sections |
+| Mouzi | System tray metaphor, file-sorting animation strip |
+| deface | Film strip before/after, privacy redaction aesthetic |
 
-Older pages predate per-showcase themes — use them for **structure**, not visual sameness.
+Each new page should have its **own** concept — don't reuse these layouts verbatim.
+
+## Hotlink patterns
+
+```
+https://github.com/<org>/<repo>/raw/<branch>/<path>
+https://codeberg.org/<org>/<repo>/raw/branch/<branch>/<path>
+```
+
+URL-encode spaces. Match default branch (`main` vs `master`).
 
 ## Gotchas
 
-1. Filename casing must match links exactly (`ffmpeg-webCLI.html`).
-2. Default branch varies (`main` vs `master`).
-3. URL-encode spaces in image paths.
-4. Catalog order is newest-first; RSS items can stay chronological.
-5. No automated validation — manual review only.
+1. Filename casing must match links (`ffmpeg-webCLI.html`).
+2. Catalog order is newest-first; RSS can stay chronological.
+3. No CI validation — check links manually.
+4. Legacy showcases (`boneyard.html`, etc.) use the old shared template — **do not copy them for new work**.
 
-## PR summary table
+## PR summary
 
 | Field | Value |
 |-------|-------|
@@ -100,4 +123,4 @@ Older pages predate per-showcase themes — use them for **structure**, not visu
 | Number | #NN (Latest) |
 | Repo | org/repo |
 | Tags | Tag1, Tag2, Tag3 |
-| Theme | e.g. "dark terminal green" |
+| Page concept | One sentence — the bespoke design idea |
