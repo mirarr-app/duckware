@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Face Looker Showcase — DuckWare</title>
+  <meta name="description" content="Generate an AI gaze grid from a single portrait, then drop in a React hook that swaps frames so the face follows the cursor — portfolio headers, avatars, and interactive UI in one pipeline.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --studio: #141210;
+      --studio-mid: #1f1b18;
+      --panel: #2a2420;
+      --ink: #f7f1ea;
+      --mute: #b0a59a;
+      --dim: #7a6f66;
+      --iris: #4ecdc4;
+      --iris-deep: #2a9d94;
+      --warm: #e8b88a;
+      --line: rgba(247, 241, 234, 0.1);
+      --display: "Syne", system-ui, sans-serif;
+      --body: "Figtree", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--body);
+      background: var(--studio);
+      color: var(--ink);
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* —— Stage hero —— */
+    .stage {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      isolation: isolate;
+    }
+
+    .stage-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .stage-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      display: block;
+      filter: saturate(0.92) contrast(1.05);
+    }
+
+    .stage-veil {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(20,18,16,0.55) 0%, rgba(20,18,16,0.25) 35%, rgba(20,18,16,0.75) 72%, rgba(20,18,16,0.96) 100%),
+        radial-gradient(ellipse 70% 55% at 70% 40%, rgba(78,205,196,0.12), transparent 60%);
+      pointer-events: none;
+    }
+
+    .stage-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(247,241,234,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(247,241,234,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 60% 50% at 50% 45%, black, transparent);
+      opacity: 0.5;
+      animation: gridPulse 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 0.55; }
+    }
+
+    .stage-top {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.85rem;
+      color: var(--mute);
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--ink);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .back:hover { color: var(--iris); }
+
+    .meta {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      color: var(--mute);
+    }
+
+    .stage-body {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem 1.5rem 3.5rem;
+      max-width: 720px;
+    }
+
+    .brand {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(3.2rem, 12vw, 6.5rem);
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 40px rgba(0,0,0,0.45);
+      animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .brand span {
+      color: var(--iris);
+    }
+
+    .lede {
+      font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+      color: rgba(247, 241, 234, 0.88);
+      max-width: 34ch;
+      margin-bottom: 1.75rem;
+      font-weight: 500;
+      animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+    }
+
+    .ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.75rem 1.2rem;
+      font-family: var(--body);
+      font-size: 0.92rem;
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: transform 0.2s, background 0.2s, border-color 0.2s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--iris);
+      color: #0d1a18;
+    }
+    .btn-primary:hover { background: #6fd9d1; }
+
+    .btn-ghost {
+      background: rgba(20, 18, 16, 0.45);
+      border-color: var(--line);
+      color: var(--ink);
+      backdrop-filter: blur(8px);
+    }
+    .btn-ghost:hover { border-color: var(--iris); color: var(--iris); }
+
+    /* Gaze HUD — floats on hero */
+    .gaze-hud {
+      position: absolute;
+      z-index: 3;
+      top: 5.5rem;
+      right: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--iris);
+      background: rgba(20, 18, 16, 0.65);
+      border: 1px solid rgba(78, 205, 196, 0.35);
+      padding: 0.65rem 0.85rem;
+      border-radius: 4px;
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+      animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+    }
+
+    .gaze-hud .label {
+      color: var(--dim);
+      margin-bottom: 0.25rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.62rem;
+    }
+
+    .crosshair {
+      position: fixed;
+      width: 28px;
+      height: 28px;
+      margin: -14px 0 0 -14px;
+      border: 1px solid rgba(78, 205, 196, 0.55);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0;
+      transition: opacity 0.2s;
+      mix-blend-mode: screen;
+    }
+    .crosshair::before,
+    .crosshair::after {
+      content: "";
+      position: absolute;
+      background: rgba(78, 205, 196, 0.7);
+    }
+    .crosshair::before {
+      left: 50%; top: 4px; bottom: 4px; width: 1px; margin-left: -0.5px;
+    }
+    .crosshair::after {
+      top: 50%; left: 4px; right: 4px; height: 1px; margin-top: -0.5px;
+    }
+    .crosshair.visible { opacity: 1; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* —— Content —— */
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem 5rem;
+    }
+
+    section {
+      padding-top: 4.5rem;
+    }
+
+    .section-kicker {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--iris);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: clamp(1.75rem, 4vw, 2.4rem);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.85rem;
+    }
+
+    .section-copy {
+      color: var(--mute);
+      font-size: 1.05rem;
+      max-width: 52ch;
+      margin-bottom: 2rem;
+    }
+
+    /* Pipeline — not cards: continuous track */
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .pipe-step {
+      display: grid;
+      grid-template-columns: 4.5rem 1fr;
+      gap: 1.25rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--line);
+      align-items: start;
+    }
+
+    .pipe-num {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: 2rem;
+      color: var(--iris);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .pipe-step h3 {
+      font-family: var(--display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .pipe-step p {
+      color: var(--mute);
+      font-size: 0.98rem;
+      max-width: 48ch;
+    }
+
+    /* Strengths — editorial columns, no card chrome */
+    .strengths {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      margin-top: 0.5rem;
+    }
+
+    @media (min-width: 720px) {
+      .strengths {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+    }
+
+    .strength h3 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      padding-top: 0.75rem;
+      border-top: 2px solid var(--iris);
+    }
+
+    .strength p {
+      color: var(--mute);
+      font-size: 0.95rem;
+    }
+
+    /* Code stage */
+    .code-stage {
+      background: var(--studio-mid);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .code-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--dim);
+      background: rgba(0,0,0,0.25);
+    }
+
+    .code-stage pre {
+      padding: 1.25rem 1.15rem;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: #d8cfc4;
+    }
+
+    .code-stage .kw { color: var(--iris); }
+    .code-stage .str { color: var(--warm); }
+    .code-stage .cm { color: var(--dim); }
+
+    /* Atlas strip */
+    .atlas {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 3px;
+      margin-top: 1.5rem;
+      max-width: 420px;
+    }
+
+    .atlas span {
+      aspect-ratio: 1;
+      background: var(--panel);
+      border-radius: 2px;
+      opacity: 0.35;
+      animation: cellGlow 3.2s ease-in-out infinite;
+    }
+
+    .atlas span:nth-child(odd) { animation-delay: 0.15s; }
+    .atlas span:nth-child(3n) { animation-delay: 0.4s; background: rgba(78, 205, 196, 0.25); }
+    .atlas span:nth-child(5n) { animation-delay: 0.7s; }
+    .atlas span:nth-child(61) {
+      background: var(--iris);
+      opacity: 1;
+      box-shadow: 0 0 12px rgba(78, 205, 196, 0.45);
+    }
+
+    @keyframes cellGlow {
+      0%, 100% { opacity: 0.25; }
+      50% { opacity: 0.55; }
+    }
+
+    .atlas-caption {
+      margin-top: 0.75rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--dim);
+    }
+
+    /* Footer */
+    .foot {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 2rem;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--dim);
+      font-size: 0.85rem;
+    }
+
+    .foot-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+
+    .foot-links a {
+      color: var(--mute);
+      transition: color 0.2s;
+    }
+    .foot-links a:hover { color: var(--iris); }
+
+    @media (max-width: 640px) {
+      .gaze-hud { top: auto; bottom: 11rem; right: 1rem; left: auto; }
+      .stage-body { padding-bottom: 2.5rem; }
+      .crosshair { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="crosshair" id="crosshair" aria-hidden="true"></div>
+
+  <header class="stage">
+    <div class="stage-media" aria-hidden="true">
+      <img
+        src="https://github.com/kylan02/face_looker/raw/main/demo.gif"
+        alt=""
+        width="960"
+        height="540"
+      >
+      <div class="stage-veil"></div>
+      <div class="stage-grid"></div>
+    </div>
+
+    <div class="stage-top">
+      <a class="back" href="./">← All showcases</a>
+      <span class="meta">kylan02/face_looker · Showcase #26</span>
+    </div>
+
+    <div class="gaze-hud" id="gazeHud" aria-hidden="true">
+      <div class="label">Gaze sample</div>
+      <div>px <span id="hudX">0</span> · py <span id="hudY">0</span></div>
+    </div>
+
+    <div class="stage-body">
+      <h1 class="brand">Face <span>Looker</span></h1>
+      <p class="lede">One portrait becomes a gaze atlas — then a React face that locks onto the cursor.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="https://github.com/kylan02/face_looker" target="_blank" rel="noopener">View source</a>
+        <a class="btn btn-ghost" href="https://replicate.com/kylan02/face-looker" target="_blank" rel="noopener">Run on Replicate</a>
+        <a class="btn btn-ghost" href="https://kylanoconnor.com/" target="_blank" rel="noopener">Live demo</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <p class="section-kicker">What it is</p>
+      <h2 class="section-title">A two-act pipeline for eyes that track</h2>
+      <p class="section-copy">
+        Face Looker turns a centered 512×512 portrait into a dense grid of gaze directions via Replicate’s expression tools, then ships a React hook that picks the right frame from pointer position. The result feels like live eye contact — without a webcam, WebGL shader, or 3D head model.
+      </p>
+
+      <div class="pipeline">
+        <div class="pipe-step">
+          <div class="pipe-num">01</div>
+          <div>
+            <h3>Generate the atlas</h3>
+            <p>Upload once to the dedicated Replicate model — or drive <code style="font-family:var(--mono);font-size:0.85em;color:var(--iris)">main.py</code> with step/min/max for denser grids. Default is an 11×11 set (121 frames); tighten the step for smoother arcs.</p>
+          </div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-num">02</div>
+          <div>
+            <h3>Ship the frames</h3>
+            <p>You get numbered WebPs, a sprite sheet, a CSV index, and even a vanilla HTML/JS zip from the hosted model. Drop the faces into <code style="font-family:var(--mono);font-size:0.85em;color:var(--iris)">public/</code> and you’re halfway to interactive.</p>
+          </div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-num">03</div>
+          <div>
+            <h3>Wire the hook</h3>
+            <p><code style="font-family:var(--mono);font-size:0.85em;color:var(--iris)">useGazeTracking</code> maps container-relative pointer (and touch) into the nearest grid cell, swapping images at interactive rates. Match P_MIN / P_MAX / STEP to whatever you generated.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="atlas" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <p class="atlas-caption">Metaphor: 11×11 gaze cells · active sample at center</p>
+    </section>
+
+    <section>
+      <p class="section-kicker">Why it lands</p>
+      <h2 class="section-title">Strengths worth stealing</h2>
+      <div class="strengths">
+        <article class="strength">
+          <h3>One-click atlas</h3>
+          <p>The Replicate face-looker model collapses GPU wrangling into upload → zip. Sprite sheet, frames, and starter HTML arrive together — ideal when you want the effect before you want the pipeline.</p>
+        </article>
+        <article class="strength">
+          <h3>Hook, not a black box</h3>
+          <p>Beyond the FaceTracker component, <code style="font-family:var(--mono);font-size:0.85em;color:var(--iris)">useGazeTracking</code> exposes the mapping so you can mask circles, stack multiple faces, or drive custom layouts without forking the math.</p>
+        </article>
+        <article class="strength">
+          <h3>Touch is first-class</h3>
+          <p>Finger motion drives the same grid on mobile. Portfolio headers and avatar widgets keep their “watching you” trick past the mouse — rare for effects that start as desktop demos.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <p class="section-kicker">In the wild</p>
+      <h2 class="section-title">Drop-in React surface</h2>
+      <p class="section-copy">
+        Copy faces into public, drop the hook and component into src, and you’ve got a header that looks back. Density is a dial: larger step values mean fewer images and cheaper generation; smaller steps buy smoother saccades.
+      </p>
+      <div class="code-stage">
+        <div class="code-bar">
+          <span>FaceTracker.jsx</span>
+          <span>react · gaze grid</span>
+        </div>
+        <pre><code><span class="cm">// Pointer → nearest gaze_px{X}_py{Y}_256.webp</span>
+<span class="kw">import</span> FaceTracker <span class="kw">from</span> <span class="str">'./components/FaceTracker'</span>;
+
+<span class="kw">export default function</span> Header() {
+  <span class="kw">return</span> (
+    &lt;div style={{ width: <span class="str">300</span>, height: <span class="str">300</span> }}&gt;
+      &lt;FaceTracker basePath=<span class="str">"/faces/"</span> /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>MIT · DuckWare Showcase #26</span>
+      <div class="foot-links">
+        <a href="https://github.com/kylan02/face_looker" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://replicate.com/kylan02/face-looker" target="_blank" rel="noopener">Replicate</a>
+        <a href="https://kylanoconnor.com/" target="_blank" rel="noopener">Demo</a>
+        <a href="./">Catalog</a>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var cross = document.getElementById('crosshair');
+      var hudX = document.getElementById('hudX');
+      var hudY = document.getElementById('hudY');
+      var P_MIN = -15, P_MAX = 15, STEP = 3;
+
+      function snap(v) {
+        var c = Math.max(P_MIN, Math.min(P_MAX, v));
+        return Math.round(c / STEP) * STEP;
+      }
+
+      function onMove(e) {
+        var x = e.clientX, y = e.clientY;
+        cross.style.left = x + 'px';
+        cross.style.top = y + 'px';
+        cross.classList.add('visible');
+
+        var nx = (x / window.innerWidth) * 2 - 1;
+        var ny = (y / window.innerHeight) * 2 - 1;
+        hudX.textContent = snap(nx * P_MAX);
+        hudY.textContent = snap(ny * P_MAX);
+      }
+
+      function onLeave() {
+        cross.classList.remove('visible');
+      }
+
+      window.addEventListener('pointermove', onMove, { passive: true });
+      window.addEventListener('pointerleave', onLeave);
+    })();
+  </script>
+</body>
+</html>
