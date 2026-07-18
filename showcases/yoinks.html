@@ -4,269 +4,541 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>yoinks Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of yoinks, the terminal video downloader with an Ink UI, yt-dlp under the hood, and no shady ad-laden web converters.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="Download video from YouTube, X, Instagram, TikTok, and 1,800+ sites through a full-screen Ink terminal UI. Paste a URL, pick a resolution or audio-only MP3, and save — no popups, no fake buttons, no shady redirects.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter, Instrument Serif, and JetBrains Mono -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    .showcase-theme--yoinks {
-      --showcase-accent: #a3e635;
-      --showcase-accent-soft: rgba(163, 230, 53, 0.12);
-      --showcase-hero-bg: linear-gradient(165deg, #1f2328 0%, #18181b 55%, #0f0f12 100%);
-      --showcase-card-bg: rgba(255, 255, 255, 0.03);
-      --showcase-border: rgba(163, 230, 53, 0.18);
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #18181b;
+      --surface: #27272a;
+      --surface-raised: #3f3f46;
+      --ink: #fafafa;
+      --muted: #a1a1aa;
+      --dim: #71717a;
+      --pixel: #1f2328;
+      --accent: #e4e4e7;
+      --success: #86efac;
+      --border: rgba(255, 255, 255, 0.08);
+      --glow: rgba(250, 250, 250, 0.04);
+      --radius: 6px;
+      --mono: "IBM Plex Mono", ui-monospace, "Cascadia Code", monospace;
     }
-    .showcase-theme--yoinks .hero-band {
-      background: var(--showcase-hero-bg);
-      position: relative;
-      overflow: hidden;
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
-    .showcase-theme--yoinks .hero-band::before {
+
+    body::before {
       content: "";
-      position: absolute;
+      position: fixed;
       inset: 0;
-      background-image:
-        linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
-        linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.02) 75%),
-        linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.02) 75%);
-      background-size: 20px 20px;
-      background-position: 0 0, 0 10px, 10px -10px, -10px 0;
       pointer-events: none;
-      opacity: 0.5;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent);
     }
-    .showcase-theme--yoinks .hero-band .container {
+
+    a { color: inherit; text-decoration: none; }
+
+    .shell {
       position: relative;
       z-index: 1;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 1.25rem 1.25rem 4rem;
     }
-    .showcase-theme--yoinks .hero-band h1 {
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      letter-spacing: -0.02em;
+
+    /* Terminal chrome */
+    .window {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #0c0c0e;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.5),
+        0 24px 80px rgba(0,0,0,0.55);
     }
-    .showcase-theme--yoinks .hero-band .text-display-serif {
-      color: #d4d4d8;
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(180deg, #2a2a2e, #1e1e22);
+      border-bottom: 1px solid var(--border);
     }
-    .showcase-theme--yoinks .showcase-meta {
-      color: #a1a1aa !important;
+
+    .dots { display: flex; gap: 0.45rem; }
+    .dots span {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
     }
-    .showcase-theme--yoinks .btn-primary {
-      background-color: var(--showcase-accent);
-      color: #18181b;
-      border-color: var(--showcase-accent);
+    .dots .red { background: #ff5f57; }
+    .dots .yellow { background: #febc2e; }
+    .dots .green { background: #28c840; }
+
+    .titlebar-label {
+      flex: 1;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--dim);
+      letter-spacing: 0.04em;
     }
-    .showcase-theme--yoinks .btn-primary:hover {
-      background-color: #bef264;
-      border-color: #bef264;
+
+    .titlebar-meta {
+      font-size: 0.68rem;
+      color: var(--dim);
+      white-space: nowrap;
     }
-    .showcase-theme--yoinks .card-content {
-      background: var(--showcase-card-bg);
-      border-color: var(--showcase-border);
+
+    .viewport { padding: 2rem 1.75rem 2.5rem; }
+
+    /* Top nav */
+    .topline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.78rem;
+      color: var(--muted);
     }
-    .showcase-theme--yoinks .card-mockup {
-      border-color: rgba(255, 255, 255, 0.08);
-      background: #0f0f12;
+
+    .topline a {
+      color: var(--accent);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s;
     }
-    .showcase-theme--yoinks .mockup-body .token-success {
-      color: var(--showcase-accent);
+    .topline a:hover { border-color: var(--accent); }
+
+    .topline .sep { color: var(--dim); margin: 0 0.5rem; }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 2.5rem;
+      align-items: center;
+      margin-bottom: 3.5rem;
     }
-    .showcase-theme--yoinks .text-body-sm-strong {
-      color: var(--showcase-accent);
+
+    .hero-copy { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .logo-wrap {
+      width: fit-content;
+      padding: 0.85rem 1rem;
+      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .logo-wrap img { display: block; width: 168px; height: auto; }
+
+    .eyebrow {
+      font-size: 0.72rem;
+      color: var(--dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    .hero-tagline {
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      color: var(--muted);
+      max-width: 34ch;
+    }
+
+    .hero-tagline strong { color: var(--ink); font-weight: 500; }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.65rem 1.1rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+    .btn-primary:hover { background: #e4e4e7; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+    }
+    .btn-ghost:hover {
+      color: var(--ink);
+      border-color: var(--surface-raised);
+      background: var(--glow);
+    }
+
+    .hero-shot {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #000;
+    }
+    .hero-shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Prompt block */
+    .prompt {
+      margin-top: 1.5rem;
+      padding: 1rem 1.1rem;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.78rem;
+      color: var(--muted);
+      overflow-x: auto;
+    }
+    .prompt .cmd { color: var(--ink); }
+    .prompt .out { color: var(--success); margin-top: 0.35rem; display: block; }
+    .prompt .cursor {
+      display: inline-block;
+      width: 0.55em;
+      height: 1em;
+      background: var(--ink);
+      vertical-align: text-bottom;
+      margin-left: 2px;
+      animation: blink 1.1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Sections */
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .prose {
+      margin-bottom: 3.5rem;
+      max-width: 68ch;
+    }
+    .prose p {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .prose p:last-child { margin-bottom: 0; }
+    .prose strong { color: var(--ink); font-weight: 500; }
+    .prose code {
+      font-size: 0.84em;
+      padding: 0.1em 0.35em;
+      background: rgba(255,255,255,0.06);
+      border-radius: 3px;
+      color: var(--accent);
+    }
+
+    /* Screenshot pair */
+    .shot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .shot-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #000;
+    }
+    .shot-card .shot-cap {
+      padding: 0.55rem 0.85rem;
+      font-size: 0.68rem;
+      color: var(--dim);
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--border);
+    }
+    .shot-card img { display: block; width: 100%; height: auto; }
+
+    /* Feature bento */
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .bento-card {
+      padding: 1.25rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .bento-card:hover {
+      border-color: rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .bento-card .num {
+      font-size: 0.68rem;
+      color: var(--dim);
+      margin-bottom: 0.65rem;
+    }
+
+    .bento-card h3 {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 0.55rem;
+      color: var(--ink);
+    }
+
+    .bento-card p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .bento-card code {
+      font-size: 0.9em;
+      color: var(--accent);
+    }
+
+    /* Install panel */
+    .install-panel {
+      margin-bottom: 3rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .install-panel .install-head {
+      padding: 0.7rem 1rem;
+      font-size: 0.72rem;
+      color: var(--dim);
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--border);
+    }
+    .install-panel pre {
+      padding: 1.25rem 1.1rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.9;
+      overflow-x: auto;
+      color: var(--muted);
+    }
+    .install-panel .line-cmd { color: var(--ink); }
+    .install-panel .line-hint { color: var(--dim); }
+    .install-panel .line-ok { color: var(--success); }
+
+    /* Footer */
+    .page-foot {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--dim);
+    }
+
+    .page-foot a {
+      color: var(--muted);
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .page-foot a:hover {
+      color: var(--ink);
+      border-color: var(--dim);
+    }
+
+    .kbd {
+      display: inline-block;
+      padding: 0.1em 0.4em;
+      font-size: 0.85em;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--accent);
+    }
+
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-shot { order: -1; }
+      .bento { grid-template-columns: 1fr; }
+      .shot-grid { grid-template-columns: 1fr; }
+      .viewport { padding: 1.5rem 1.1rem 2rem; }
+      .titlebar-meta { display: none; }
     }
   </style>
 </head>
-<body class="showcase-theme showcase-theme--yoinks">
-
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
-      </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
-      <div style="flex-grow: 1;">
-        <div class="showcase-meta text-code" style="margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-          <span>pablostanley/yoinks</span>
-          <span>•</span>
-          <span>July 18, 2026</span>
-          <span>•</span>
-          <span style="color: var(--color-body-strong);">Showcase #25</span>
+<body>
+  <div class="shell">
+    <div class="window">
+      <div class="titlebar">
+        <div class="dots" aria-hidden="true">
+          <span class="red"></span>
+          <span class="yellow"></span>
+          <span class="green"></span>
         </div>
-        
-        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-          yoinks
-        </h1>
-        
-        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); font-size: 38px; line-height: 44px;">
-          Paste a link, pick a format, and archive video from 1,800+ sites — no popups, no fake download buttons.
-        </p>
-
-        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-          <a href="https://github.com/pablostanley/yoinks" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-          <a href="https://www.npmjs.com/package/yoinks" class="btn-secondary-ghost" target="_blank" rel="noopener">Install via npm</a>
-        </div>
+        <div class="titlebar-label">yoinks — ~/showcase</div>
+        <div class="titlebar-meta">Showcase #25</div>
       </div>
 
-      <div class="card-mockup" style="width: 120px; height: 60px; display: flex; align-items: center; justify-content: center; padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.4); flex-shrink: 0; border-radius: var(--radius-md); background: #ffffff;">
-        <img src="https://github.com/pablostanley/yoinks/raw/main/assets/logo-light.svg" alt="yoinks logo" style="width: 100%; height: auto; display: block;">
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- UI Screenshots -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Terminal UI</h3>
-        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">home.png</div>
-            </div>
-            <img src="https://github.com/pablostanley/yoinks/raw/main/assets/home.png" alt="yoinks home screen with URL input and yoink button" style="width: 100%; height: auto; display: block;">
+      <div class="viewport">
+        <nav class="topline" aria-label="Page navigation">
+          <div>
+            <a href="./">← all showcases</a>
+            <span class="sep">/</span>
+            <span>pablostanley/yoinks</span>
+            <span class="sep">·</span>
+            <span>Jul 18, 2026</span>
           </div>
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">download-options.png</div>
-            </div>
-            <img src="https://github.com/pablostanley/yoinks/raw/main/assets/download-options.png" alt="yoinks format picker showing resolutions and audio-only mp3 option" style="width: 100%; height: auto; display: block;">
+          <div>
+            <a href="https://github.com/pablostanley/yoinks" target="_blank" rel="noopener">source</a>
+            <span class="sep">·</span>
+            <a href="https://www.npmjs.com/package/yoinks" target="_blank" rel="noopener">npm</a>
           </div>
-        </div>
-      </section>
+        </nav>
 
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is yoinks?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Most web-based video downloaders are a minefield of deceptive buttons, redirect chains, and ad overlays. Power users reach for <code>yt-dlp</code> directly, but memorizing format codes and merge flags is not everyone's idea of a good time.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>yoinks</strong> wraps the extraction engine in a full-screen Ink terminal UI: paste a URL from YouTube, X, Instagram, TikTok, or any of 1,800+ supported hosts, browse available resolutions with estimated file sizes, and save to <code>~/Downloads</code>. The experience is interactive when you want it and scriptable flags are on the roadmap — but the core promise is honest downloads without the sketchy web middleman.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Self-Provisioning Download Stack</span>
-              <p class="text-body-sm">
-                On first launch, yoinks fetches a standalone <code>yt-dlp</code> binary into <code>~/.yoinks/bin</code> — no Python install required. If a system copy already exists, it defers to that. For stream merging and MP3 extraction, it prefers <code>ffmpeg</code> on your PATH and falls back to the bundled <code>ffmpeg-static</code> package. The tool arrives ready to run with a single <code>npm install -g</code> or <code>npx</code> invocation.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Full-Screen Ink UI with Dual Input</span>
-              <p class="text-body-sm">
-                Built on React-for-the-terminal via Ink, yoinks takes over the viewport, centers its panels, and restores scrollback on exit. Navigate formats with arrow keys, vim bindings, number shortcuts, or mouse clicks on the yoink button, format list, and footer controls. The <code>auto</code> theme inherits your terminal's native colors; <code>^t</code> cycles through light and dark palettes for the session.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Informed Format Selection</span>
-              <p class="text-body-sm">
-                Before committing bandwidth, the format picker surfaces resolution labels, codecs, and approximate file sizes side by side — including an audio-only MP3 path. High-resolution streams that require separate video and audio tracks are merged automatically via ffmpeg, so you pick once and yoinks handles the post-processing pipeline.
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Getting Started</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Requires Node 18+. Install globally or try instantly without a permanent install:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">terminal</div>
+        <header class="hero">
+          <div class="hero-copy">
+            <div class="logo-wrap">
+              <img src="https://github.com/pablostanley/yoinks/raw/main/assets/logo-light.svg" alt="yoinks logo">
             </div>
-            <div class="mockup-body">
-              <span class="token-cmd">npm install -g yoinks</span><br>
-              <span class="token-comment"># or: npx yoinks</span><br><br>
-              <span class="token-cmd">yoinks https://youtu.be/dQw4w9WgXcQ</span><br>
-              <span class="token-success">~/Downloads/Rick Astley - Never Gonna Give You Up.mp4</span>
+            <p class="eyebrow">Terminal video archiver</p>
+            <h1>paste. yoink. done.</h1>
+            <p class="hero-tagline">
+              A full-screen <strong>Ink</strong> UI around <strong>yt-dlp</strong> — grab video from 1,800+ hosts without fake download buttons, ad traps, or browser tab roulette.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="https://www.npmjs.com/package/yoinks" target="_blank" rel="noopener">npm install -g yoinks</a>
+              <a class="btn btn-ghost" href="https://github.com/pablostanley/yoinks" target="_blank" rel="noopener">View on GitHub →</a>
+            </div>
+            <div class="prompt" aria-label="Example session">
+              <span class="cmd">$ yoinks https://youtu.be/dQw4w9WgXcQ</span>
+              <span class="out">→ format picker · 1080p · 720p · audio mp3</span>
+              <span class="cmd" style="margin-top:0.5rem;display:block;">$ <span class="cursor" aria-hidden="true"></span></span>
             </div>
           </div>
-        </div>
-      </section>
+          <figure class="hero-shot">
+            <img src="https://github.com/pablostanley/yoinks/raw/main/assets/home.png" alt="yoinks home screen — paste a link and hit yoink">
+          </figure>
+        </header>
 
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
+        <section aria-labelledby="about-label">
+          <h2 class="section-label" id="about-label">// about</h2>
+          <div class="prose">
+            <p>
+              Web downloaders trade convenience for trust — every page is a maze of deceptive buttons and redirect chains. Running <code>yt-dlp</code> raw works, but format strings and merge flags are a chore when you just want one clean file.
+            </p>
+            <p>
+              <strong>yoinks</strong> occupies the middle ground: paste a URL from YouTube, X, Instagram, Threads, or TikTok, browse resolutions with estimated sizes, pick audio-only MP3 if you want, and land the file in <code>~/Downloads</code>. It takes over the terminal viewport, centers the UI, and hands your scrollback back when you quit.
+            </p>
+          </div>
+        </section>
 
+        <section aria-labelledby="ui-label">
+          <h2 class="section-label" id="ui-label">// interface</h2>
+          <div class="shot-grid">
+            <figure class="shot-card">
+              <div class="shot-cap">home — url input</div>
+              <img src="https://github.com/pablostanley/yoinks/raw/main/assets/home.png" alt="yoinks URL entry screen">
+            </figure>
+            <figure class="shot-card">
+              <div class="shot-cap">picker — formats + sizes</div>
+              <img src="https://github.com/pablostanley/yoinks/raw/main/assets/download-options.png" alt="yoinks format picker with resolution and file size estimates">
+            </figure>
+          </div>
+        </section>
+
+        <section aria-labelledby="why-label">
+          <h2 class="section-label" id="why-label">// why it stands out</h2>
+          <div class="bento">
+            <article class="bento-card">
+              <div class="num">01</div>
+              <h3>Arrives with its own engine</h3>
+              <p>First run pulls a standalone <code>yt-dlp</code> binary into <code>~/.yoinks/bin</code> — no Python layer. Existing installs are reused. <code>ffmpeg</code> on PATH handles merges; <code>ffmpeg-static</code> covers the fallback.</p>
+            </article>
+            <article class="bento-card">
+              <div class="num">02</div>
+              <h3>Terminal-native interaction</h3>
+              <p>Arrow keys, <span class="kbd">j</span>/<span class="kbd">k</span>, number shortcuts, or mouse clicks on the yoink button and format list. <span class="kbd">^t</span> cycles <code>auto</code>, <code>light</code>, and <code>dark</code> themes that inherit your shell colors by default.</p>
+            </article>
+            <article class="bento-card">
+              <div class="num">03</div>
+              <h3>Choose before you download</h3>
+              <p>The format picker shows codecs, resolution labels, and approximate file weights side by side — including MP3 extraction. Split high-res streams merge through ffmpeg automatically after you pick once.</p>
+            </article>
+          </div>
+        </section>
+
+        <section aria-labelledby="install-label">
+          <h2 class="section-label" id="install-label">// install</h2>
+          <div class="install-panel">
+            <div class="install-head">bash · Node 18+</div>
+            <pre><span class="line-cmd">npm install -g yoinks</span>
+<span class="line-hint"># or try without installing:</span>
+<span class="line-cmd">npx yoinks</span>
+
+<span class="line-hint"># paste a url or launch bare for a prompt:</span>
+<span class="line-cmd">yoinks https://youtu.be/dQw4w9WgXcQ</span>
+<span class="line-cmd">yoinks --theme light</span>
+<span class="line-ok">~/Downloads/Rick Astley - Never Gonna Give You Up.mp4</span></pre>
+          </div>
+        </section>
+
+        <footer class="page-foot">
+          <a href="./">← Back to DuckWare catalog</a>
+          <span>Curated showcase · fair use applies</span>
+        </footer>
+      </div>
     </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
-      </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
-
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+  </div>
 </body>
 </html>
