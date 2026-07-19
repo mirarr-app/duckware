@@ -23,8 +23,23 @@
   <nav class="nav-bar" id="navbar">
     <div class="nav-container">
       <a href="#" class="nav-logo" id="nav-logo">
-        <img src="favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
+        <svg class="nav-logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Headband tails -->
+          <path d="M 30,32 C 20,30 18,38 14,35 C 18,40 25,38 31,35 Z" fill="var(--color-headband-red)" />
+          <path d="M 29,34 C 18,36 15,44 12,42 C 16,46 24,43 30,37 Z" fill="var(--color-headband-red)" />
+          <!-- Duck Body & Head -->
+          <path d="M 25,65 C 25,50 45,48 55,48 C 70,48 85,55 85,68 C 85,80 70,82 50,82 C 30,82 25,75 25,65 Z" fill="var(--color-duck-yellow)" />
+          <path d="M 35,66 C 40,58 55,58 60,66 C 60,72 50,75 35,66 Z" fill="#FFA000" opacity="0.4" />
+          <path d="M 35,50 C 35,32 50,22 62,32 C 68,37 68,48 60,52 C 55,55 45,55 35,50 Z" fill="var(--color-duck-yellow)" />
+          <!-- Orange Beak -->
+          <path d="M 62,34 C 70,33 78,36 78,41 C 78,46 70,48 62,45 Z" fill="#FF5722" />
+          <!-- Red Headband (Wrap around head) -->
+          <path d="M 39,29 C 45,26 53,26 59,29 L 57,34 C 52,31 45,31 40,34 Z" fill="var(--color-headband-red)" />
+          <!-- Black Eyepatch -->
+          <path d="M 38,32 L 60,37" stroke="#0a0e14" stroke-width="3" stroke-linecap="round" />
+          <ellipse cx="50" cy="34" rx="7" ry="8" fill="#0a0e14" transform="rotate(-15, 50, 34)" />
+        </svg>
+        <span style="font-weight: 700; letter-spacing: -0.5px;">duck<span class="text-headband">ware</span></span>
       </a>
       
       <div class="nav-links">
@@ -46,16 +61,31 @@
   <!-- Hero Section -->
   <header class="hero-band">
     <div class="container">
-      <div class="hero-content" style="max-width: 720px; margin: 0 auto; text-align: center; align-items: center;">
-        <h1 class="text-display-xl hero-title">
-          Curating the finest software <br><span class="font-serif">on the internet.</span>
-        </h1>
-        <p class="text-body-lg hero-description">
-          We explore, audit, and showcase exceptional developer tools, libraries, and open-source applications. Quietly confident software, built for builders.
-        </p>
-        <div class="hero-cta-group">
-          <a href="showcases/" class="btn-primary">Browse Catalog</a>
-          <a href="#submit" class="btn-secondary-ghost">Submit Yours</a>
+      <div class="hero-layout">
+        <div class="hero-content">
+          <div class="hero-eyepatch-badge" style="align-self: flex-start; margin-bottom: var(--space-sm);">
+            <span class="badge-latest">Captain's Log</span>
+            <span class="text-caption" style="color: var(--color-body-strong);">Duck Approved Curation</span>
+          </div>
+          <h1 class="text-display-xl hero-title">
+            Curating the finest software <br><span class="font-serif text-duck">on the internet.</span>
+          </h1>
+          <p class="text-body-lg hero-description">
+            We explore, audit, and showcase exceptional developer tools, libraries, and open-source applications. Quietly confident software, built for builders.
+          </p>
+          <div class="hero-cta-group">
+            <a href="showcases/" class="btn-primary">Browse Catalog</a>
+            <a href="#submit" class="btn-secondary-ghost">Submit Yours</a>
+          </div>
+        </div>
+        
+        <div class="hero-mockups" style="display: flex; justify-content: center; align-items: center;">
+          <div class="ducky-sketch-card" style="background-color: #f4ebd0; border: 1px solid #d3c4a3; padding: var(--space-md); border-radius: var(--radius-lg); box-shadow: 0 12px 36px rgba(0,0,0,0.6); transform: rotate(1.5deg); max-width: 360px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); transition: transform 0.3s ease;">
+            <img src="pirate_ducky_hero.jpg" alt="Pirate Rubber Ducky Line Art Sketch" style="width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid rgba(92,78,60,0.2); display: block;">
+            <div style="font-family: var(--font-serif); font-style: italic; color: #5c4e3c; font-size: 15px; margin-top: 6px; letter-spacing: -0.2px;">
+              "Duck Approved"
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -87,9 +117,15 @@
   <footer class="footer">
     <div class="container footer-layout">
       <div class="footer-brand">
-        <a href="#" class="footer-logo">duckware</a>
+        <a href="#" class="footer-logo" style="font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: var(--space-xs);">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px; fill: var(--color-duck-yellow);">
+            <path d="M 25,65 C 25,50 45,48 55,48 C 70,48 85,55 85,68 C 85,80 70,82 50,82 C 30,82 25,75 25,65 Z" />
+          </svg>
+          <span>duck<span class="text-headband">ware</span></span>
+        </a>
         <p class="footer-description">
-          A catalog of cool software        </p>
+          A curation engine plundering the internet for clean, local-first developer tools.
+        </p>
       </div>
       
       <div class="footer-column">

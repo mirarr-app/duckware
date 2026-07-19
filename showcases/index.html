@@ -21,8 +21,23 @@
   <nav class="nav-bar" id="navbar">
     <div class="nav-container">
       <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
+        <svg class="nav-logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Headband tails -->
+          <path d="M 30,32 C 20,30 18,38 14,35 Z" fill="var(--color-headband-red)" />
+          <path d="M 29,34 C 18,36 15,44 12,42 Z" fill="var(--color-headband-red)" />
+          <!-- Duck Body & Head -->
+          <path d="M 25,65 C 25,50 45,48 55,48 C 70,48 85,55 85,68 C 85,80 70,82 50,82 C 30,82 25,75 25,65 Z" fill="var(--color-duck-yellow)" />
+          <path d="M 35,66 C 40,58 55,58 60,66 C 60,72 50,75 35,66 Z" fill="#FFA000" opacity="0.4" />
+          <path d="M 35,50 C 35,32 50,22 62,32 C 68,37 68,48 60,52 C 55,55 45,55 35,50 Z" fill="var(--color-duck-yellow)" />
+          <!-- Orange Beak -->
+          <path d="M 62,34 C 70,33 78,36 78,41 C 78,46 70,48 62,45 Z" fill="#FF5722" />
+          <!-- Red Headband (Wrap around head) -->
+          <path d="M 39,29 C 45,26 53,26 59,29 L 57,34 C 52,31 45,31 40,34 Z" fill="var(--color-headband-red)" />
+          <!-- Black Eyepatch -->
+          <path d="M 38,32 L 60,37" stroke="#0a0e14" stroke-width="3" stroke-linecap="round" />
+          <ellipse cx="50" cy="34" rx="7" ry="8" fill="#0a0e14" transform="rotate(-15, 50, 34)" />
+        </svg>
+        <span style="font-weight: 700; letter-spacing: -0.5px;">duck<span class="text-headband">ware</span></span>
       </a>
       
       <div class="nav-links">
@@ -41,19 +56,16 @@
   <!-- Showcase Catalog Band -->
   <main class="content-band" id="showcases" style="padding-top: var(--space-5xl);">
     <div class="container">
-      <div class="section-header" style="margin-bottom: var(--space-4xl);">
+      <div class="section-header" style="margin-bottom: var(--space-3xl);">
         <h1 class="text-display-md" style="font-size: 40px; margin-bottom: var(--space-sm);">Showcases Catalog</h1>
-        <p class="text-body-md" style="margin-top: var(--space-md); color: var(--color-mute);">
-          Hand-picked open source releases and developer utilities, ordered descending from latest release.
-        </p>
       </div>
 
       <!-- Showcases Grid (Ordered Descending) -->
       <div class="grid" style="grid-template-columns: 1fr; gap: var(--space-2xl); max-width: 900px; margin: 0 auto;">
         
         <!-- Showcase Card 29: kage (LATEST on top) -->
-        <a href="kage.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="kage.html" class="card-content showcase-list-card" data-tags="cli,go,offline" >
+          <div class="card-mockup">
             <img src="https://raw.githubusercontent.com/tamnd/kage/main/docs/static/demo.gif" alt="kage cloning and packing a site for offline viewing" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -77,8 +89,8 @@
         </a>
 
         <!-- Showcase Card 28: Topgrade -->
-        <a href="topgrade.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="topgrade.html" class="card-content showcase-list-card" data-tags="cli,rust,system-tools" >
+          <div class="card-mockup">
             <img src="https://github.com/topgrade-rs/topgrade/raw/main/doc/topgrade_demo.gif?raw=true" alt="Topgrade terminal upgrade demo" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -102,8 +114,8 @@
         </a>
 
         <!-- Showcase Card 27: Runtipi -->
-        <a href="runtipi.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="runtipi.html" class="card-content showcase-list-card" data-tags="self-hosted,docker,homeserver" >
+          <div class="card-mockup">
             <img src="https://raw.githubusercontent.com/runtipi/runtipi/develop/screenshots/appstore.png" alt="Runtipi app store dashboard" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -127,8 +139,8 @@
         </a>
 
         <!-- Showcase Card 26: Face Looker -->
-        <a href="face-looker.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="face-looker.html" class="card-content showcase-list-card" data-tags="react,ai-generation,interactive" >
+          <div class="card-mockup">
             <img src="./assets/face-looker-poster.jpg" alt="Face Looker gaze-tracking demo" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -152,8 +164,8 @@
         </a>
 
         <!-- Showcase Card 25: yoinks -->
-        <a href="yoinks.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="yoinks.html" class="card-content showcase-list-card" data-tags="terminal,node.js,yt-dlp" >
+          <div class="card-mockup">
             <img src="https://github.com/pablostanley/yoinks/raw/main/assets/home.png" alt="yoinks terminal video downloader home screen" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -177,8 +189,8 @@
         </a>
 
         <!-- Showcase Card 24: UniClipboard -->
-        <a href="uniclipboard.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="uniclipboard.html" class="card-content showcase-list-card" data-tags="privacy,desktop,tauri" >
+          <div class="card-mockup">
             <img src="https://github.com/UniClipboard/UniClipboard/raw/main/assets/demo.png" alt="UniClipboard cross-device sync preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -202,8 +214,8 @@
         </a>
 
         <!-- Showcase Card 23: Pixel Snapper -->
-        <a href="spritefusion-pixel-snapper.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="spritefusion-pixel-snapper.html" class="card-content showcase-list-card" data-tags="rust,pixel-art,game-dev" >
+          <div class="card-mockup">
             <img src="https://github.com/Hugo-Dz/spritefusion-pixel-snapper/raw/main/static/hero.png" alt="Pixel Snapper grid snapping preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -227,8 +239,8 @@
         </a>
 
         <!-- Showcase Card 22: Idle Fantasy -->
-        <a href="idle-fantasy.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas); padding: var(--space-lg);">
+        <a href="idle-fantasy.html" class="card-content showcase-list-card" data-tags="android,kotlin,gaming" >
+          <div class="card-mockup">
             <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Idle Fantasy home screen preview" style="width: 180px; height: auto; border-radius: var(--radius-md);">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -252,8 +264,8 @@
         </a>
 
         <!-- Showcase Card 21: Mouzi -->
-        <a href="mouzi.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="mouzi.html" class="card-content showcase-list-card" data-tags="desktop,privacy,tauri" >
+          <div class="card-mockup">
             <img src="https://github.com/hsr88/mouzi/raw/main/docs/screenshots/screenshot2.png" alt="Mouzi tray popup preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -277,8 +289,8 @@
         </a>
 
         <!-- Showcase Card 20: Witr -->
-        <a href="witr.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="witr.html" class="card-content showcase-list-card" data-tags="go,devops,terminal" >
+          <div class="card-mockup">
             <div class="mockup-header">
               <div class="mockup-controls">
                 <span class="mockup-dot red"></span>
@@ -315,8 +327,8 @@
         </a>
 
         <!-- Showcase Card 19: Deface -->
-        <a href="deface.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); display: grid; grid-template-columns: 1fr 1fr;">
+        <a href="deface.html" class="card-content showcase-list-card" data-tags="python,privacy,computer-vision" >
+          <div class="card-mockup">
             <img src="https://github.com/ORB-HD/deface/raw/master/examples/city.jpg" alt="Original frame before anonymization" style="width: 100%; height: auto; display: block;">
             <img src="https://github.com/ORB-HD/deface/raw/master/examples/city_anonymized.jpg" alt="Anonymized frame with blurred faces" style="width: 100%; height: auto; display: block;">
           </div>
@@ -341,8 +353,8 @@
         </a>
 
         <!-- Showcase Card 18: Tork -->
-        <a href="tork.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="tork.html" class="card-content showcase-list-card" data-tags="terminal,bittorrent,go" >
+          <div class="card-mockup">
             <img src="https://github.com/melqtx/tork/raw/main/docs/home.png" alt="Tork terminal home screen preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -366,8 +378,8 @@
         </a>
 
         <!-- Showcase Card 17: Ternlight -->
-        <a href="ternlight.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="ternlight.html" class="card-content showcase-list-card" data-tags="webassembly,embeddings,javascript" >
+          <div class="card-mockup">
             <img src="https://github.com/soycaporal/ternlight/raw/main/docs/assets/banner.jpeg" alt="Ternlight project banner preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -391,8 +403,8 @@
         </a>
 
         <!-- Showcase Card 16: QR Code Styling -->
-        <a href="qr-code-styling.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas); padding: var(--space-xl);">
+        <a href="qr-code-styling.html" class="card-content showcase-list-card" data-tags="javascript,qr-codes,web-library" >
+          <div class="card-mockup">
             <img src="https://github.com/kozakdenys/qr-code-styling/raw/master/src/assets/qr_code_example.png" alt="QR Code Styling example preview" style="width: 140px; height: 140px; border-radius: var(--radius-md);">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -416,8 +428,8 @@
         </a>
 
         <!-- Showcase Card 15: Frame -->
-        <a href="frame.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="frame.html" class="card-content showcase-list-card" data-tags="ffmpeg,rust,desktop" >
+          <div class="card-mockup">
             <img src="https://github.com/66HEX/frame/raw/master/preview.png" alt="Frame FFmpeg GUI preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -441,8 +453,8 @@
         </a>
 
         <!-- Showcase Card 14: rtk -->
-        <a href="rtk.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="rtk.html" class="card-content showcase-list-card" data-tags="cli,rust,ai-tools" >
+          <div class="card-mockup">
             <div class="mockup-header">
               <div class="mockup-controls">
                 <span class="mockup-dot red"></span>
@@ -478,8 +490,8 @@
         </a>
 
         <!-- Showcase Card 13: autobrr -->
-        <a href="autobrr.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="autobrr.html" class="card-content showcase-list-card" data-tags="automation,torrents,self-hosted" >
+          <div class="card-mockup">
             <img src="https://github.com/autobrr/autobrr/raw/develop/.github/images/front-dark.png" alt="autobrr dashboard preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -503,8 +515,8 @@
         </a>
 
         <!-- Showcase Card 12: mapcn -->
-        <a href="mapcn.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="mapcn.html" class="card-content showcase-list-card" data-tags="react,maplibre,shadcn/ui" >
+          <div class="card-mockup">
             <img src="https://github.com/AnmolSaini16/mapcn/raw/main/public/banner.png" alt="mapcn map components preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -528,8 +540,8 @@
         </a>
 
         <!-- Showcase Card 11: omaTUNES -->
-        <a href="omatunes.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="omatunes.html" class="card-content showcase-list-card" data-tags="rust,hyprland,music-player" >
+          <div class="card-mockup">
             <img src="https://github.com/Balthazzahr/omatunes/raw/master/assets/Main%20UI.png" alt="omaTUNES player interface preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -553,8 +565,8 @@
         </a>
 
         <!-- Showcase Card 10: gallery-dl -->
-        <a href="gallery-dl.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="gallery-dl.html" class="card-content showcase-list-card" data-tags="cli,python,downloader" >
+          <div class="card-mockup">
             <div class="mockup-header">
               <div class="mockup-controls">
                 <span class="mockup-dot red"></span>
@@ -590,8 +602,8 @@
         </a>
 
         <!-- Showcase Card 9: httpSMS -->
-        <a href="httpsms.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="httpsms.html" class="card-content showcase-list-card" data-tags="sms,http-api,android" >
+          <div class="card-mockup">
             <img src="https://user-images.githubusercontent.com/4196457/194767449-f12d84a0-22f1-4787-afb2-17398fb459f6.png" alt="httpSMS platform preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -615,8 +627,8 @@
         </a>
 
         <!-- Showcase Card 8: Screenshot.rocks -->
-        <a href="screenshot.rocks.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="screenshot.rocks.html" class="card-content showcase-list-card" data-tags="design-tool,mockups,open-source" >
+          <div class="card-mockup">
             <img src="https://github.com/daveearley/screenshot.rocks/raw/master/.github/images/example2.jpeg" alt="Screenshot.rocks browser mockup preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -640,8 +652,8 @@
         </a>
 
         <!-- Showcase Card 7: restic -->
-        <a href="restic.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="restic.html" class="card-content showcase-list-card" data-tags="backup,encryption,cross-platform" >
+          <div class="card-mockup">
             <div class="mockup-header">
               <div class="mockup-controls">
                 <span class="mockup-dot red"></span>
@@ -677,8 +689,8 @@
         </a>
 
         <!-- Showcase Card 6: portless -->
-        <a href="portless.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="portless.html" class="card-content showcase-list-card" data-tags="dev-server,https-proxy,monorepo" >
+          <div class="card-mockup">
             <div class="mockup-header">
               <div class="mockup-controls">
                 <span class="mockup-dot red"></span>
@@ -714,8 +726,8 @@
         </a>
 
         <!-- Showcase Card 5: Podroid -->
-        <a href="podroid.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas); padding: var(--space-xl);">
+        <a href="podroid.html" class="card-content showcase-list-card" data-tags="android,containers,virtualization" >
+          <div class="card-mockup">
             <img src="https://github.com/ExTV/Podroid/raw/main/docs/logo.png" alt="Podroid Logo Preview" style="width: 100px; height: 100px; border-radius: var(--radius-md);">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -739,8 +751,8 @@
         </a>
 
         <!-- Showcase Card 4: Boneyard -->
-        <a href="boneyard.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas); padding: var(--space-xl);">
+        <a href="boneyard.html" class="card-content showcase-list-card" data-tags="loader,headless,automation" >
+          <div class="card-mockup">
             <img src="https://github.com/0xGF/boneyard/raw/main/boneyard-logo.gif" alt="Boneyard Logo Preview" style="width: 100px; height: 100px; border-radius: var(--radius-md);">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -764,8 +776,8 @@
         </a>
 
         <!-- Showcase Card 3: ZenNotes -->
-        <a href="zennotes.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas); padding: var(--space-xl);">
+        <a href="zennotes.html" class="card-content showcase-list-card" data-tags="vim-mode,mcp-server,markdown" >
+          <div class="card-mockup">
             <img src="https://github.com/ZenNotes/zennotes/raw/main/apps/desktop/build/icon.png" alt="ZenNotes Logo Preview" style="width: 100px; height: 100px; border-radius: var(--radius-md);">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -789,8 +801,8 @@
         </a>
 
         <!-- Showcase Card 2: ffmpeg-webCLI -->
-        <a href="ffmpeg-webCLI.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="ffmpeg-webCLI.html" class="card-content showcase-list-card" data-tags="webassembly,offline-first,utility" >
+          <div class="card-mockup">
             <img src="https://github.com/tejaswigowda/ffmpeg-webCLI/raw/main/demos/features.png" alt="ffmpeg-webCLI Dashboard Preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -814,8 +826,8 @@
         </a>
 
         <!-- Showcase Card 1: Mirarr -->
-        <a href="mirarr.html" class="card-content showcase-list-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-          <div class="card-mockup" style="box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline);">
+        <a href="mirarr.html" class="card-content showcase-list-card" data-tags="foss,cross-platform,media" >
+          <div class="card-mockup">
             <img src="mirarr/386850551-e65dd5ca-bd2f-443f-9cd7-d162c9c7245f.png" alt="Mirarr Desktop Preview" style="width: 100%; height: auto; display: block;">
           </div>
           <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -846,9 +858,15 @@
   <footer class="footer">
     <div class="container footer-layout">
       <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
+        <a href="../" class="footer-logo" style="font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: var(--space-xs);">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px; fill: var(--color-duck-yellow);">
+            <path d="M 25,65 C 25,50 45,48 55,48 C 70,48 85,55 85,68 C 85,80 70,82 50,82 C 30,82 25,75 25,65 Z" />
+          </svg>
+          <span>duck<span class="text-headband">ware</span></span>
+        </a>
         <p class="footer-description">
-          A catalog of cool software        </p>
+          A curation engine plundering the internet for clean, local-first developer tools.
+        </p>
       </div>
       
       <div class="footer-column">

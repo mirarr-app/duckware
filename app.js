@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   initNavbarScroll();
   initSmoothScroll();
+  initLogoWobble();
 });
 
 /**
@@ -42,5 +43,29 @@ function initSmoothScroll() {
         });
       }
     });
+  });
+}
+
+
+/**
+ * Fun pirate logo micro-interaction (wobble on click/hover)
+ */
+function initLogoWobble() {
+  const logo = document.getElementById('nav-logo');
+  if (!logo) return;
+
+  logo.addEventListener('click', (e) => {
+    const svg = logo.querySelector('.nav-logo-icon');
+    if (!svg) return;
+
+    svg.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    svg.style.transform = 'scale(1.2) rotate(15deg)';
+    
+    setTimeout(() => {
+      svg.style.transform = 'scale(1.2) rotate(-12deg)';
+      setTimeout(() => {
+        svg.style.transform = 'scale(1) rotate(0deg)';
+      }, 150);
+    }, 150);
   });
 }
