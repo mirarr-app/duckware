@@ -3,241 +3,878 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mirarr Showcase — DuckWare</title>
-  <meta name="description" content="A detailed audit and showcase of Mirarr, the open-source cross-platform movie client.">
+  <title>Mirarr: FOSS Movie Client — DuckWare</title>
+  <meta name="description" content="A clean, native, and platform-agnostic client designed to query and manage media watchlists. Runs natively on Android, iOS, Windows, and Linux with full privacy and zero telemetry tracking.">
   
-  <!-- Preconnect to Google Fonts -->
+  <!-- Preconnect and Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <style>
+    :root {
+      --bg-dark: #06050a;
+      --bg-deep: #0b0914;
+      --primary: #ff2a5f;
+      --primary-rgb: 255, 42, 95;
+      --accent: #00f0ff;
+      --accent-rgb: 0, 240, 255;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-translucent: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(255, 42, 95, 0.25);
+      --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(var(--primary-rgb), 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 75%, rgba(var(--accent-rgb), 0.06) 0%, transparent 40%),
+        linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-deep) 100%);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f1d29;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* Translucent Navbar */
+    .nav-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(6, 5, 10, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-translucent);
+      transition: background 0.3s;
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+    .nav-logo img {
+      border-radius: 4px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-back-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-translucent);
+      transition: var(--transition-smooth);
+    }
+    .nav-back-link:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 160px 24px 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .hero-section {
+        grid-template-columns: 1fr;
+        padding-top: 120px;
+        text-align: center;
+        gap: 32px;
+      }
+    }
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    @media (max-width: 900px) {
+      .hero-content {
+        align-items: center;
+      }
+    }
+    .hero-meta {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-meta span.dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .hero-title {
+      font-size: 54px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 40%, rgba(255, 255, 255, 0.7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    @media (max-width: 600px) {
+      .hero-title {
+        font-size: 40px;
+      }
+    }
+    .hero-subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      font-weight: 300;
+      max-width: 520px;
+      line-height: 1.5;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: var(--transition-smooth);
+      box-shadow: 0 4px 20px rgba(var(--primary-rgb), 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.5);
+      background: #ff4575;
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-translucent);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Mockups & Devices */
+    .hero-mockup-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+    .glow-bg {
+      position: absolute;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle, rgba(var(--primary-rgb), 0.15) 0%, transparent 70%);
+      filter: blur(40px);
+      z-index: -1;
+      animation: pulse-glow 6s infinite ease-in-out;
+    }
+    .device-mockup {
+      background: #18181f;
+      border-radius: 16px;
+      padding: 6px;
+      box-shadow: 0 24px 50px rgba(0,0,0,0.5), 0 0 2px 1px rgba(255,255,255,0.1);
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+      transition: var(--transition-smooth);
+    }
+    .device-mockup:hover {
+      transform: scale(1.02) rotate(1deg);
+    }
+    .device-header {
+      height: 28px;
+      background: #111116;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+    }
+    .device-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .device-dot.red { background: #ff5f56; }
+    .device-dot.yellow { background: #ffbd2e; }
+    .device-dot.green { background: #27c93f; }
+    .device-title {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 0 auto;
+      font-family: monospace;
+    }
+    .device-screen {
+      background: #000;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      overflow: hidden;
+      display: block;
+    }
+    .device-screen img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Mobile Layout Section */
+    .mobile-showcase {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-title-wrapper {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .section-title {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #fff 60%, rgba(255, 255, 255, 0.7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .section-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .phone-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    @media (max-width: 768px) {
+      .phone-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        max-width: 320px;
+      }
+    }
+    .phone-mockup {
+      background: #000;
+      border-radius: 36px;
+      padding: 10px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 3px #18181f;
+      transition: var(--transition-smooth);
+      position: relative;
+    }
+    .phone-mockup::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 18px;
+      background: #000;
+      border-radius: 12px;
+      z-index: 10;
+    }
+    .phone-mockup:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 60px rgba(var(--primary-rgb), 0.15), 0 0 0 3px var(--primary);
+    }
+    .phone-screen {
+      border-radius: 28px;
+      overflow: hidden;
+      display: block;
+      border: 1px solid #111;
+      aspect-ratio: 9 / 19.5;
+    }
+    .phone-screen img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .phone-label {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Bento Grid Section */
+    .bento-section {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .bento-grid-secondary {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 900px) {
+      .bento-grid, .bento-grid-secondary {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+    .bento-card {
+      background: rgba(15, 14, 21, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-translucent);
+      border-radius: 24px;
+      padding: 36px;
+      transition: var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 280px;
+      position: relative;
+      overflow: hidden;
+    }
+    .bento-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-glow);
+      box-shadow: 0 12px 40px rgba(var(--primary-rgb), 0.08);
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(var(--primary-rgb), 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      color: var(--primary);
+    }
+    .bento-card.accent-card .card-icon {
+      background: rgba(var(--accent-rgb), 0.1);
+      color: var(--accent);
+    }
+    .card-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    .card-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* Screen Search Showcase Section */
+    .search-showcase {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .search-showcase-container {
+      background: rgba(15, 14, 21, 0.3);
+      border: 1px solid var(--border-translucent);
+      border-radius: 24px;
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 48px;
+      align-items: center;
+      backdrop-filter: blur(12px);
+    }
+    @media (max-width: 900px) {
+      .search-showcase-container {
+        grid-template-columns: 1fr;
+        padding: 32px 24px;
+        gap: 32px;
+      }
+    }
+    .search-info {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Terminal Widget */
+    .terminal-section {
+      padding: 80px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .terminal-window {
+      background: #08070d;
+      border: 1px solid var(--border-translucent);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+      max-width: 680px;
+      margin: 0 auto;
+      font-family: monospace;
+    }
+    .terminal-header {
+      background: #12101b;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-translucent);
+    }
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .terminal-dot.close { background: #ff5f56; }
+    .terminal-dot.minimize { background: #ffbd2e; }
+    .terminal-dot.maximize { background: #27c93f; }
+    .terminal-tab {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+    .terminal-body {
+      padding: 24px;
+      color: var(--accent);
+      font-size: 14px;
+      line-height: 1.6;
+      position: relative;
+    }
+    .terminal-body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .token-comment {
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .token-prompt {
+      color: var(--primary);
+      user-select: none;
+    }
+    .token-cmd {
+      color: #fff;
+    }
+    .cursor-blink {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: var(--accent);
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border-translucent);
+      padding: 60px 24px;
+      background: #040307;
+      text-align: center;
+      margin-top: 80px;
+    }
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+    }
+    .footer-logo img {
+      border-radius: 4px;
+    }
+    .footer-description {
+      color: var(--text-muted);
+      font-size: 14px;
+      max-width: 320px;
+      margin-top: -8px;
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+    .footer-bottom {
+      margin-top: 24px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.15);
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      border-top: 1px solid rgba(255,255,255,0.03);
+      padding-top: 24px;
+    }
+
+    /* Animations */
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.4; filter: blur(40px); }
+      50% { opacity: 0.7; filter: blur(60px); }
+    }
+    @keyframes blink {
+      from, to { background-color: transparent }
+      50% { background-color: var(--accent); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
   <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
+  <nav class="nav-bar">
     <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
+      <a href="../" class="nav-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 18px; height: 18px;">
         <span>duckware</span>
       </a>
       
       <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
-      </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
+        <a href="./" class="nav-back-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Showcases
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-meta">
         <span>mirarr-app/mirarr</span>
-        <span>•</span>
+        <span class="dot"></span>
         <span>June 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #01</span>
+        <span class="dot"></span>
+        <span style="color: #fff;">Showcase #01</span>
       </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        Mirarr: FOSS Movie App
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Watch movies and Arr — natively across Android, Windows, Linux, and iOS.
+      <h1 class="hero-title">Mirarr: FOSS Movie Client</h1>
+      <p class="hero-subtitle">
+        A completely open-source, private catalog client to search and manage watchlists natively across Android, iOS, Windows, and Linux.
       </p>
-
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://github.com/mirarr-app/mirarr" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-        <a href="https://github.com/mirarr-app/mirarr/releases" class="btn-secondary-ghost" target="_blank" rel="noopener">Downloads</a>
+      <div class="hero-ctas">
+        <a href="https://github.com/mirarr-app/mirarr" class="btn-primary" target="_blank" rel="noopener">
+          View Source
+          <svg style="margin-left: 8px;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+        </a>
+        <a href="https://github.com/mirarr-app/mirarr/releases" class="btn-secondary" target="_blank" rel="noopener">Downloads</a>
       </div>
     </div>
-  </header>
-
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Desktop Screenshots Grid -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Desktop Interface</h3>
-        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls">
-                <span class="mockup-dot red"></span>
-                <span class="mockup-dot yellow"></span>
-                <span class="mockup-dot green"></span>
-              </div>
-              <div class="mockup-title">mirarr-desktop-1.png</div>
-              <div style="width: 36px;"></div>
-            </div>
-            <img src="mirarr/386850551-e65dd5ca-bd2f-443f-9cd7-d162c9c7245f.png" alt="Mirarr Desktop Interface Main" style="width: 100%; height: auto; display: block;">
-          </div>
-
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls">
-                <span class="mockup-dot red"></span>
-                <span class="mockup-dot yellow"></span>
-                <span class="mockup-dot green"></span>
-              </div>
-              <div class="mockup-title">mirarr-desktop-2.png</div>
-              <div style="width: 36px;"></div>
-            </div>
-            <img src="mirarr/386850534-6997a0fa-fa88-4cf7-9096-f87f5ccaffc7.png" alt="Mirarr Desktop Interface Search" style="width: 100%; height: auto; display: block;">
-          </div>
+    <div class="hero-mockup-wrapper">
+      <div class="glow-bg"></div>
+      <div class="device-mockup">
+        <div class="device-header">
+          <div class="device-dot red"></div>
+          <div class="device-dot yellow"></div>
+          <div class="device-dot green"></div>
+          <div class="device-title">mirarr-desktop-main.png</div>
         </div>
-      </section>
-
-      <!-- Mobile Screenshots Grid -->
-      <section style="margin-bottom: var(--space-5xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Mobile Layout</h3>
-        <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: var(--space-lg);">
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">feed.jpg</div>
-            </div>
-            <img src="mirarr/386850596-1e9b5380-581a-470e-a434-a6a62fc2ccbe.jpg" alt="Mirarr Mobile Feed" style="width: 100%; height: auto; display: block;">
-          </div>
-
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">details.jpg</div>
-            </div>
-            <img src="mirarr/386850607-7beb0804-b33f-4976-b95e-771316eedee8.jpg" alt="Mirarr Mobile Details" style="width: 100%; height: auto; display: block;">
-          </div>
-
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">ratings.jpg</div>
-            </div>
-            <img src="mirarr/386850609-fbdfc3f2-8e38-4787-9a47-bc67df8af172.jpg" alt="Mirarr Mobile Ratings" style="width: 100%; height: auto; display: block;">
-          </div>
+        <div class="device-screen">
+          <img src="mirarr/386850551-e65dd5ca-bd2f-443f-9cd7-d162c9c7245f.png" alt="Mirarr Desktop App main screen">
         </div>
-      </section>
-
-      <!-- Audit & Review Details -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Mirarr?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Mirarr is a fully open-source movie and TV show client designed for speed, flexibility, and absolute privacy. Written to run natively across major platforms, it wraps media metadata, ratings, and playback indexes into a unified, responsive interface.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            Unlike standard commercial streaming catalog tools, Mirarr operates with zero tracking or telemetry. It fetches listings directly from community-trusted resources, giving developers and FOSS enthusiasts an clean interface devoid of promotional fluff.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architecture & Key Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Multi-Platform Adaptability</span>
-              <p class="text-body-sm">
-                Built from the ground up to target Android, iOS (for side-loading), Windows, and Linux. The responsive desktop views rearrange cleanly into a thumb-optimized layout on mobile devices.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">TMDB & OMDB Integration</span>
-              <p class="text-body-sm">
-                Connects directly to the TMDB API to manage watchlists, favorites, and ratings. The authentication process is handled locally via secure tokens directly with TMDB, keeping user metadata local and non-custodial.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Custom Styling Cues</span>
-              <p class="text-body-sm">
-                For films and series with distinct cinematic flair, the app supports custom stylistic profiles. The community can suggest or request unique stylesheets directly through the issue tracker to match individual movie aesthetics.
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Installation & Setup</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Mirarr is distributed as raw build archives and compiled binaries on the official release index. Arch Linux users can install directly via the AUR:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">bash</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-comment"># Install via AUR helper</span><br>
-              <span class="token-cmd">yay -S mirarr-bin</span>
-            </div>
-          </div>
-          <p class="text-body-sm" style="color: var(--color-mute);">
-            Note: Linux installations require the <code class="text-code-md" style="background-color: var(--color-canvas-soft); padding: 2px 4px; border-radius: var(--radius-sm);">xdg-user-dirs</code> package to correctly reference local directories. iOS sideloads are distributed as compiled IPA bundles.
-          </p>
-        </div>
-      </section>
-
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
+      </div>
     </div>
-  </main>
+  </section>
+
+  <!-- Mobile Showcase Section -->
+  <section class="mobile-showcase">
+    <div class="section-title-wrapper">
+      <h2 class="section-title">Mobile Experience</h2>
+      <p class="section-subtitle">
+        Optimized interface designed for handheld control, featuring modern touch navigation, quick swipes, and clean layout scaling.
+      </p>
+    </div>
+    <div class="phone-grid">
+      <!-- Card 1 -->
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <img src="mirarr/386850596-1e9b5380-581a-470e-a434-a6a62fc2ccbe.jpg" alt="Mirarr mobile feed interface">
+        </div>
+        <div class="phone-label">Discover Feed</div>
+      </div>
+      <!-- Card 2 -->
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <img src="mirarr/386850607-7beb0804-b33f-4976-b95e-771316eedee8.jpg" alt="Mirarr mobile details interface">
+        </div>
+        <div class="phone-label">Media Details</div>
+      </div>
+      <!-- Card 3 -->
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <img src="mirarr/386850609-fbdfc3f2-8e38-4787-9a47-bc67df8af172.jpg" alt="Mirarr mobile ratings interface">
+        </div>
+        <div class="phone-label">Community Ratings</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bento Features Section -->
+  <section class="bento-section">
+    <div class="section-title-wrapper">
+      <h2 class="section-title">Engine Features</h2>
+      <p class="section-subtitle">
+        What makes Mirarr stand out among other media managers in the open-source community.
+      </p>
+    </div>
+
+    <!-- First Bento Row -->
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+        <div>
+          <h3 class="card-title">Zero Telemetry Privacy</h3>
+          <p class="card-desc">
+            Direct endpoints query TMDB and community indexes locally. Authentication keys and configurations never pass through middleware or tracking hubs, securing user identity.
+          </p>
+        </div>
+      </div>
+      <div class="bento-card accent-card">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </div>
+        <div>
+          <h3 class="card-title">Aggregated Indexers</h3>
+          <p class="card-desc">
+            Bridges media tracking portals into a cohesive client interface, grouping metadata, trailers, and platform-specific download links.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Bento Row -->
+    <div class="bento-grid-secondary">
+      <div class="bento-card accent-card">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+        </div>
+        <div>
+          <h3 class="card-title">Cross-Platform Engine</h3>
+          <p class="card-desc">
+            Compiled from a shared base to offer identical performance and UI layout on Android, Windows, Linux, and sideloaded iOS setups.
+          </p>
+        </div>
+      </div>
+      <div class="bento-card">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+        </div>
+        <div>
+          <h3 class="card-title">Cinematic Customization</h3>
+          <p class="card-desc">
+            The community maintains aesthetic profiles to modify page backgrounds and accent hues. Change themes instantly to align with the visual personality of your favorite movies.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search UI Detail Section -->
+  <section class="search-showcase">
+    <div class="search-showcase-container">
+      <div class="search-info">
+        <h2 class="section-title" style="text-align: left;">Intuitive Discovery</h2>
+        <p class="card-desc" style="font-size: 16px;">
+          The integrated search engine scans global repositories in real-time, mapping exact query results alongside rating tags, release dates, and trailer lookups instantly.
+        </p>
+      </div>
+      <div class="device-mockup" style="max-width: 600px;">
+        <div class="device-header">
+          <div class="device-dot red"></div>
+          <div class="device-dot yellow"></div>
+          <div class="device-dot green"></div>
+          <div class="device-title">mirarr-desktop-search.png</div>
+        </div>
+        <div class="device-screen">
+          <img src="mirarr/386850534-6997a0fa-fa88-4cf7-9096-f87f5ccaffc7.png" alt="Mirarr Desktop search results screen">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Terminal Installation Widget -->
+  <section class="terminal-section">
+    <div class="section-title-wrapper">
+      <h2 class="section-title">Terminal Installation</h2>
+      <p class="section-subtitle">
+        Linux distributions can build natively or pull from community packages.
+      </p>
+    </div>
+    <div class="terminal-window">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <div class="terminal-dot close"></div>
+          <div class="terminal-dot minimize"></div>
+          <div class="terminal-dot maximize"></div>
+        </div>
+        <div class="terminal-tab">bash — install</div>
+        <div style="width: 32px;"></div>
+      </div>
+      <div class="terminal-body">
+        <span class="token-comment"># Install via Arch Linux AUR Helper</span><br>
+        <span class="token-prompt">$</span> <span class="token-cmd">yay -S mirarr-bin</span><br>
+        <span class="token-comment"># Note: Requires xdg-user-dirs package to access folders</span><br>
+        <span class="token-prompt">$</span> <span class="token-cmd">xdg-user-dirs-update</span><span class="cursor-blink"></span>
+      </div>
+    </div>
+  </section>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
-      </div>
+    <div class="footer-container">
+      <a href="../" class="footer-logo">
+        <img src="../favicon.ico" alt="duckware logo" style="width: 20px; height: 20px;">
+        <span>duckware</span>
+      </a>
+      <p class="footer-description">
+        A curated showcase of exceptional developers tools, local utilities, and beautiful software.
+      </p>
       
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
+      <ul class="footer-links">
+        <li><a href="./">Showcases</a></li>
+        <li><a href="../#submit">Submit Software</a></li>
+        <li><a href="https://github.com/mirarr-app/duckware" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="../feed.xml">RSS Feed</a></li>
+        <li><a href="../privacy.html">Privacy Policy</a></li>
+      </ul>
+      
+      <div class="footer-bottom">
+        <span>&copy; 2026 DuckWare Curator. All rights reserved.</span>
+        <span style="font-style: italic; opacity: 0.6;">Showcasing Mirarr</span>
       </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
     </div>
   </footer>
 
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
 </body>
 </html>
