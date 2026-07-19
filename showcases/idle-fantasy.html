@@ -4,196 +4,1102 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Idle Fantasy Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of Idle Fantasy, the free offline idle RPG for Android with 23 skills, 20 dungeons, and no ads or account required.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="A free, open-source Android idle RPG with 23 skills, 20 dungeons, and 170+ quests. Train while the app is closed, collect loot on return — no internet, no account, no ads, and no stamina bar.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #070b14;
+      --bg: #0c1220;
+      --bg-raised: #141c2e;
+      --bg-panel: #1a2438;
+      --bg-warm: #231c14;
+      --ink: #eef2f8;
+      --ink-soft: #b8c2d6;
+      --mute: #7a869e;
+      --gold: #e0b84a;
+      --gold-dim: #a8842e;
+      --gold-glow: rgba(224, 184, 74, 0.22);
+      --teal: #4ec9a8;
+      --teal-dim: #2a7a66;
+      --hp: #5fbf7a;
+      --line: rgba(224, 184, 74, 0.18);
+      --line-soft: rgba(184, 194, 214, 0.12);
+      --font-display: "Cinzel", Georgia, serif;
+      --font-body: "Source Sans 3", system-ui, sans-serif;
+      --radius: 14px;
+      --phone-w: 260px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-deep);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Atmosphere */
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 50% at 70% -10%, rgba(224, 184, 74, 0.12), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 10% 30%, rgba(78, 201, 168, 0.06), transparent 50%),
+        radial-gradient(ellipse 50% 60% at 90% 80%, rgba(40, 70, 140, 0.25), transparent 55%),
+        linear-gradient(180deg, #0a1020 0%, var(--bg-deep) 40%, #080c16 100%);
+    }
+
+    .sky::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,0.35), transparent),
+        radial-gradient(1px 1px at 28% 42%, rgba(255,255,255,0.25), transparent),
+        radial-gradient(1.5px 1.5px at 55% 12%, rgba(255,255,255,0.3), transparent),
+        radial-gradient(1px 1px at 72% 35%, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1px 1px at 88% 22%, rgba(255,255,255,0.28), transparent),
+        radial-gradient(1.5px 1.5px at 40% 8%, rgba(255,255,255,0.22), transparent);
+      animation: twinkle 8s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes twinkle {
+      from { opacity: 0.55; }
+      to { opacity: 1; }
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 2.5rem));
+      margin-inline: auto;
+    }
+
+    /* Top bar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 0 0.5rem;
+      font-size: 0.9rem;
+      color: var(--mute);
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--ink-soft);
+      border: 1px solid var(--line-soft);
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .back:hover {
+      color: var(--gold);
+      border-color: var(--line);
+      background: rgba(224, 184, 74, 0.06);
+    }
+
+    .meta {
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--mute);
+    }
+
+    .meta strong { color: var(--gold); font-weight: 600; }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 3rem;
+      align-items: center;
+      padding: 2.5rem 0 4rem;
+      min-height: min(88vh, 820px);
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      color: var(--ink);
+      text-shadow: 0 0 40px var(--gold-glow);
+      margin-bottom: 1rem;
+    }
+
+    .brand span {
+      display: block;
+      color: var(--gold);
+    }
+
+    .lede {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--ink-soft);
+      max-width: 34ch;
+      margin-bottom: 1.75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.15s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-gold {
+      background: linear-gradient(180deg, #f0c85a, #c99628);
+      color: #1a1206;
+      box-shadow: 0 6px 24px var(--gold-glow);
+    }
+
+    .btn-gold:hover { box-shadow: 0 8px 28px rgba(224, 184, 74, 0.35); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--gold);
+      background: rgba(224, 184, 74, 0.08);
+    }
+
+    .promise {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      list-style: none;
+      font-size: 0.85rem;
+      color: var(--mute);
+    }
+
+    .promise li {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .promise li::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 8px rgba(78, 201, 168, 0.6);
+    }
+
+    /* Phone stage */
+    .stage {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 520px;
+    }
+
+    .stage-glow {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--gold-glow), transparent 70%);
+      filter: blur(8px);
+      animation: pulse-glow 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.08); }
+    }
+
+    .phone {
+      position: relative;
+      width: var(--phone-w);
+      border-radius: 28px;
+      padding: 10px;
+      background: linear-gradient(160deg, #2a3348, #121820 40%, #0a0e16);
+      border: 1px solid rgba(224, 184, 74, 0.28);
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.4),
+        0 30px 60px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      animation: float-phone 6s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes float-phone {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 72px;
+      height: 8px;
+      border-radius: 999px;
+      background: #0a0e14;
+      z-index: 2;
+    }
+
+    .phone-screen {
+      border-radius: 20px;
+      overflow: hidden;
+      background: #0a1220;
+      aspect-ratio: 9 / 19.5;
+    }
+
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .session-chip {
+      position: absolute;
+      right: -18px;
+      top: 18%;
+      z-index: 3;
+      background: var(--bg-warm);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.65rem 0.85rem;
+      min-width: 132px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      animation: float-chip 5s ease-in-out infinite 0.4s;
+    }
+
+    @keyframes float-chip {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .session-chip .label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--mute);
+      margin-bottom: 0.2rem;
+    }
+
+    .session-chip .task {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.45rem;
+    }
+
+    .session-chip .timer {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      color: var(--gold);
+      letter-spacing: 0.03em;
+    }
+
+    .xp-track {
+      margin-top: 0.55rem;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal-dim), var(--teal));
+      animation: fill-xp 3.5s ease-out forwards 0.6s;
+    }
+
+    @keyframes fill-xp {
+      from { width: 0; }
+      to { width: 72%; }
+    }
+
+    .loot-chip {
+      position: absolute;
+      left: -22px;
+      bottom: 22%;
+      z-index: 3;
+      background: var(--bg-panel);
+      border: 1px solid rgba(78, 201, 168, 0.35);
+      border-radius: 12px;
+      padding: 0.55rem 0.8rem;
+      font-size: 0.8rem;
+      color: var(--teal);
+      font-weight: 600;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+      animation: float-chip 5.5s ease-in-out infinite 1s;
+    }
+
+    /* Sections */
+    section {
+      padding: 3.5rem 0;
+    }
+
+    .section-kicker {
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.15rem);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.75rem;
+      color: var(--ink);
+    }
+
+    .section-lead {
+      color: var(--ink-soft);
+      max-width: 58ch;
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+    }
+
+    /* Idle loop */
+    .loop {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.85rem;
+      counter-reset: step;
+    }
+
+    .loop-step {
+      position: relative;
+      background: var(--bg-raised);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.1rem 1.35rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .loop-step:hover {
+      border-color: var(--line);
+      transform: translateY(-2px);
+    }
+
+    .loop-step::before {
+      counter-increment: step;
+      content: "0" counter(step);
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.65rem;
+    }
+
+    .loop-step h3 {
+      font-size: 1.05rem;
+      font-weight: 650;
+      margin-bottom: 0.4rem;
+      color: var(--ink);
+    }
+
+    .loop-step p {
+      font-size: 0.9rem;
+      color: var(--mute);
+      line-height: 1.5;
+    }
+
+    /* Quest board */
+    .board {
+      background:
+        linear-gradient(180deg, rgba(35, 28, 20, 0.55), rgba(20, 28, 46, 0.85)),
+        var(--bg-raised);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 1.5rem;
+      box-shadow: inset 0 1px 0 rgba(224, 184, 74, 0.08), 0 20px 50px rgba(0,0,0,0.25);
+    }
+
+    .board-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .board-header h2 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+    }
+
+    .board-header span {
+      font-size: 0.85rem;
+      color: var(--mute);
+    }
+
+    .quest-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem;
+    }
+
+    .quest {
+      background: rgba(7, 11, 20, 0.55);
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      padding: 1.1rem 1.15rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .quest:hover {
+      border-color: rgba(224, 184, 74, 0.35);
+      background: rgba(7, 11, 20, 0.75);
+    }
+
+    .quest-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .quest-top h3 {
+      font-size: 1rem;
+      font-weight: 650;
+    }
+
+    .badge {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-gold {
+      color: #1a1206;
+      background: var(--gold);
+    }
+
+    .badge-teal {
+      color: #042820;
+      background: var(--teal);
+    }
+
+    .badge-mute {
+      color: var(--ink-soft);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .quest p {
+      font-size: 0.88rem;
+      color: var(--mute);
+      margin-bottom: 0.75rem;
+    }
+
+    .bar {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .bar > i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+      transform-origin: left;
+      animation: bar-grow 1.8s ease-out both;
+    }
+
+    @keyframes bar-grow {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    .bar-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--mute);
+      margin-top: 0.35rem;
+    }
+
+    /* Skill atlas */
+    .atlas {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.85rem;
+    }
+
+    .skill-col {
+      background: var(--bg-raised);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.1rem;
+      min-height: 100%;
+    }
+
+    .skill-col h3 {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.55rem;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .skill-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .skill-col li {
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      padding: 0.25rem 0;
+      border-bottom: 1px dashed rgba(122, 134, 158, 0.2);
+    }
+
+    .skill-col li:last-child { border-bottom: none; }
+
+    .skill-col .count {
+      display: inline-block;
+      margin-left: 0.35rem;
+      font-size: 0.72rem;
+      color: var(--mute);
+    }
+
+    /* Town row */
+    .town {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.9rem;
+    }
+
+    .town-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-panel);
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .town-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.5;
+    }
+
+    .town-card:hover {
+      border-color: var(--line);
+      transform: translateY(-2px);
+    }
+
+    .town-card h3 {
+      font-size: 1.1rem;
+      font-weight: 650;
+      margin-bottom: 0.45rem;
+    }
+
+    .town-card p {
+      font-size: 0.9rem;
+      color: var(--mute);
+    }
+
+    /* Gallery */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .shot {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #000;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .shot:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 22px 48px rgba(0,0,0,0.45);
+    }
+
+    .shot img {
+      width: 100%;
+      height: auto;
+      display: block;
+      aspect-ratio: 9 / 19;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    /* Offline strip */
+    .offline {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2rem;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(20, 28, 46, 0.9), rgba(35, 28, 20, 0.55));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 2rem 2.1rem;
+    }
+
+    .offline h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+      margin-bottom: 0.65rem;
+      letter-spacing: 0.03em;
+    }
+
+    .offline p {
+      color: var(--ink-soft);
+      margin-bottom: 1.25rem;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .stack-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.7rem 0.9rem;
+      background: rgba(7, 11, 20, 0.55);
+      border-radius: 10px;
+      border: 1px solid var(--line-soft);
+      font-size: 0.9rem;
+    }
+
+    .stack-item span:last-child {
+      color: var(--teal);
+      font-weight: 600;
+      font-size: 0.82rem;
+    }
+
+    /* Footer */
+    .foot {
+      padding: 2.5rem 0 3rem;
+      border-top: 1px solid var(--line-soft);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      color: var(--mute);
+      font-size: 0.88rem;
+    }
+
+    .foot a {
+      color: var(--ink-soft);
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .foot a:hover {
+      color: var(--gold);
+      border-color: var(--gold-dim);
+    }
+
+    .foot-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.35rem;
+    }
+
+    /* Reveal on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.is-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        gap: 2rem;
+        padding-top: 1.5rem;
+        text-align: center;
+      }
+
+      .lede { margin-inline: auto; }
+
+      .cta-row, .promise { justify-content: center; }
+
+      .stage { min-height: 480px; }
+
+      .session-chip { right: -8px; }
+      .loot-chip { left: -8px; }
+
+      .loop { grid-template-columns: 1fr 1fr; }
+      .atlas { grid-template-columns: 1fr 1fr; }
+      .town { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: 1fr 1fr; }
+      .offline { grid-template-columns: 1fr; }
+      .quest-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .wrap { width: calc(100% - 1.5rem); }
+      :root { --phone-w: 220px; }
+      .loop, .atlas, .gallery { grid-template-columns: 1fr; }
+      .session-chip, .loot-chip { display: none; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .xp-fill { width: 72%; }
+      .bar > i { transform: scaleX(1); }
+    }
+  </style>
 </head>
 <body>
+  <div class="sky" aria-hidden="true"></div>
 
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
-      </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <p class="meta">tristinbaker/IdleFantasy · Showcase <strong>#22</strong></p>
+    </header>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-        <span>tristinbaker/IdleFantasy</span>
-        <span>•</span>
-        <span>July 13, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #22</span>
+    <section class="hero" aria-label="Idle Fantasy">
+      <div>
+        <h1 class="brand">Idle <span>Fantasy</span></h1>
+        <p class="lede">
+          Set your hero to work, close the app, come back to loot — a free offline idle RPG for Android with no ads, no account, and no stamina bar.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-gold" href="https://github.com/tristinbaker/IdleFantasy/releases" target="_blank" rel="noopener">Download APK</a>
+          <a class="btn btn-ghost" href="https://github.com/tristinbaker/IdleFantasy" target="_blank" rel="noopener">View Source</a>
+          <a class="btn btn-ghost" href="https://idlefantasy.tristinbaker.xyz/" target="_blank" rel="noopener">Wiki</a>
+        </div>
+        <ul class="promise">
+          <li>100% offline</li>
+          <li>GPL-3.0</li>
+          <li>F-Droid ready</li>
+          <li>No Play Services</li>
+        </ul>
       </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        Idle Fantasy
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Set your hero to work, close the app, come back to loot — a free offline idle RPG for Android.
+
+      <div class="stage">
+        <div class="stage-glow" aria-hidden="true"></div>
+        <aside class="session-chip" aria-hidden="true">
+          <div class="label">Session active</div>
+          <div class="task">Mining — Coal</div>
+          <div class="timer">48m 49s</div>
+          <div class="xp-track"><div class="xp-fill"></div></div>
+        </aside>
+        <div class="phone">
+          <div class="phone-notch" aria-hidden="true"></div>
+          <div class="phone-screen">
+            <img
+              src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png"
+              alt="Idle Fantasy home screen showing an active mining session and hired worker"
+              width="1008"
+              height="2244"
+            >
+          </div>
+        </div>
+        <aside class="loot-chip" aria-hidden="true">+ XP &amp; loot ready</aside>
+      </div>
+    </section>
+
+    <section class="reveal" id="loop">
+      <p class="section-kicker">The idle contract</p>
+      <h2 class="section-title">Play in four beats</h2>
+      <p class="section-lead">
+        Most mobile RPGs punish you for putting the phone down. Idle Fantasy is built the other way around: WorkManager keeps your hero training for up to an hour after you leave.
       </p>
-
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://github.com/tristinbaker/IdleFantasy" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-        <a href="https://github.com/tristinbaker/IdleFantasy/releases" class="btn-secondary-ghost" target="_blank" rel="noopener">Download APK</a>
+      <div class="loop">
+        <article class="loop-step">
+          <h3>Choose work</h3>
+          <p>Pick a skill or dungeon — Mining coal, smithing steel, or clearing Bandit Camp.</p>
+        </article>
+        <article class="loop-step">
+          <h3>Start a session</h3>
+          <p>Tap once, then walk away. The timer runs whether the app is open or not.</p>
+        </article>
+        <article class="loop-step">
+          <h3>Collect rewards</h3>
+          <p>Return when you like. XP, coins, quest progress, and drops wait for you.</p>
+        </article>
+        <article class="loop-step">
+          <h3>Spend &amp; send out</h3>
+          <p>Craft gear, upgrade town buildings, hire Inn workers, then queue the next run.</p>
+        </article>
       </div>
-    </div>
-  </header>
+    </section>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Phone Screenshots -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">In-Game Screenshots</h3>
-        <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap: var(--space-md);">
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
-            <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Idle Fantasy home screen" style="width: 100%; height: auto; display: block;">
-          </div>
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
-            <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="Idle Fantasy dungeons screen" style="width: 100%; height: auto; display: block;">
-          </div>
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
-            <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" alt="Idle Fantasy combat session" style="width: 100%; height: auto; display: block;">
-          </div>
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
-            <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/12.png" alt="Idle Fantasy profile screen" style="width: 100%; height: auto; display: block;">
-          </div>
+    <section class="reveal" id="board">
+      <div class="board">
+        <div class="board-header">
+          <h2>Quest Board</h2>
+          <span>170+ quests · daily resets at dawn</span>
         </div>
-      </section>
-
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Idle Fantasy?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Most mobile RPGs are built around stamina bars, daily login pressure, and always-on connectivity. If you want a progression game you can dip into on the commute and walk away from without FOMO, the pickings on Android are slim — especially among titles that respect your privacy.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>Idle Fantasy</strong> is a free, open-source idle RPG that runs entirely offline. Pick a skill or dungeon, start a session, and close the app — your hero keeps training for up to an hour via WorkManager. Come back to collect XP and loot, then send them out again. No internet, no account, no ads, and no energy system nagging you to reopen the app.
-          </p>
+        <div class="quest-grid">
+          <article class="quest">
+            <div class="quest-top">
+              <h3>Deep skill tree</h3>
+              <span class="badge badge-gold">23 skills</span>
+            </div>
+            <p>Gathering, crafting, combat, and support — from Woodcutting and Herblore to Slayer and Mercantile. Better gear speeds gathering and opens tougher dungeons.</p>
+            <div class="bar"><i style="width: 86%"></i></div>
+            <div class="bar-meta"><span>Progression depth</span><span>86%</span></div>
+          </article>
+          <article class="quest">
+            <div class="quest-top">
+              <h3>Twenty dungeons</h3>
+              <span class="badge badge-mute">Combat</span>
+            </div>
+            <p>From the starter Farm to Fortress Ruins. Each zone has its own roster, difficulty read, and loot table. Melee, Ranged, or Magic — each style levels its own skills.</p>
+            <div class="bar"><i style="width: 74%"></i></div>
+            <div class="bar-meta"><span>World map</span><span>20 zones</span></div>
+          </article>
+          <article class="quest">
+            <div class="quest-top">
+              <h3>Infinite Tower</h3>
+              <span class="badge badge-teal">Endless</span>
+            </div>
+            <p>Climb floor by floor. Enemies scale with height; every tenth floor drops milestone rewards — unique gear plus permanent XP and coin bonuses.</p>
+            <div class="bar"><i style="width: 61%"></i></div>
+            <div class="bar-meta"><span>Floor climb</span><span>∞</span></div>
+          </article>
+          <article class="quest">
+            <div class="quest-top">
+              <h3>Guild reputation</h3>
+              <span class="badge badge-gold">17 guilds</span>
+            </div>
+            <p>Rank up through progression quests and daily requests. Higher ranks unlock harder dailies and cross-skill rewards so specialists still access other resources.</p>
+            <div class="bar"><i style="width: 68%"></i></div>
+            <div class="bar-meta"><span>Rank ladder</span><span>10 tiers</span></div>
+          </article>
         </div>
+      </div>
+    </section>
 
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Deep Skill and Dungeon Progression</span>
-              <p class="text-body-sm">
-                Train 23 skills across gathering, crafting, combat, and support — from Mining and Herblore to Slayer and Mercantile. Explore 20 combat dungeons with distinct enemy rosters and drops, climb an infinite tower gauntlet, and complete over 170 quests including daily resets and long-term cumulative goals.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Guilds, Pets, and Town Systems</span>
-              <p class="text-body-sm">
-                Seventeen guilds with rank progression unlock cross-skill rewards. The Inn hires workers to queue sessions on your behalf, the Church grants timed Prayer blessings, and the Carnival converts skill levels into tickets for exclusive gear. Rare pet drops add permanent passive XP bonuses.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">F-Droid Ready, GPL-3.0</span>
-              <p class="text-body-sm">
-                Built with Kotlin, Jetpack Compose, Room, and Hilt — no Google Play Services dependency. Available via F-Droid repository or direct APK from GitHub Releases. Localized in five languages with Weblate-compatible string resources.
-              </p>
-            </li>
+    <section class="reveal" id="skills">
+      <p class="section-kicker">Skill atlas</p>
+      <h2 class="section-title">Train what you want, when you want</h2>
+      <p class="section-lead">
+        Twenty-three skills across four trees. There is no energy meter forcing a particular grind — your schedule is the only limit.
+      </p>
+      <div class="atlas">
+        <div class="skill-col">
+          <h3>Gathering <span class="count">×7</span></h3>
+          <ul>
+            <li>Mining</li>
+            <li>Fishing</li>
+            <li>Woodcutting</li>
+            <li>Farming</li>
+            <li>Firemaking</li>
+            <li>Agility</li>
+            <li>Thieving</li>
           </ul>
         </div>
+        <div class="skill-col">
+          <h3>Crafting <span class="count">×7</span></h3>
+          <ul>
+            <li>Smithing</li>
+            <li>Cooking</li>
+            <li>Fletching</li>
+            <li>Crafting</li>
+            <li>Runecrafting</li>
+            <li>Herblore</li>
+            <li>Construction</li>
+          </ul>
+        </div>
+        <div class="skill-col">
+          <h3>Combat <span class="count">×7</span></h3>
+          <ul>
+            <li>Attack</li>
+            <li>Strength</li>
+            <li>Defense</li>
+            <li>Ranged</li>
+            <li>Magic</li>
+            <li>Hitpoints</li>
+            <li>Prayer</li>
+          </ul>
+        </div>
+        <div class="skill-col">
+          <h3>Support <span class="count">×2</span></h3>
+          <ul>
+            <li>Mercantile</li>
+            <li>Slayer</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
+    <section class="reveal" id="town">
+      <p class="section-kicker">Town systems</p>
+      <h2 class="section-title">More than a timer</h2>
+      <p class="section-lead">
+        Between sessions you shape a small fantasy town — workers, blessings, pets, and a traveling carnival that turns skill levels into exclusive loot.
+      </p>
+      <div class="town">
+        <article class="town-card">
+          <h3>The Inn</h3>
+          <p>Hire workers who queue sessions for you, and buy food in bulk so tougher dungeon runs last longer.</p>
+        </article>
+        <article class="town-card">
+          <h3>Church &amp; Workshop</h3>
+          <p>Spend Construction materials on the Inn, Guild Hall, and Church. Prayer blessings add timed XP, defense, or coin multipliers.</p>
+        </article>
+        <article class="town-card">
+          <h3>Carnival &amp; Pets</h3>
+          <p>Idle minigames mint tickets for exclusive gear. Rare enemies drop pets that grant permanent passive XP bonuses.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="reveal" id="shots">
+      <p class="section-kicker">In the field</p>
+      <h2 class="section-title">Screens from an adventurer’s phone</h2>
+      <p class="section-lead">
+        Home dashboard, dungeon roster, live combat log, and daily quests — the same dark navy and gold UI you get on device.
+      </p>
+      <div class="gallery">
+        <figure class="shot">
+          <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Home screen with active session and worker" width="1008" height="2244" loading="lazy">
+        </figure>
+        <figure class="shot">
+          <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="Dungeons list under Combat" width="1008" height="2244" loading="lazy">
+        </figure>
+        <figure class="shot">
+          <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" alt="Combat session against a Rogue in Bandit Camp" width="1008" height="2244" loading="lazy">
+        </figure>
+        <figure class="shot">
+          <img src="https://github.com/tristinbaker/IdleFantasy/raw/main/fastlane/metadata/android/en-US/images/phoneScreenshots/7.png" alt="Daily quests board with progress bars" width="1008" height="2244" loading="lazy">
+        </figure>
+      </div>
+    </section>
+
+    <section class="reveal" id="offline">
+      <div class="offline">
         <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">How It Works</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Start a session, put the phone down, and collect rewards when you return — the core loop is designed around real idle play, not screen-time retention:
+          <h2>Built to stay offline</h2>
+          <p>
+            Kotlin, Jetpack Compose, Room, Hilt, and WorkManager — no Google Play Services dependency. Available via F-Droid repository or direct APK, localized in five languages on Weblate-compatible strings.
           </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">gameplay loop</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">1. Pick a skill or dungeon → start session</span><br>
-              <span class="token-cmd">2. Close the app (hero trains up to 1 hour)</span><br>
-              <span class="token-success">3. Return → collect XP, loot, quest progress</span><br>
-              <span class="token-cmd">4. Craft gear, upgrade buildings, send back out</span>
-            </div>
+          <div class="cta-row">
+            <a class="btn btn-gold" href="https://github.com/tristinbaker/IdleFantasy" target="_blank" rel="noopener">GitHub</a>
+            <a class="btn btn-ghost" href="https://github.com/tristinbaker/IdleFantasy/releases" target="_blank" rel="noopener">Releases</a>
           </div>
         </div>
-      </section>
-
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
+        <div class="stack">
+          <div class="stack-item"><span>Internet required</span><span>Never</span></div>
+          <div class="stack-item"><span>Account / login</span><span>None</span></div>
+          <div class="stack-item"><span>Ads &amp; stamina bar</span><span>None</span></div>
+          <div class="stack-item"><span>License</span><span>GPL-3.0</span></div>
+        </div>
       </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
+    <footer class="foot">
+      <p>Showcase #22 · DuckWare curation of <a href="https://github.com/tristinbaker/IdleFantasy" target="_blank" rel="noopener">Idle Fantasy</a></p>
+      <div class="foot-links">
+        <a href="./">Catalog</a>
+        <a href="../feed.xml">RSS</a>
+        <a href="https://idlefantasy.tristinbaker.xyz/" target="_blank" rel="noopener">Game wiki</a>
       </div>
+    </footer>
+  </div>
 
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
-
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+  <script>
+    (function () {
+      var nodes = document.querySelectorAll(".reveal");
+      if (!nodes.length) return;
+      if (!("IntersectionObserver" in window)) {
+        nodes.forEach(function (n) { n.classList.add("is-in"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-in");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+      nodes.forEach(function (n) { io.observe(n); });
+    })();
+  </script>
 </body>
 </html>
