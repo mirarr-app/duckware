@@ -41,14 +41,17 @@ Only the accent color and hero gradient changed. **Reject this approach.**
 
 | Requirement | Notes |
 |-------------|-------|
+| **Understand the project** | Research first; page reflects what the software actually does |
+| **Dark mode only** | Dark backgrounds, light text — never light mode |
+| **Unique design** | Do not copy layout/style from other showcases |
 | `<title>… — DuckWare</title>` | SEO + tab label |
 | `<meta name="description">` | Matches catalog blurb closely |
 | Back to catalog | Link to `./` — style it natively |
-| CTAs | Source, releases, demo, docs — as buttons/links fitting the design |
-| Content | Original audit voice; ~3 strengths worth highlighting |
+| CTAs | Source, releases, demo, docs |
+| Animation | Subtle, project-specific; `prefers-reduced-motion` fallback |
 | Images | Hotlink from repo when possible |
 | Mobile | Readable at 375px width |
-| Accessibility | Sufficient contrast; alt text on images |
+| Accessibility | Sufficient contrast on dark backgrounds; alt text on images |
 
 ## Catalog card (unchanged shared style)
 
@@ -99,6 +102,47 @@ Only the accent color and hero gradient changed. **Reject this approach.**
 
 Each new page should have its **own** concept — don't reuse these layouts verbatim.
 
+## Animation (subtle, project-specific)
+
+Add motion only when it reinforces the product — not decoration for its own sake.
+
+| Product vibe | Animation idea |
+|--------------|----------------|
+| Terminal CLI | Cursor blink, command-line type-in, scanline drift |
+| Sync / P2P | Pulse along connection lines, packet dots traveling |
+| Game / idle | Soft float on hero asset, XP bar fill on scroll |
+| Privacy | Shield glow on hover, lock icon micro-bounce |
+| Media / download | Progress shimmer, waveform bars |
+
+Always include:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+## PR screenshot
+
+When opening the showcase PR, capture the finished detail page and embed it:
+
+1. Open `showcases/<slug>.html` locally or via static server
+2. Full-page screenshot at ~1280px width
+3. Save to `/opt/cursor/artifacts/screenshots/<slug>-showcase.png`
+4. Embed in PR body:
+
+```markdown
+## Preview
+
+<img alt="Showcase page preview" src="/opt/cursor/artifacts/screenshots/<slug>-showcase.png" />
+```
+
+If capture isn't possible, state that in the PR and describe the visual design in prose.
+
 ## Hotlink patterns
 
 ```
@@ -123,4 +167,6 @@ URL-encode spaces. Match default branch (`main` vs `master`).
 | Number | #NN (Latest) |
 | Repo | org/repo |
 | Tags | Tag1, Tag2, Tag3 |
-| Page concept | One sentence — the bespoke design idea |
+| What it does | Two-sentence product summary |
+| Page concept | Bespoke design idea tied to the product |
+| Screenshot | Attached in PR body when possible |

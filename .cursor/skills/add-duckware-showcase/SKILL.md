@@ -1,6 +1,6 @@
 ---
 name: add-duckware-showcase
-description: Adds curated DuckWare showcases. Creates a bespoke HTML page per project at showcases/<slug>.html, plus catalog and RSS entries. Use when the user asks to add a showcase, curate a project, or publish a software audit page for duckware.
+description: Adds curated DuckWare showcases with bespoke dark-mode detail pages tailored to each project (research first, unique UI, subtle animations). Creates showcases/<slug>.html plus catalog and RSS entries; include a page screenshot in the PR when possible. Use when the user asks to add a showcase, curate a project, or publish a software audit page for duckware.
 ---
 
 # Add a DuckWare Showcase
@@ -27,6 +27,18 @@ DuckWare is a **static HTML site** — no build step, no CMS. Each showcase touc
 - "Template + accent color overrides" — **this is wrong**
 
 Each `showcases/<slug>.html` should look like **a beautiful standalone page** built for that product — as if you designed a microsite for it.
+
+## Design principles (mandatory)
+
+1. **Understand the project first.** Before writing HTML, be able to explain in plain language what the software does, who it's for, and what makes it worth showcasing. Read the README, skim issues/docs, watch demos if available. The page must communicate *that understanding* — not generic filler.
+
+2. **UI unique and tailored.** Design layout, typography, color, and section structure specifically for *this* project. Do not copy the visual style of other DuckWare showcases (`runtipi.html`, `topgrade.html`, `face-looker.html`, etc.) — each page is a fresh design.
+
+3. **Dark mode only.** Never design showcase detail pages in light mode. Use dark backgrounds, light text, and accents tuned for dark UI. No white/off-white page backgrounds.
+
+4. **Subtle, project-specific animation.** When it fits, add small crafted touches — hover states, entrance fades, glow pulses, typing effects, parallax hints — that reinforce *this* product's personality. Keep motion subtle and purposeful; respect `prefers-reduced-motion`.
+
+5. **PR screenshot.** When opening the showcase PR, include a full-page screenshot of the detail page in the PR body if possible (see step 8).
 
 ## Three-file rule (mandatory)
 
@@ -56,17 +68,26 @@ Read top card in `showcases/index.html` → assign **next showcase number**.
 | Tags | Exactly 3 pills on catalog card |
 | Date | User `created` date or today |
 
-### 3. Research
+### 3. Research — understand what it actually does
 
-- Repo URL, CTAs, screenshots, logo, default branch for hotlinks
-- Product **personality** — terminal tool, cozy desktop app, game, privacy utility, creative tool, etc.
-- UI cues to echo: fonts, palette, density, motion, metaphor (terminal window, phone frame, blueprint grid…)
+**Do not skip this.** Goal: internalize the product before designing.
 
-Write **original audit prose**. Do not copy-paste README or clippings.
+- Read README, docs, and any wiki linked from the repo
+- Identify: **problem solved**, **primary user**, **core workflow**, **standout technical or UX choices**
+- Collect assets: repo URL, CTAs, logo, screenshots, demo video, default branch for hotlinks
+- Note **personality** — terminal tool, cozy desktop app, game, privacy utility, homelab dashboard, etc.
+
+Write **original audit prose** from that understanding. Do not copy-paste README or user clippings.
+
+**Sanity check:** Can you describe what the project does in two sentences without looking at the repo? If not, research more before designing.
 
 ### 4. Design the bespoke page
 
-**Start from a blank page.** Do not open `boneyard.html` and tweak colors.
+**Start from a blank page.** Do not open another showcase or `boneyard.html` as a starting point.
+
+**Dark mode only** — dark backgrounds (`#0a0a0f`, `#111`, deep brand-tinted darks), light text, accent colors that pop on dark. Never ship a light-themed showcase page.
+
+**Original visual identity** — the layout and aesthetic must be invented for this project. Borrowing section patterns from `runtipi.html`, `topgrade.html`, or any prior showcase is not allowed.
 
 #### Required in every detail page
 
@@ -89,7 +110,8 @@ Plus:
 - **Typography:** pick Google Fonts (or system stack) that match the product — not default Inter + Instrument Serif unless intentional
 - **Layout:** invent section structure per project — split hero, bento grid, timeline, comparison panels, device frames, terminal chrome, etc.
 - **Imagery:** hotlink upstream screenshots/logos; build custom UI mockups in HTML/CSS when needed
-- **Polish:** gradients, borders, subtle animation, grid textures, glass panels — whatever serves **this** product
+- **Animation (optional but encouraged):** subtle CSS transitions, `@keyframes`, or scroll reveals tailored to the product — e.g. terminal cursor blink, sync pulse between devices, pixel snap grid. Use `prefers-reduced-motion: reduce` to disable motion when requested
+- **Polish:** gradients, borders, grid textures, glass panels on **dark** canvases — whatever serves **this** product
 
 #### Design bar
 
@@ -153,25 +175,44 @@ Update channel dates; append `<item>`. Title + description must match catalog ca
 git add showcases/<slug>.html showcases/index.html feed.xml
 git commit -m "Add showcase #NN: <ProjectName>
 
-Bespoke detail page plus catalog and RSS integration."
+Bespoke dark-mode detail page plus catalog and RSS integration."
 git push -u origin cursor/add-<slug>-showcase-7a08
 ```
 
-In PR body, describe the **page concept** (e.g. "full-viewport terminal with green phosphor theme"), not just accent colors.
+**PR body must include:**
+
+- **Page concept** — one paragraph on design direction tied to what the project does
+- **What the project does** — two-sentence summary proving you understood it
+- **Screenshot** — full-page capture of the showcase detail page embedded in the PR when possible:
+
+```markdown
+## Preview
+
+<img alt="Showcase page preview" src="/opt/cursor/artifacts/screenshots/<slug>-showcase.png" />
+```
+
+Capture after building the page (browser screenshot or headless capture at ~1280px width). If screenshot capture is unavailable, note that in the PR and describe the visual design instead.
+
+Open a **draft PR** to `main`.
 
 ## Checklist
 
-- [ ] Detail page is **bespoke** — not DuckWare template with overrides
+- [ ] **Understood the project** — can explain what it does before designing
+- [ ] Detail page is **bespoke** — not copied from other showcases or DuckWare template
+- [ ] **Dark mode only** — no light backgrounds
+- [ ] **Unique visual identity** — layout/fonts/motion invented for this project
+- [ ] Subtle animations added where they fit the product (with reduced-motion fallback)
 - [ ] No `../index.css` dependency (unless explicitly justified)
-- [ ] Layout, fonts, and sections are unique to this project
 - [ ] Title, meta description, back-to-catalog link present
 - [ ] Catalog card at top; previous `(Latest)` demoted
 - [ ] `feed.xml` updated; title/description match catalog
 - [ ] Original prose; hotlinked images; external links safe
-- [ ] Committed, pushed, draft PR
+- [ ] Committed, pushed, draft PR **with screenshot** when possible
 
 ## Don't
 
+- Clone another showcase's layout or visual style (`runtipi.html`, `topgrade.html`, etc.)
+- Design in **light mode**
 - Clone `boneyard.html` / `portless.html` and change CSS variables
 - Use `showcase-theme--<slug>` overrides on DuckWare components as the main approach
 - Make every page "hero-band + 3 card-content sections" with different hex codes
