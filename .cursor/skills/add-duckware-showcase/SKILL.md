@@ -1,6 +1,6 @@
 ---
 name: add-duckware-showcase
-description: Adds curated DuckWare showcases with bespoke dark-mode detail pages tailored to each project (research first, unique UI, subtle animations). Creates showcases/<slug>.html plus catalog and RSS entries; include a page screenshot in the PR when possible. Use when the user asks to add a showcase, curate a project, or publish a software audit page for duckware.
+description: Adds curated DuckWare showcases with bespoke dark-mode detail pages tailored to each project (research first, unique UI, subtle animations). Creates showcases/<slug>.html plus catalog and RSS entries. Use when the user asks to add a showcase, curate a project, or publish a software audit page for duckware.
 ---
 
 # Add a DuckWare Showcase
@@ -37,8 +37,6 @@ Each `showcases/<slug>.html` should look like **a beautiful standalone page** bu
 3. **Dark mode only.** Never design showcase detail pages in light mode. Use dark backgrounds, light text, and accents tuned for dark UI. No white/off-white page backgrounds.
 
 4. **Subtle, project-specific animation.** When it fits, add small crafted touches — hover states, entrance fades, glow pulses, typing effects, parallax hints — that reinforce *this* product's personality. Keep motion subtle and purposeful; respect `prefers-reduced-motion`.
-
-5. **PR screenshot.** When opening the showcase PR, include a full-page screenshot of the detail page in the PR body if possible (see step 8).
 
 ## Three-file rule (mandatory)
 
@@ -183,15 +181,6 @@ git push -u origin cursor/add-<slug>-showcase-7a08
 
 - **Page concept** — one paragraph on design direction tied to what the project does
 - **What the project does** — two-sentence summary proving you understood it
-- **Screenshot** — full-page capture of the showcase detail page embedded in the PR when possible:
-
-```markdown
-## Preview
-
-<img alt="Showcase page preview" src="/opt/cursor/artifacts/screenshots/<slug>-showcase.png" />
-```
-
-Capture after building the page (browser screenshot or headless capture at ~1280px width). If screenshot capture is unavailable, note that in the PR and describe the visual design instead.
 
 Open a **draft PR** to `main`.
 
@@ -207,7 +196,7 @@ Open a **draft PR** to `main`.
 - [ ] Catalog card at top; previous `(Latest)` demoted
 - [ ] `feed.xml` updated; title/description match catalog
 - [ ] Original prose; hotlinked images; external links safe
-- [ ] Committed, pushed, draft PR **with screenshot** when possible
+- [ ] Committed, pushed, draft PR opened
 
 ## Don't
 
