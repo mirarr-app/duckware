@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Sat, 18 Jul 2026 15:15:00 GMT</lastBuildDate>
-    <pubDate>Sat, 18 Jul 2026 15:15:00 GMT</pubDate>
+    <lastBuildDate>Sun, 19 Jul 2026 09:15:00 GMT</lastBuildDate>
+    <pubDate>Sun, 19 Jul 2026 09:15:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -231,6 +231,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/topgrade.html</guid>
       <pubDate>Sat, 18 Jul 2026 15:15:00 GMT</pubDate>
       <description>One command that detects your package managers and upgrades everything — apt, brew, cargo, pip, winget, and dozens more — across local and remote machines.</description>
+    </item>
+
+    <item>
+      <title>kage: Shadow Sites Offline</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/kage.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/kage.html</guid>
+      <pubDate>Sun, 19 Jul 2026 09:15:00 GMT</pubDate>
+      <description>Shadow any website for offline viewing: headless Chrome renders the finished page, every script is stripped, and the mirror packs into ZIM, a self-serving binary, or a native window.</description>
     </item>
   </channel>
 </rss>
