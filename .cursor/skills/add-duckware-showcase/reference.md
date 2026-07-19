@@ -126,23 +126,6 @@ Always include:
 }
 ```
 
-## PR screenshot
-
-When opening the showcase PR, capture the finished detail page and embed it:
-
-1. Open `showcases/<slug>.html` locally or via static server
-2. Full-page screenshot at ~1280px width
-3. Save to `/opt/cursor/artifacts/screenshots/<slug>-showcase.png`
-4. Embed in PR body:
-
-```markdown
-## Preview
-
-<img alt="Showcase page preview" src="/opt/cursor/artifacts/screenshots/<slug>-showcase.png" />
-```
-
-If capture isn't possible, state that in the PR and describe the visual design in prose.
-
 ## Hotlink patterns
 
 ```
@@ -169,4 +152,3 @@ URL-encode spaces. Match default branch (`main` vs `master`).
 | Tags | Tag1, Tag2, Tag3 |
 | What it does | Two-sentence product summary |
 | Page concept | Bespoke design idea tied to the product |
-| Screenshot | Attached in PR body when possible |
