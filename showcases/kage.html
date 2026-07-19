@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kage Showcase — DuckWare</title>
+  <meta name="description" content="Shadow any website for offline viewing: headless Chrome renders the finished page, every script is stripped, and the mirror packs into ZIM, a self-serving binary, or a native window.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho:wght@400;600;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #05060a;
+      --ink: #0b0e14;
+      --panel: #11151d;
+      --moon: #e6ecf4;
+      --mist: #9aa7b8;
+      --dim: #5c6a7c;
+      --accent: #8ec8b8;
+      --accent-deep: #3d7a6e;
+      --warn: #c9a46c;
+      --line: rgba(230, 236, 244, 0.1);
+      --glow: rgba(142, 200, 184, 0.18);
+      --font-display: "Shippori Mincho", "Noto Serif JP", serif;
+      --font-body: "Source Serif 4", Georgia, serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--void);
+      color: var(--moon);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+    a:hover { color: var(--moon); }
+
+    .site-nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+    }
+
+    .site-nav a {
+      color: var(--mist);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .site-nav a:hover {
+      color: var(--moon);
+      border-color: var(--accent);
+    }
+
+    /* —— Hero: one composition, brand first —— */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: end start;
+      padding: 6.5rem 1.5rem 3.5rem;
+      isolation: isolate;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 80% 55% at 70% 20%, rgba(61, 122, 110, 0.22), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 15% 80%, rgba(201, 164, 108, 0.08), transparent 50%),
+        linear-gradient(165deg, #080a10 0%, #05060a 45%, #0a1014 100%);
+    }
+
+    .hero::before {
+      content: "影";
+      position: absolute;
+      right: -4%;
+      top: 42%;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(14rem, 42vw, 28rem);
+      line-height: 0.8;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(230, 236, 244, 0.07);
+      text-shadow: 0 0 80px rgba(142, 200, 184, 0.08);
+      pointer-events: none;
+      z-index: 0;
+      animation: shadow-drift 18s ease-in-out infinite alternate;
+      user-select: none;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, transparent 55%, var(--void) 100%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 3px,
+          rgba(0, 0, 0, 0.04) 3px,
+          rgba(0, 0, 0, 0.04) 4px
+        );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 38rem;
+      animation: rise 0.9s ease-out both;
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(3.4rem, 11vw, 6.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--moon);
+      margin-bottom: 0.35rem;
+    }
+
+    .brand-ruby {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(1.35rem, 3.2vw, 1.85rem);
+      line-height: 1.35;
+      color: var(--moon);
+      margin-bottom: 0.85rem;
+      max-width: 22ch;
+    }
+
+    .hero-lede {
+      color: var(--mist);
+      font-size: 1.05rem;
+      max-width: 36ch;
+      margin-bottom: 1.75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.03em;
+      padding: 0.85rem 1.2rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--void);
+      border: 1px solid var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--moon);
+      border-color: var(--moon);
+      color: var(--void);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--moon);
+      border: 1px solid var(--line);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* —— Sections —— */
+    section {
+      position: relative;
+      padding: 4.5rem 1.5rem;
+    }
+
+    .wrap {
+      max-width: 68rem;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+      line-height: 1.2;
+      margin-bottom: 0.85rem;
+      max-width: 18ch;
+    }
+
+    .section-copy {
+      color: var(--mist);
+      max-width: 42rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Problem: Save As vs shadow */
+    .rift {
+      background: var(--ink);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .rift-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .rift-side {
+      padding: 1.5rem 0;
+    }
+
+    .rift-side h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .rift-side p {
+      color: var(--mist);
+      font-size: 0.98rem;
+    }
+
+    .rift-side.dead h3 { color: var(--dim); }
+    .rift-side.alive h3 { color: var(--accent); }
+
+    .rift-slash {
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--warn), transparent);
+      position: relative;
+      align-self: stretch;
+      min-height: 6rem;
+    }
+
+    .rift-slash span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-90deg);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--warn);
+      white-space: nowrap;
+      background: var(--ink);
+      padding: 0.35rem 0;
+    }
+
+    /* Pipeline */
+    .pipeline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      overflow: hidden;
+    }
+
+    .pipe-step {
+      flex: 1 1 10rem;
+      padding: 1.35rem 1.2rem;
+      border-right: 1px solid var(--line);
+      position: relative;
+      min-width: 0;
+    }
+
+    .pipe-step:last-child { border-right: none; }
+
+    .pipe-step::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+      width: 0;
+      background: var(--accent);
+      animation: pipe-fill 3.2s ease-in-out infinite;
+    }
+
+    .pipe-step:nth-child(1)::after { animation-delay: 0s; }
+    .pipe-step:nth-child(2)::after { animation-delay: 0.7s; }
+    .pipe-step:nth-child(3)::after { animation-delay: 1.4s; }
+    .pipe-step:nth-child(4)::after { animation-delay: 2.1s; }
+
+    .pipe-num {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--dim);
+      letter-spacing: 0.12em;
+      margin-bottom: 0.45rem;
+    }
+
+    .pipe-step strong {
+      display: block;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .pipe-step p {
+      font-size: 0.88rem;
+      color: var(--mist);
+      line-height: 1.45;
+    }
+
+    /* Demo stage */
+    .demo-stage {
+      padding: 0;
+      background: #000;
+    }
+
+    .demo-stage .wrap {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    .demo-frame {
+      position: relative;
+      width: 100%;
+      background: #000;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .demo-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1rem;
+      background: #0e1118;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--dim);
+    }
+
+    .demo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--dim);
+      opacity: 0.5;
+    }
+
+    .demo-dot:nth-child(1) { background: #c46a6a; opacity: 0.7; }
+    .demo-dot:nth-child(2) { background: var(--warn); opacity: 0.7; }
+    .demo-dot:nth-child(3) { background: var(--accent); opacity: 0.7; }
+
+    .demo-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 70vh;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    .demo-caption {
+      padding: 1rem 1.5rem 1.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--dim);
+      letter-spacing: 0.04em;
+      background: var(--ink);
+    }
+
+    /* Terminal */
+    .term {
+      background: #080b10;
+      border: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      overflow: hidden;
+    }
+
+    .term-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 0.9rem;
+      border-bottom: 1px solid var(--line);
+      color: var(--dim);
+      font-size: 0.7rem;
+    }
+
+    .term-body {
+      padding: 1.1rem 1.2rem 1.3rem;
+      color: var(--mist);
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .term-body .cmd { color: var(--accent); }
+    .term-body .cmt { color: var(--dim); }
+    .term-body .out { color: var(--moon); }
+
+    .cursor-blink::after {
+      content: "▋";
+      color: var(--accent);
+      margin-left: 2px;
+      animation: blink 1.05s steps(1) infinite;
+    }
+
+    /* Strengths — not cards: stacked editorial rows */
+    .strengths {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid var(--line);
+    }
+
+    .strength {
+      display: grid;
+      grid-template-columns: 4rem 1fr;
+      gap: 1.25rem;
+      padding: 1.75rem 0;
+      border-bottom: 1px solid var(--line);
+      align-items: start;
+    }
+
+    .strength-mark {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--accent-deep);
+      line-height: 1;
+      padding-top: 0.15rem;
+    }
+
+    .strength h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .strength p {
+      color: var(--mist);
+      font-size: 0.98rem;
+      max-width: 40rem;
+    }
+
+    /* Pack formats — silhouette strip, not cards */
+    .formats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 1px solid var(--line);
+    }
+
+    .format {
+      padding: 1.75rem 1.35rem;
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--panel) 0%, var(--ink) 100%);
+      transition: background 0.3s ease;
+    }
+
+    .format:last-child { border-right: none; }
+    .format:hover { background: rgba(142, 200, 184, 0.06); }
+
+    .format-glyph {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+      display: block;
+    }
+
+    .format h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .format p {
+      color: var(--mist);
+      font-size: 0.92rem;
+    }
+
+    .webview-shot {
+      margin-top: 2.5rem;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      background: #000;
+    }
+
+    .webview-shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .webview-shot figcaption {
+      padding: 0.85rem 1.1rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--dim);
+      letter-spacing: 0.04em;
+      background: var(--ink);
+      border-top: 1px solid var(--line);
+    }
+
+    /* Footer CTA */
+    .close {
+      text-align: left;
+      padding-bottom: 5rem;
+      background:
+        radial-gradient(ellipse 50% 40% at 30% 100%, rgba(142, 200, 184, 0.1), transparent 60%),
+        var(--void);
+    }
+
+    .close .section-title { max-width: 16ch; }
+
+    .meta-line {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--dim);
+      letter-spacing: 0.04em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+    }
+
+    .meta-line a { color: var(--mist); text-decoration: none; }
+    .meta-line a:hover { color: var(--accent); }
+
+    @keyframes shadow-drift {
+      from { transform: translateY(-50%) translateX(0) scale(1); opacity: 0.9; }
+      to { transform: translateY(-52%) translateX(-2%) scale(1.03); opacity: 1; }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pipe-fill {
+      0%, 100% { width: 0; opacity: 0.3; }
+      40%, 60% { width: 100%; opacity: 1; }
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    @media (max-width: 820px) {
+      .rift-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .rift-slash {
+        width: 100%;
+        height: 1px;
+        min-height: 0;
+        margin: 0.5rem 0;
+      }
+
+      .rift-slash span {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+
+      .formats { grid-template-columns: 1fr; }
+      .format { border-right: none; border-bottom: 1px solid var(--line); }
+      .format:last-child { border-bottom: none; }
+
+      .pipe-step { border-right: none; border-bottom: 1px solid var(--line); flex: 1 1 100%; }
+      .pipe-step:last-child { border-bottom: none; }
+
+      .hero::before {
+        right: -18%;
+        font-size: clamp(12rem, 55vw, 18rem);
+        opacity: 0.85;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav">
+    <a href="./">← All showcases</a>
+    <a href="https://github.com/tamnd/kage" target="_blank" rel="noopener">tamnd/kage</a>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <span class="brand-ruby">影 · shadow · offline</span>
+      <p class="brand">kage</p>
+      <h1>Freeze a website. Strip every script. Keep the page.</h1>
+      <p class="hero-lede">A Go CLI that renders sites in headless Chrome, then saves a script-free mirror you can browse offline for decades.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/tamnd/kage" target="_blank" rel="noopener">View source</a>
+        <a class="btn btn-ghost" href="https://kage.tamnd.com/" target="_blank" rel="noopener">Read the docs</a>
+        <a class="btn btn-ghost" href="https://github.com/tamnd/kage/releases" target="_blank" rel="noopener">Releases</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="rift">
+    <div class="wrap">
+      <p class="section-label">The problem</p>
+      <h2 class="section-title">“Save As” was never yours</h2>
+      <p class="section-copy">Browser saves leave behind thin clients: blank screens, endless spinners, and pages that still call home to trackers. kage takes the opposite path — render first, then rip the JavaScript out.</p>
+      <div class="rift-grid">
+        <div class="rift-side dead">
+          <h3>Browser Save As</h3>
+          <p>A fragile snapshot that still expects live scripts, CDNs, and analytics endpoints that may vanish tomorrow.</p>
+        </div>
+        <div class="rift-slash" aria-hidden="true"><span>vs</span></div>
+        <div class="rift-side alive">
+          <h3>kage shadow</h3>
+          <p>The finished DOM a human would have seen — CSS, images, and fonts localized — with every script deleted. Open it offline.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="section-label">How it works</p>
+      <h2 class="section-title">Render, then sanitize</h2>
+      <p class="section-copy">A polite breadth-first crawl respects robots.txt and sitemaps. Chrome settles each page; sanitize strips scripts and handlers; assets land on deterministic local paths.</p>
+      <div class="pipeline" aria-label="kage processing pipeline">
+        <div class="pipe-step">
+          <p class="pipe-num">01</p>
+          <strong>Seed</strong>
+          <p>Start from a URL; expand via links and sitemap within scope.</p>
+        </div>
+        <div class="pipe-step">
+          <p class="pipe-num">02</p>
+          <strong>Render</strong>
+          <p>Headless Chrome waits for the live page to settle.</p>
+        </div>
+        <div class="pipe-step">
+          <p class="pipe-num">03</p>
+          <strong>Strip</strong>
+          <p>Scripts, handlers, and javascript: URLs leave the DOM.</p>
+        </div>
+        <div class="pipe-step">
+          <p class="pipe-num">04</p>
+          <strong>Localize</strong>
+          <p>CSS, images, and fonts rewrite to on-disk paths.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo-stage" aria-label="Demo">
+    <div class="demo-frame">
+      <div class="demo-chrome">
+        <span class="demo-dot"></span>
+        <span class="demo-dot"></span>
+        <span class="demo-dot"></span>
+        <span style="margin-left: 0.75rem;">clone → pack → open · paulgraham.com</span>
+      </div>
+      <img src="https://raw.githubusercontent.com/tamnd/kage/main/docs/static/demo.gif" alt="kage cloning paulgraham.com, packing it into one file, and serving it back offline">
+      <p class="demo-caption">Upstream demo: clone a site, pack the mirror, serve it with zero network.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="section-label">Quick start</p>
+      <h2 class="section-title">Two commands to own a site</h2>
+      <p class="section-copy">Clone into <code style="font-family:var(--font-mono);font-size:0.9em;color:var(--accent)">$HOME/data/kage/&lt;host&gt;/</code>, then serve locally. Pack later if you want a single file.</p>
+      <div class="term">
+        <div class="term-bar">
+          <span class="demo-dot"></span>
+          <span class="demo-dot"></span>
+          <span class="demo-dot"></span>
+          <span style="margin-left:0.5rem;">shell</span>
+        </div>
+        <pre class="term-body"><span class="cmt"># mirror the site (Chrome/Chromium required)</span>
+<span class="cmd">kage clone paulgraham.com</span>
+
+<span class="cmt"># browse the shadow offline</span>
+<span class="cmd">kage serve $HOME/data/kage/paulgraham.com</span>
+<span class="out"># → http://127.0.0.1:8800</span>
+
+<span class="cmt"># optional: one shareable ZIM</span>
+<span class="cmd">kage pack paulgraham.com</span>
+<span class="cmd cursor-blink">kage open paulgraham.com.zim</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top: 2rem;">
+    <div class="wrap">
+      <p class="section-label">Why it stands out</p>
+      <h2 class="section-title">Built for archives that last</h2>
+      <div class="strengths">
+        <article class="strength">
+          <span class="strength-mark" aria-hidden="true">影</span>
+          <div>
+            <h3>Finished DOM, not source HTML</h3>
+            <p>kage drives real Chrome so SPAs and lazy loaders finish their work before the snapshot. What you keep is what a person saw — then every script is gone.</p>
+          </div>
+        </article>
+        <article class="strength">
+          <span class="strength-mark" aria-hidden="true">∅</span>
+          <div>
+            <h3>Offline means offline</h3>
+            <p>No trackers, no phone-home, no surprise network calls. Plain HTML you can hand to a friend, open from a USB stick, or reopen in 2050.</p>
+          </div>
+        </article>
+        <article class="strength">
+          <span class="strength-mark" aria-hidden="true">▣</span>
+          <div>
+            <h3>Pack once, open anywhere</h3>
+            <p>Collapse a mirror into a Kiwix-compatible ZIM, a self-serving binary, a double-click app, or — with the webview build — a native OS window.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="section-label">Pack shapes</p>
+      <h2 class="section-title">Folder, archive, or executable</h2>
+      <p class="section-copy">A mirror is great on disk. For sharing, <code style="font-family:var(--font-mono);font-size:0.9em;color:var(--accent)">kage pack</code> collapses it into the shape you need — open format preferred.</p>
+      <div class="formats">
+        <div class="format">
+          <span class="format-glyph">.ZIM</span>
+          <h3>Open archive</h3>
+          <p>Deterministic ZIM packs work with kage, kiwix-serve, and the wider Kiwix ecosystem — boats, classrooms, long flights.</p>
+        </div>
+        <div class="format">
+          <span class="format-glyph">BINARY</span>
+          <h3>Self-serving exe</h3>
+          <p>Append the archive onto kage itself. Recipients need nothing installed; cross-pack with a release <code style="font-family:var(--font-mono);font-size:0.85em">--base</code>.</p>
+        </div>
+        <div class="format">
+          <span class="format-glyph">APP</span>
+          <h3>Double-click shell</h3>
+          <p>macOS .app, Linux AppImage-style bundles, or Windows GUI-subsystem viewers — site as app, no terminal flash.</p>
+        </div>
+      </div>
+
+      <figure class="webview-shot">
+        <img src="https://raw.githubusercontent.com/tamnd/kage/main/docs/static/webview.png" alt="paulgraham.com served offline in a native kage webview window">
+        <figcaption>Optional webview build: Paul Graham’s essays in a real OS window, not another browser tab.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="close">
+    <div class="wrap">
+      <p class="section-label">Get it</p>
+      <h2 class="section-title">Install the shadow tool</h2>
+      <p class="section-copy"><code style="font-family:var(--font-mono);font-size:0.9em;color:var(--accent)">go install github.com/tamnd/kage/cmd/kage@latest</code> — or grab packages, a Chromium-bundled container, or platform archives from GitHub Releases.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/tamnd/kage" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-ghost" href="https://github.com/tamnd/kage/releases" target="_blank" rel="noopener">Downloads</a>
+        <a class="btn btn-ghost" href="https://kage.tamnd.com/" target="_blank" rel="noopener">kage.tamnd.com</a>
+      </div>
+      <div class="meta-line">
+        <span>Showcase #29 · DuckWare</span>
+        <a href="./">Catalog</a>
+        <a href="https://github.com/tamnd/kage" target="_blank" rel="noopener">tamnd/kage</a>
+        <span>MIT · Go</span>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
