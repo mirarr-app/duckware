@@ -1,6 +1,6 @@
 ---
 name: add-duckware-showcase
-description: Adds curated DuckWare showcases. Creates a bespoke HTML page per project at showcases/<slug>.html, plus catalog and RSS entries. Use when the user asks to add a showcase, curate a project, or publish a software audit page for duckware.
+description: Adds curated DuckWare showcases with bespoke dark-mode detail pages tailored to each project (research first, unique UI, subtle animations). Creates showcases/<slug>.html plus catalog and RSS entries; include a page screenshot in the PR when possible. Use when the user asks to add a showcase, curate a project, or publish a software audit page for duckware.
 ---
 
 # Add a DuckWare Showcase
