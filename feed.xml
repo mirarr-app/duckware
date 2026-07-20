@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Sun, 19 Jul 2026 09:15:00 GMT</lastBuildDate>
-    <pubDate>Sun, 19 Jul 2026 09:15:00 GMT</pubDate>
+    <lastBuildDate>Mon, 20 Jul 2026 08:40:00 GMT</lastBuildDate>
+    <pubDate>Mon, 20 Jul 2026 08:40:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -239,6 +239,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/kage.html</guid>
       <pubDate>Sun, 19 Jul 2026 09:15:00 GMT</pubDate>
       <description>Shadow any website for offline viewing: headless Chrome renders the finished page, every script is stripped, and the mirror packs into ZIM, a self-serving binary, or a native window.</description>
+    </item>
+
+    <item>
+      <title>croc: Secure Phrase Transfers</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/croc.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/croc.html</guid>
+      <pubDate>Mon, 20 Jul 2026 08:40:00 GMT</pubDate>
+      <description>Securely send files between any two computers with a short code phrase — end-to-end encrypted, resumable, and free of port-forwarding.</description>
     </item>
   </channel>
 </rss>
