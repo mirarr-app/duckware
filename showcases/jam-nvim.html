@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jam.nvim Showcase — DuckWare</title>
+  <meta name="description" content="Search Spotify and control playback from a Telescope picker without leaving Neovim — live search, album-art previews, and PKCE auth.">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #060708;
+      --panel: #0e1114;
+      --panel-2: #14191e;
+      --line: rgba(160, 255, 210, 0.14);
+      --mist: #9aa7b2;
+      --paper: #e8f0f4;
+      --mint: #5cffb0;
+      --mint-dim: rgba(92, 255, 176, 0.12);
+      --coral: #ff6b4a;
+      --gold: #f0c75e;
+      --type: #7ec8ff;
+      --album: #c9a0ff;
+      --artist: #ff9ec8;
+      --playlist: #7dffc8;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --display: "Syne", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--mono);
+      background: var(--ink);
+      color: var(--paper);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 45% at 15% 0%, rgba(92, 255, 176, 0.09), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 90% 20%, rgba(255, 107, 74, 0.07), transparent 50%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(255, 255, 255, 0.012) 2px,
+          rgba(255, 255, 255, 0.012) 3px
+        );
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, calc(100% - 2rem));
+      margin: 0 auto;
+    }
+
+    /* —— top bar —— */
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 0 0;
+      gap: 1rem;
+    }
+
+    .back {
+      font-size: 0.78rem;
+      color: var(--mist);
+      letter-spacing: 0.04em;
+      transition: color 0.2s ease;
+    }
+    .back:hover { color: var(--mint); }
+
+    .top-links {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .chip-link {
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--line);
+      background: rgba(14, 17, 20, 0.7);
+      color: var(--mist);
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+    .chip-link:hover {
+      color: var(--paper);
+      border-color: rgba(92, 255, 176, 0.45);
+      background: var(--mint-dim);
+    }
+
+    /* —— hero —— */
+    .hero {
+      padding: 3.5rem 0 4rem;
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        grid-template-columns: 0.95fr 1.05fr;
+        align-items: end;
+        min-height: calc(100vh - 5rem);
+        padding-top: 4rem;
+        padding-bottom: 3rem;
+      }
+    }
+
+    .brand {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(3.2rem, 8vw, 5.6rem);
+      letter-spacing: -0.04em;
+      line-height: 0.92;
+      color: var(--paper);
+    }
+
+    .brand span {
+      color: var(--mint);
+      display: inline-block;
+    }
+
+    .brand span::after {
+      content: "";
+      display: inline-block;
+      width: 0.55em;
+      height: 0.12em;
+      margin-left: 0.12em;
+      margin-bottom: 0.08em;
+      background: var(--coral);
+      vertical-align: middle;
+      animation: blink 1.1s steps(1) infinite;
+    }
+
+    .lede {
+      margin-top: 1.25rem;
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      max-width: 22ch;
+      color: var(--paper);
+    }
+
+    .sub {
+      margin-top: 0.85rem;
+      color: var(--mist);
+      font-size: 0.88rem;
+      max-width: 36ch;
+    }
+
+    .cta-row {
+      margin-top: 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      padding: 0.75rem 1.1rem;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--mint);
+      color: #06140e;
+    }
+    .btn-primary:hover { background: #7dffc0; }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--paper);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(92, 255, 176, 0.5);
+      background: var(--mint-dim);
+    }
+
+    .note {
+      margin-top: 1.5rem;
+      font-size: 0.72rem;
+      color: var(--mist);
+      border-left: 2px solid var(--gold);
+      padding-left: 0.75rem;
+      max-width: 40ch;
+    }
+
+    /* —— telescope stage (hero visual) —— */
+    .stage {
+      position: relative;
+    }
+
+    .nvim-chrome {
+      background: linear-gradient(180deg, #12171c 0%, #0a0d10 100%);
+      border: 1px solid var(--line);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        0 30px 80px rgba(0, 0, 0, 0.55),
+        0 0 60px rgba(92, 255, 176, 0.06);
+      overflow: hidden;
+      transform: perspective(1200px) rotateY(-2deg) rotateX(2deg);
+      transform-origin: center right;
+      animation: float-in 0.9s ease both;
+    }
+
+    @media (max-width: 899px) {
+      .nvim-chrome { transform: none; }
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 0.75rem;
+      background: #0a0d10;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.68rem;
+      color: var(--mist);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3a424a;
+    }
+    .dot:nth-child(1) { background: #ff6b4a; }
+    .dot:nth-child(2) { background: #f0c75e; }
+    .dot:nth-child(3) { background: #5cffb0; }
+
+    .titlebar-label { margin-left: 0.5rem; }
+
+    .picker {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      min-height: 320px;
+    }
+
+    @media (max-width: 620px) {
+      .picker { grid-template-columns: 1fr; }
+      .preview { min-height: 160px; }
+    }
+
+    .results {
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 0.65rem 0.55rem 0.75rem;
+    }
+
+    .prompt {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.55rem;
+      margin-bottom: 0.55rem;
+      background: var(--panel-2);
+      border: 1px solid rgba(92, 255, 176, 0.25);
+      font-size: 0.78rem;
+      color: var(--paper);
+    }
+
+    .prompt-prefix { color: var(--mint); }
+
+    .typed {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid var(--mint);
+      animation:
+        typing 3.2s steps(14, end) infinite,
+        caret 0.7s step-end infinite;
+      max-width: 14ch;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.55rem;
+      align-items: center;
+      padding: 0.38rem 0.5rem;
+      font-size: 0.72rem;
+      color: var(--mist);
+      border-left: 2px solid transparent;
+      opacity: 0;
+      animation: row-in 0.45s ease forwards;
+    }
+    .row:nth-child(2) { animation-delay: 0.15s; }
+    .row:nth-child(3) { animation-delay: 0.28s; }
+    .row:nth-child(4) { animation-delay: 0.4s; }
+    .row:nth-child(5) { animation-delay: 0.52s; }
+    .row:nth-child(6) { animation-delay: 0.64s; }
+
+    .row.active {
+      background: var(--mint-dim);
+      border-left-color: var(--mint);
+      color: var(--paper);
+    }
+
+    .tag {
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      padding: 0.15rem 0.35rem;
+      border: 1px solid currentColor;
+      opacity: 0.9;
+    }
+    .tag.track { color: var(--type); }
+    .tag.album { color: var(--album); }
+    .tag.artist { color: var(--artist); }
+    .tag.playlist { color: var(--playlist); }
+
+    .meta { color: inherit; opacity: 0.55; font-size: 0.65rem; }
+
+    .preview {
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      background:
+        radial-gradient(circle at 70% 20%, rgba(92, 255, 176, 0.08), transparent 45%),
+        var(--panel);
+    }
+
+    .art {
+      aspect-ratio: 1;
+      width: min(100%, 180px);
+      margin: 0 auto;
+      position: relative;
+      background:
+        conic-gradient(from 210deg, #1a2228, #2a3340, #152018, #2c1a18, #1a2228);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .art::before {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        radial-gradient(circle at 50% 50%, #0a0d10 0 18%, transparent 19%),
+        repeating-radial-gradient(circle at 50% 50%, transparent 0 4px, rgba(255,255,255,0.04) 4px 5px);
+      animation: spin 18s linear infinite;
+    }
+
+    .art-label {
+      position: absolute;
+      inset: auto 8% 10% 8%;
+      font-family: var(--display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(232, 240, 244, 0.85);
+      z-index: 1;
+    }
+
+    .now {
+      font-size: 0.7rem;
+      color: var(--mist);
+      text-align: center;
+    }
+    .now strong {
+      display: block;
+      color: var(--paper);
+      font-weight: 500;
+      margin-bottom: 0.15rem;
+    }
+
+    .eq {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 3px;
+      height: 28px;
+    }
+
+    .eq span {
+      width: 4px;
+      background: var(--mint);
+      border-radius: 1px;
+      animation: eq 0.9s ease-in-out infinite alternate;
+      opacity: 0.85;
+    }
+    .eq span:nth-child(1) { height: 40%; animation-delay: 0s; }
+    .eq span:nth-child(2) { height: 70%; animation-delay: 0.1s; }
+    .eq span:nth-child(3) { height: 55%; animation-delay: 0.2s; }
+    .eq span:nth-child(4) { height: 90%; animation-delay: 0.05s; }
+    .eq span:nth-child(5) { height: 45%; animation-delay: 0.25s; }
+    .eq span:nth-child(6) { height: 75%; animation-delay: 0.15s; }
+    .eq span:nth-child(7) { height: 35%; animation-delay: 0.3s; }
+
+    .statusline {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.35rem 0.65rem;
+      background: #5cffb0;
+      color: #06140e;
+      font-size: 0.65rem;
+      font-weight: 500;
+    }
+
+    .statusline .dim { opacity: 0.7; }
+
+    /* —— sections —— */
+    section {
+      padding: 4rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .sec-kicker {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mint);
+      margin-bottom: 0.75rem;
+    }
+
+    .sec-title {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: clamp(1.6rem, 3.5vw, 2.35rem);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 18ch;
+      margin-bottom: 0.75rem;
+    }
+
+    .sec-copy {
+      color: var(--mist);
+      font-size: 0.9rem;
+      max-width: 58ch;
+    }
+
+    /* flow / prefixes */
+    .prefix-rail {
+      margin-top: 2rem;
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    @media (min-width: 720px) {
+      .prefix-rail {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .prefix {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 1rem 1.1rem;
+      transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    }
+    .prefix:hover {
+      border-color: rgba(92, 255, 176, 0.4);
+      background: var(--panel-2);
+      transform: translateY(-2px);
+    }
+
+    .prefix code {
+      color: var(--mint);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .prefix p {
+      margin-top: 0.35rem;
+      font-size: 0.78rem;
+      color: var(--mist);
+    }
+
+    /* transport keys */
+    .keys {
+      margin-top: 2rem;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 700px) {
+      .keys { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .key {
+      background: linear-gradient(180deg, #171c21, #0f1317);
+      border: 1px solid var(--line);
+      padding: 1.1rem 1rem 1rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .key::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--mint), transparent);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .key:hover::after { opacity: 1; }
+
+    .key kbd {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--paper);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.35rem 0.55rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .key p {
+      font-size: 0.72rem;
+      color: var(--mist);
+    }
+
+    /* strengths strip */
+    .strengths {
+      margin-top: 2rem;
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    @media (min-width: 800px) {
+      .strengths { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    }
+
+    .strength h3 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.45rem;
+      color: var(--paper);
+    }
+
+    .strength p {
+      font-size: 0.82rem;
+      color: var(--mist);
+    }
+
+    .strength .num {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      color: var(--coral);
+      margin-bottom: 0.5rem;
+    }
+
+    /* auth band */
+    .auth-band {
+      margin-top: 2rem;
+      display: grid;
+      gap: 1rem;
+      background:
+        linear-gradient(135deg, rgba(92, 255, 176, 0.06), transparent 40%),
+        var(--panel);
+      border: 1px solid var(--line);
+      padding: 1.5rem;
+    }
+
+    @media (min-width: 800px) {
+      .auth-band {
+        grid-template-columns: 1.2fr 1fr;
+        align-items: center;
+        padding: 1.75rem 2rem;
+      }
+    }
+
+    .auth-band h3 {
+      font-family: var(--display);
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-band p {
+      font-size: 0.84rem;
+      color: var(--mist);
+    }
+
+    .cmd-block {
+      background: #080a0c;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 1rem;
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--mist);
+      overflow-x: auto;
+    }
+    .cmd-block .ok { color: var(--mint); }
+    .cmd-block .cmd { color: var(--paper); }
+
+    /* commands table-ish */
+    .cmd-grid {
+      margin-top: 2rem;
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .cmd-row {
+      display: grid;
+      grid-template-columns: minmax(9rem, 0.45fr) 1fr;
+      gap: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      background: rgba(14, 17, 20, 0.65);
+      border-left: 2px solid transparent;
+      font-size: 0.8rem;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .cmd-row:hover {
+      border-left-color: var(--mint);
+      background: var(--mint-dim);
+    }
+    .cmd-row code { color: var(--mint); font-weight: 500; }
+    .cmd-row span { color: var(--mist); }
+
+    @media (max-width: 520px) {
+      .cmd-row { grid-template-columns: 1fr; gap: 0.2rem; }
+    }
+
+    /* footer CTA */
+    .finale {
+      padding: 4.5rem 0 5rem;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .finale .brand-sm {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3rem);
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+    }
+
+    .finale .brand-sm span { color: var(--mint); }
+
+    .finale p {
+      color: var(--mist);
+      font-size: 0.88rem;
+      max-width: 42ch;
+      margin: 0 auto 1.5rem;
+    }
+
+    .foot {
+      padding: 1.5rem 0 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.72rem;
+      color: var(--mist);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .foot a:hover { color: var(--mint); }
+
+    /* motion */
+    @keyframes blink {
+      0%, 45% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    @keyframes typing {
+      0%, 12% { max-width: 0; }
+      45%, 75% { max-width: 14ch; }
+      90%, 100% { max-width: 0; }
+    }
+
+    @keyframes caret {
+      50% { border-color: transparent; }
+    }
+
+    @keyframes row-in {
+      from { opacity: 0; transform: translateX(-6px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes eq {
+      from { transform: scaleY(0.45); }
+      to { transform: scaleY(1); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes float-in {
+      from { opacity: 0; transform: perspective(1200px) rotateY(-2deg) rotateX(2deg) translateY(18px); }
+      to { opacity: 1; transform: perspective(1200px) rotateY(-2deg) rotateX(2deg) translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .nvim-chrome { transform: none; }
+      .row { opacity: 1; }
+      .typed {
+        max-width: none;
+        border-right: none;
+        animation: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="back" href="./">← All showcases</a>
+      <div class="top-links">
+        <a class="chip-link" href="https://github.com/bautistaaa/jam.nvim" target="_blank" rel="noopener">GitHub</a>
+        <a class="chip-link" href="https://github.com/bautistaaa/jam.nvim#installation" target="_blank" rel="noopener">Install</a>
+      </div>
+    </header>
+
+    <section class="hero" aria-label="jam.nvim hero">
+      <div>
+        <h1 class="brand">jam<span>.nvim</span></h1>
+        <p class="lede">Stay in the buffer. Let the music move.</p>
+        <p class="sub">
+          Live Spotify search and playback control from a Telescope picker —
+          tracks, albums, artists, playlists, and podcasts without leaving Neovim.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/bautistaaa/jam.nvim" target="_blank" rel="noopener">Open repository</a>
+          <a class="btn btn-ghost" href="https://github.com/bautistaaa/jam.nvim#spotify-setup" target="_blank" rel="noopener">Spotify setup</a>
+        </div>
+        <p class="note">Early preview — Spotify ships first; more providers are planned as their APIs allow.</p>
+      </div>
+
+      <div class="stage" aria-hidden="true">
+        <div class="nvim-chrome">
+          <div class="titlebar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="titlebar-label">nvim · :Jam</span>
+          </div>
+          <div class="picker">
+            <div class="results">
+              <div class="prompt">
+                <span class="prompt-prefix">❯</span>
+                <span class="typed">s:One More Night</span>
+              </div>
+              <div class="row active">
+                <span class="tag track">TRACK</span>
+                <span>One More Time</span>
+                <span class="meta">Daft Punk</span>
+              </div>
+              <div class="row">
+                <span class="tag album">ALBUM</span>
+                <span>Discovery</span>
+                <span class="meta">2001</span>
+              </div>
+              <div class="row">
+                <span class="tag artist">ARTIST</span>
+                <span>Maroon 5</span>
+                <span class="meta">top tracks</span>
+              </div>
+              <div class="row">
+                <span class="tag playlist">PLAYLIST</span>
+                <span>Discover Weekly</span>
+                <span class="meta">Spotify</span>
+              </div>
+              <div class="row">
+                <span class="tag track">TRACK</span>
+                <span>Nightcall</span>
+                <span class="meta">Kavinsky</span>
+              </div>
+            </div>
+            <div class="preview">
+              <div class="art">
+                <div class="art-label">chafa / image.nvim</div>
+              </div>
+              <div class="now">
+                <strong>One More Time</strong>
+                Daft Punk · Discovery
+              </div>
+              <div class="eq" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+          <div class="statusline">
+            <span>NORMAL&nbsp;&nbsp;lua/jam/init.lua</span>
+            <span class="dim">▶ playing · jam.nvim</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="sec-kicker">What it is</p>
+      <h2 class="sec-title">A session booth inside Telescope</h2>
+      <p class="sec-copy">
+        jam.nvim is for people who already live in Neovim and refuse to alt-tab for a song change.
+        Type <code style="color:var(--mint)">:Jam</code>, filter the catalog with short prefixes,
+        drill into an album or artist, queue a track, or skip — all while your cursor stays home.
+      </p>
+
+      <div class="prefix-rail">
+        <div class="prefix"><code>a:</code><p>Albums — open disc-order track lists</p></div>
+        <div class="prefix"><code>t:</code><p>Artists — jump to top tracks</p></div>
+        <div class="prefix"><code>s:</code><p>Songs — play a track on Enter</p></div>
+        <div class="prefix"><code>l:</code><p>Playlists — browse or play when Spotify allows</p></div>
+        <div class="prefix"><code>p:</code><p>Podcasts — show episode shelves</p></div>
+        <div class="prefix"><code>e:</code><p>Episodes — queue or play directly</p></div>
+      </div>
+    </section>
+
+    <section>
+      <p class="sec-kicker">Hands on the transport</p>
+      <h2 class="sec-title">Picker mappings that feel native</h2>
+      <p class="sec-copy">
+        Collections open in place. Escape returns you to the same search.
+        Playback stays a chord away — no floating media window fighting your layout.
+      </p>
+
+      <div class="keys">
+        <div class="key">
+          <kbd>&lt;CR&gt;</kbd>
+          <p>Open a collection or play the selection</p>
+        </div>
+        <div class="key">
+          <kbd>&lt;C-q&gt;</kbd>
+          <p>Add track or episode to the queue</p>
+        </div>
+        <div class="key">
+          <kbd>&lt;C-p&gt;</kbd>
+          <p>Pause without closing the picker</p>
+        </div>
+        <div class="key">
+          <kbd>&lt;Esc&gt;</kbd>
+          <p>Pop back from album / artist / show</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <p class="sec-kicker">Why it stands out</p>
+      <h2 class="sec-title">Three moves that earn the install</h2>
+
+      <div class="strengths">
+        <article class="strength">
+          <p class="num">01 — SEARCH</p>
+          <h3>One fuzzy list, labeled types</h3>
+          <p>
+            Unfiltered queries mix TRACK, ALBUM, ARTIST, PLAYLIST, PODCAST, and EPISODE
+            in a single Telescope stream. Prefixes narrow when you already know the shape.
+          </p>
+        </article>
+        <article class="strength">
+          <p class="num">02 — ARTWORK</p>
+          <h3>Previews that respect the terminal</h3>
+          <p>
+            Auto-detects <code style="color:var(--mint)">image.nvim</code> or <code style="color:var(--mint)">chafa</code>
+            for album art in the preview pane. No renderer? You still get the image URL as text —
+            and <code style="color:var(--mint)">:checkhealth jam</code> tells you which backend won.
+          </p>
+        </article>
+        <article class="strength">
+          <p class="num">03 — AUTH</p>
+          <h3>PKCE, no client secret in config</h3>
+          <p>
+            OAuth Authorization Code with PKCE keeps secrets out of your Lua files.
+            Tokens land mode <code style="color:var(--mint)">0600</code> under Neovim’s data dir;
+            <code style="color:var(--mint)">:Jam logout</code> wipes them clean.
+          </p>
+        </article>
+      </div>
+
+      <div class="auth-band">
+        <div>
+          <h3>Connect once, then jam</h3>
+          <p>
+            Export a Spotify app Client ID, run health checks, authorize in the browser,
+            wake a Connect device, and search. Premium plus an active device unlocks playback control.
+          </p>
+        </div>
+        <pre class="cmd-block"><span class="ok">$</span> <span class="cmd">export SPOTIFY_CLIENT_ID=…</span>
+<span class="ok">:</span> <span class="cmd">checkhealth jam</span>
+<span class="ok">:</span> <span class="cmd">Jam auth spotify</span>
+<span class="ok">:</span> <span class="cmd">Jam</span>          <span class="ok"># type, filter, play</span></pre>
+      </div>
+    </section>
+
+    <section>
+      <p class="sec-kicker">Command surface</p>
+      <h2 class="sec-title">Entry points that stay memorable</h2>
+      <p class="sec-copy">
+        Prefer Telescope’s extension loader? <code style="color:var(--mint)">:Telescope jam</code> is there too.
+        Provider adapters sit behind a shared search/playback interface so future services can ship
+        only the capabilities their APIs allow.
+      </p>
+
+      <div class="cmd-grid">
+        <div class="cmd-row"><code>:Jam</code><span>Open live search</span></div>
+        <div class="cmd-row"><code>:Jam auth spotify</code><span>Browser OAuth with PKCE</span></div>
+        <div class="cmd-row"><code>:Jam play / pause</code><span>Transport on the active Connect device</span></div>
+        <div class="cmd-row"><code>:Jam next / previous</code><span>Skip without leaving the editor</span></div>
+        <div class="cmd-row"><code>:Jam now-playing</code><span>What’s on deck right now</span></div>
+        <div class="cmd-row"><code>:Jam health</code><span>Same diagnostics as :checkhealth jam</span></div>
+        <div class="cmd-row"><code>:Jam logout</code><span>Drop stored tokens</span></div>
+      </div>
+    </section>
+
+    <section class="finale">
+      <p class="brand-sm">jam<span>.nvim</span></p>
+      <p>Search Spotify from Telescope. Keep your hands on the modal keyboard. Queue the next track like another buffer.</p>
+      <div class="cta-row" style="justify-content: center;">
+        <a class="btn btn-primary" href="https://github.com/bautistaaa/jam.nvim" target="_blank" rel="noopener">Star on GitHub</a>
+        <a class="btn btn-ghost" href="https://github.com/bautistaaa/jam.nvim#configuration" target="_blank" rel="noopener">Configuration</a>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <a href="./">← DuckWare showcases</a>
+      <span>Showcase · bautistaaa/jam.nvim</span>
+    </footer>
+  </div>
+</body>
+</html>
