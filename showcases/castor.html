@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Castor Showcase — DuckWare</title>
+  <meta name="description" content="Cast real web video streams to your TV from the terminal — extract, transcode, and DLNA-cast at full quality with optional burned-in Whisper subtitles.">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #050508;
+      --room: #0b0c12;
+      --panel: #12131c;
+      --panel-lift: #1a1c28;
+      --hair: rgba(255, 255, 255, 0.08);
+      --mist: #9aa3b8;
+      --fog: #c8d0e0;
+      --ink: #eef1f7;
+      --amber: #f0a84a;
+      --amber-dim: #c47a28;
+      --teal: #3fd4c0;
+      --teal-dim: #1f8f82;
+      --signal: #7ae0ff;
+      --danger: #ff6b6b;
+      --font-display: "Syne", sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      --max: 1100px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--void);
+      color: var(--fog);
+      font-family: var(--font-mono);
+      font-size: 15px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    a { color: var(--teal); text-decoration: none; }
+    a:hover { color: var(--signal); }
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* Atmosphere: living-room glow + subtle scan */
+    .room-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 80% 50% at 78% 42%, rgba(240, 168, 74, 0.14), transparent 55%),
+        radial-gradient(ellipse 55% 40% at 12% 70%, rgba(63, 212, 192, 0.08), transparent 50%),
+        radial-gradient(ellipse 100% 80% at 50% 100%, rgba(20, 22, 40, 0.9), var(--void));
+      pointer-events: none;
+    }
+    .room-scan {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.12) 3px,
+        rgba(0, 0, 0, 0.12) 4px
+      );
+      opacity: 0.35;
+      pointer-events: none;
+      animation: scan-drift 12s linear infinite;
+    }
+    @keyframes scan-drift {
+      from { transform: translateY(0); }
+      to { transform: translateY(4px); }
+    }
+
+    .wrap {
+      width: min(100% - 2.5rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* Top bar */
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--hair);
+    }
+    .back {
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: var(--mist);
+      text-transform: uppercase;
+    }
+    .back:hover { color: var(--ink); }
+    .top-meta {
+      font-size: 0.72rem;
+      color: var(--mist);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .live-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+      margin-right: 0.45rem;
+      box-shadow: 0 0 10px var(--teal);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    /* Hero — one composition: brand + cast beam scene */
+    .hero {
+      position: relative;
+      min-height: min(92vh, 820px);
+      display: grid;
+      align-items: end;
+      padding: 2.5rem 0 3.5rem;
+      isolation: isolate;
+    }
+    .hero-stage {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    /* TV silhouette — full-bleed visual plane */
+    .tv-plane {
+      position: absolute;
+      right: -4%;
+      top: 8%;
+      width: min(62vw, 640px);
+      aspect-ratio: 16 / 10;
+      background:
+        linear-gradient(160deg, #151722 0%, #0a0b10 60%, #06070b 100%);
+      border: 2px solid #2a2d3a;
+      border-radius: 10px 10px 4px 4px;
+      box-shadow:
+        0 0 0 10px #0e0f16,
+        0 40px 80px rgba(0, 0, 0, 0.65),
+        inset 0 0 60px rgba(240, 168, 74, 0.08);
+    }
+    .tv-plane::before {
+      content: "";
+      position: absolute;
+      inset: 4%;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(240, 168, 74, 0.35), transparent 55%),
+        linear-gradient(180deg, #1a1420, #0c0d14);
+      border-radius: 2px;
+      animation: screen-breathe 5s ease-in-out infinite;
+    }
+    .tv-plane::after {
+      content: "DLNA · MediaRenderer";
+      position: absolute;
+      left: 50%;
+      bottom: -2.2rem;
+      transform: translateX(-50%);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mist);
+      white-space: nowrap;
+    }
+    .tv-stand {
+      position: absolute;
+      right: 18%;
+      top: calc(8% + min(62vw, 640px) * 0.625);
+      width: min(18vw, 160px);
+      height: 14px;
+      background: #1c1e28;
+      border-radius: 0 0 4px 4px;
+      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.5);
+    }
+    @keyframes screen-breathe {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.12); }
+    }
+
+    /* Cast beam from left (terminal) to TV */
+    .cast-beam {
+      position: absolute;
+      left: 8%;
+      top: 38%;
+      width: 55%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--signal), var(--amber));
+      border-radius: 2px;
+      box-shadow: 0 0 18px rgba(63, 212, 192, 0.55), 0 0 40px rgba(240, 168, 74, 0.25);
+      transform-origin: left center;
+      animation: beam-pulse 2.8s ease-in-out infinite;
+      opacity: 0.85;
+    }
+    .cast-beam::before,
+    .cast-beam::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--signal);
+      box-shadow: 0 0 12px var(--signal);
+      animation: packet-fly 2.8s linear infinite;
+    }
+    .cast-beam::after {
+      animation-delay: 1.4s;
+      background: var(--amber);
+      box-shadow: 0 0 12px var(--amber);
+    }
+    @keyframes beam-pulse {
+      0%, 100% { opacity: 0.55; filter: blur(0.2px); }
+      50% { opacity: 1; filter: blur(0); }
+    }
+    @keyframes packet-fly {
+      0% { left: 0%; transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { left: 100%; transform: translate(-50%, -50%) scale(1.1); opacity: 0; }
+    }
+
+    .term-node {
+      position: absolute;
+      left: 2%;
+      top: 28%;
+      width: min(28vw, 260px);
+      background: #0a0c12;
+      border: 1px solid #2a3140;
+      border-radius: 8px;
+      padding: 0.65rem 0.75rem 0.85rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), 0 0 30px rgba(63, 212, 192, 0.12);
+      font-size: 0.68rem;
+      color: #8fa0b8;
+      line-height: 1.55;
+    }
+    .term-node .chrome {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 0.55rem;
+    }
+    .term-node .chrome i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3a4154;
+      display: block;
+    }
+    .term-node .chrome i:nth-child(1) { background: #ff5f57; }
+    .term-node .chrome i:nth-child(2) { background: #febc2e; }
+    .term-node .chrome i:nth-child(3) { background: #28c840; }
+    .term-node .cmd { color: var(--teal); }
+    .term-node .ok { color: var(--amber); }
+    .cursor {
+      display: inline-block;
+      width: 0.55em;
+      height: 1em;
+      background: var(--teal);
+      vertical-align: text-bottom;
+      animation: blink 1.05s steps(1) infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      max-width: 34rem;
+      padding-bottom: 0.5rem;
+    }
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+    .brand-mark {
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 4px 12px rgba(165, 116, 77, 0.35));
+    }
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(3.2rem, 9vw, 5.5rem);
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin: 0;
+      text-shadow: 0 0 40px rgba(240, 168, 74, 0.2);
+    }
+    .hero h2 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+      line-height: 1.35;
+      color: var(--fog);
+      margin: 0 0 0.85rem;
+      max-width: 28ch;
+    }
+    .hero-lead {
+      color: var(--mist);
+      font-size: 0.88rem;
+      max-width: 42ch;
+      margin: 0 0 1.75rem;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1.15rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: var(--amber);
+      color: #1a1005;
+      border-color: var(--amber);
+    }
+    .btn-primary:hover {
+      background: #ffc066;
+      color: #1a1005;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--fog);
+      border-color: var(--hair);
+    }
+    .btn-ghost:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* Pipeline — signal stages */
+    .pipeline {
+      padding: 4rem 0 3rem;
+      border-top: 1px solid var(--hair);
+    }
+    .section-kicker {
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin: 0 0 0.6rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      margin: 0 0 0.6rem;
+      line-height: 1.15;
+    }
+    .section-lead {
+      color: var(--mist);
+      max-width: 52ch;
+      margin: 0 0 2.25rem;
+      font-size: 0.9rem;
+    }
+
+    .stages {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .stages::before {
+      content: "";
+      position: absolute;
+      top: 1.55rem;
+      left: 8%;
+      right: 8%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal-dim), var(--signal), var(--amber-dim));
+      opacity: 0.5;
+      z-index: 0;
+    }
+    .stage {
+      position: relative;
+      z-index: 1;
+      padding: 0 0.75rem 0 0;
+      text-align: left;
+    }
+    .stage-num {
+      width: 2.1rem;
+      height: 2.1rem;
+      border-radius: 50%;
+      background: var(--panel);
+      border: 2px solid var(--teal);
+      color: var(--teal);
+      display: grid;
+      place-items: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 16px rgba(63, 212, 192, 0.25);
+      animation: node-glow 3s ease-in-out infinite;
+    }
+    .stage:nth-child(2) .stage-num {
+      border-color: var(--signal);
+      color: var(--signal);
+      animation-delay: 0.4s;
+    }
+    .stage:nth-child(3) .stage-num {
+      border-color: var(--amber);
+      color: var(--amber);
+      animation-delay: 0.8s;
+    }
+    .stage:nth-child(4) .stage-num {
+      border-color: #ffb86b;
+      color: #ffb86b;
+      animation-delay: 1.2s;
+    }
+    @keyframes node-glow {
+      0%, 100% { box-shadow: 0 0 10px rgba(63, 212, 192, 0.15); }
+      50% { box-shadow: 0 0 22px rgba(63, 212, 192, 0.45); }
+    }
+    .stage h3 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 0.4rem;
+    }
+    .stage p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--mist);
+      line-height: 1.55;
+      max-width: 22ch;
+    }
+
+    /* Why it matters — stacked comparison strip */
+    .compare {
+      padding: 3.5rem 0;
+      border-top: 1px solid var(--hair);
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+    .compare-pane {
+      background: var(--panel);
+      border: 1px solid var(--hair);
+      padding: 1.5rem 1.35rem;
+      border-radius: 6px;
+    }
+    .compare-pane.bad {
+      border-color: rgba(255, 107, 107, 0.25);
+      background: linear-gradient(160deg, #161018, var(--panel));
+    }
+    .compare-pane.good {
+      border-color: rgba(63, 212, 192, 0.35);
+      background: linear-gradient(160deg, #0e1616, var(--panel));
+      box-shadow: 0 0 40px rgba(63, 212, 192, 0.06);
+    }
+    .compare-pane h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      margin: 0 0 0.75rem;
+      color: var(--ink);
+    }
+    .compare-pane.bad h3 { color: var(--danger); }
+    .compare-pane.good h3 { color: var(--teal); }
+    .compare-pane ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .compare-pane li {
+      font-size: 0.82rem;
+      color: var(--mist);
+      padding: 0.35rem 0;
+      border-bottom: 1px solid var(--hair);
+    }
+    .compare-pane li:last-child { border-bottom: none; }
+    .vs {
+      align-self: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      color: var(--amber);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+
+    /* Strengths — editorial list, not cards */
+    .strengths {
+      padding: 3.5rem 0;
+      border-top: 1px solid var(--hair);
+    }
+    .strength-list {
+      display: grid;
+      gap: 0;
+    }
+    .strength {
+      display: grid;
+      grid-template-columns: 4.5rem 1fr;
+      gap: 1.25rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--hair);
+      align-items: start;
+    }
+    .strength:first-child { border-top: 1px solid var(--hair); }
+    .strength-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      padding-top: 0.25rem;
+    }
+    .strength h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 0.4rem;
+    }
+    .strength p {
+      margin: 0;
+      color: var(--mist);
+      font-size: 0.88rem;
+      max-width: 60ch;
+    }
+
+    /* Screens — TUI evidence */
+    .screens {
+      padding: 3.5rem 0;
+      border-top: 1px solid var(--hair);
+    }
+    .screen-rail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    .screen-frame {
+      background: #08090e;
+      border: 1px solid #2a2e3c;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
+    }
+    .screen-frame figcaption {
+      padding: 0.65rem 0.9rem;
+      font-size: 0.72rem;
+      color: var(--mist);
+      border-top: 1px solid var(--hair);
+      background: var(--panel);
+    }
+    .screen-frame img {
+      width: 100%;
+      opacity: 0.95;
+    }
+
+    /* Devices */
+    .devices {
+      padding: 3.5rem 0;
+      border-top: 1px solid var(--hair);
+    }
+    .brand-ticker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 0.65rem;
+      margin-top: 1.5rem;
+    }
+    .brand-chip {
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--fog);
+      padding: 0.4rem 0.7rem;
+      border: 1px solid var(--hair);
+      border-radius: 3px;
+      background: var(--panel);
+    }
+
+    /* Quick start terminal */
+    .start {
+      padding: 3.5rem 0 4rem;
+      border-top: 1px solid var(--hair);
+    }
+    .start-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    .code-block {
+      background: #07090f;
+      border: 1px solid #252a38;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .code-block header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.55rem 0.9rem;
+      background: #10131c;
+      border-bottom: 1px solid var(--hair);
+      font-size: 0.7rem;
+      color: var(--mist);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .code-block pre {
+      margin: 0;
+      padding: 1.1rem 1.15rem;
+      overflow-x: auto;
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: #b8c4d8;
+    }
+    .code-block .c { color: #5a6578; }
+    .code-block .g { color: var(--teal); }
+    .code-block .y { color: var(--amber); }
+    .start-aside p {
+      color: var(--mist);
+      font-size: 0.88rem;
+      margin: 0 0 1.25rem;
+    }
+    .start-aside ol {
+      margin: 0;
+      padding-left: 1.15rem;
+      color: var(--fog);
+      font-size: 0.85rem;
+    }
+    .start-aside li { margin-bottom: 0.55rem; }
+    .start-aside code {
+      font-family: var(--font-mono);
+      font-size: 0.8em;
+      color: var(--teal);
+      background: rgba(63, 212, 192, 0.08);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+
+    /* Disclaimer */
+    .legal {
+      padding: 2.5rem 0 3rem;
+      border-top: 1px solid var(--hair);
+    }
+    .legal-box {
+      border-left: 3px solid var(--amber-dim);
+      padding: 0.25rem 0 0.25rem 1.25rem;
+    }
+    .legal-box h2 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--ink);
+      margin: 0 0 0.5rem;
+    }
+    .legal-box p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: var(--mist);
+      max-width: 70ch;
+    }
+
+    /* Footer */
+    footer {
+      padding: 1.75rem 0 2.5rem;
+      border-top: 1px solid var(--hair);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--mist);
+    }
+    footer a { color: var(--fog); }
+    footer a:hover { color: var(--teal); }
+
+    /* Reveal on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 900px) {
+      .stages { grid-template-columns: 1fr 1fr; gap: 1.5rem 1rem; }
+      .stages::before { display: none; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .vs {
+        writing-mode: horizontal-tb;
+        transform: none;
+        text-align: center;
+        padding: 0.25rem 0;
+      }
+      .start-grid,
+      .screen-rail { grid-template-columns: 1fr; }
+      .tv-plane { width: min(78vw, 420px); right: -8%; opacity: 0.55; }
+      .term-node { display: none; }
+      .cast-beam { width: 48%; left: 5%; opacity: 0.5; }
+      .hero { min-height: auto; padding-top: 2rem; }
+      .hero-copy { max-width: 100%; }
+    }
+
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 1.5rem, var(--max)); }
+      .stages { grid-template-columns: 1fr; }
+      .strength { grid-template-columns: 1fr; gap: 0.35rem; }
+      .tv-plane, .tv-stand, .cast-beam { display: none; }
+      .hero {
+        background:
+          radial-gradient(ellipse 90% 60% at 80% 20%, rgba(240, 168, 74, 0.18), transparent 50%);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="room-bg" aria-hidden="true"></div>
+  <div class="room-scan" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <header class="top">
+      <a class="back" href="./">← All showcases</a>
+      <div class="top-meta"><span class="live-dot" aria-hidden="true"></span>Cast session · Showcase #31</div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-stage" aria-hidden="true">
+        <div class="term-node">
+          <div class="chrome"><i></i><i></i><i></i></div>
+          <div><span class="cmd">$</span> castor scan</div>
+          <div class="ok">✓ Living Room TV · dlna</div>
+          <div><span class="cmd">$</span> castor cast player …<span class="cursor"></span></div>
+        </div>
+        <div class="cast-beam"></div>
+        <div class="tv-plane"></div>
+        <div class="tv-stand"></div>
+      </div>
+
+      <div class="hero-copy">
+        <div class="brand-row">
+          <img class="brand-mark" src="https://raw.githubusercontent.com/stupside/castor/main/.github/images/castor.svg" width="52" height="52" alt="">
+          <h1 class="brand">Castor</h1>
+        </div>
+        <h2>Cast the real stream to your TV — not a laggy mirror of your screen.</h2>
+        <p class="hero-lead">Point it at a page or URL. Headless Chrome finds the video, ffmpeg shapes it for your panel, and DLNA delivers full-quality playback from your terminal.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/stupside/castor" target="_blank" rel="noopener">View on GitHub</a>
+          <a class="btn btn-ghost" href="https://github.com/stupside/castor/releases" target="_blank" rel="noopener">Releases</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="pipeline reveal">
+      <p class="section-kicker">Signal path</p>
+      <h2 class="section-title">Four hops from URL to living room</h2>
+      <p class="section-lead">Castor is a real-time media pipeline, not a screen sharer. Each stage stays on your LAN so the TV gets a clean, playable feed.</p>
+      <div class="stages">
+        <article class="stage">
+          <div class="stage-num">01</div>
+          <h3>Extract</h3>
+          <p>Headless Chrome + CDP watches network traffic, clicks to start playback, and snags the stream URL.</p>
+        </article>
+        <article class="stage">
+          <div class="stage-num">02</div>
+          <h3>Resolve</h3>
+          <p>ffprobe picks a height that fits your TV’s <code style="color:var(--teal)">max_height</code> — up to 4K if the panel can take it.</p>
+        </article>
+        <article class="stage">
+          <div class="stage-num">03</div>
+          <h3>Transcode</h3>
+          <p>Passthrough when the TV already accepts the codec; otherwise hardware H.264 or libx264. Whisper can burn subtitles.</p>
+        </article>
+        <article class="stage">
+          <div class="stage-num">04</div>
+          <h3>Cast</h3>
+          <p>A local replay server feeds DLNA MediaRenderer devices — Samsung, LG, Bravia, and friends.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="compare reveal">
+      <p class="section-kicker">Why bother</p>
+      <h2 class="section-title">Mirroring cheats. Casting doesn’t.</h2>
+      <p class="section-lead">Smart TVs refuse arbitrary web video. Screen mirrors crush resolution and add lag. Castor sends the stream the page already had.</p>
+      <div class="compare-grid">
+        <div class="compare-pane bad">
+          <h3>Screen mirroring</h3>
+          <ul>
+            <li>Compressed desktop capture</li>
+            <li>Resolution and framerate loss</li>
+            <li>Input lag on every frame</li>
+            <li>Tied to your laptop staying awake</li>
+          </ul>
+        </div>
+        <div class="vs" aria-hidden="true">VS</div>
+        <div class="compare-pane good">
+          <h3>Castor pipeline</h3>
+          <ul>
+            <li>Native stream extraction</li>
+            <li>Full quality up to your panel</li>
+            <li>Real-time LAN delivery</li>
+            <li>Runs from a terminal session</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="strengths reveal">
+      <p class="section-kicker">What stands out</p>
+      <h2 class="section-title">Built for people who already own the remote</h2>
+      <div class="strength-list">
+        <article class="strength">
+          <div class="strength-tag">CDP</div>
+          <div>
+            <h3>Browser-grade extraction</h3>
+            <p>Castor drives Chromium over the DevTools Protocol, then runs a short action pipeline — page click, largest iframe, click again — so playback actually starts on sites that allow automation.</p>
+          </div>
+        </article>
+        <article class="strength">
+          <div class="strength-tag">TUI</div>
+          <div>
+            <h3>Stay in the terminal</h3>
+            <p><code style="color:var(--teal)">castor cast</code> opens an interactive browser that searches titles via TMDB and casts without a GUI. Direct <code style="color:var(--teal)">cast player</code> / <code style="color:var(--teal)">cast movie</code> commands cover scripted flows.</p>
+          </div>
+        </article>
+        <article class="strength">
+          <div class="strength-tag">SUBS</div>
+          <div>
+            <h3>Whisper, burned in</h3>
+            <p>Optional whisper.cpp transcription generates captions and ffmpeg burns them into the outgoing video — useful when your TV’s subtitle stack won’t cooperate with the source.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="screens reveal">
+      <p class="section-kicker">On the wire</p>
+      <h2 class="section-title">The castor TUI</h2>
+      <p class="section-lead">Browse titles, pick a device, cast — all without leaving the shell.</p>
+      <div class="screen-rail">
+        <figure class="screen-frame">
+          <img src="https://raw.githubusercontent.com/stupside/castor/main/.github/images/screen-selection.png" alt="Castor TUI browsing titles for casting" width="960" height="540" loading="lazy">
+          <figcaption>Title browser — <code>castor cast</code></figcaption>
+        </figure>
+        <figure class="screen-frame">
+          <img src="https://raw.githubusercontent.com/stupside/castor/main/.github/images/screen-devices.png" alt="Castor TUI selecting a cast target device" width="960" height="540" loading="lazy">
+          <figcaption>Device picker — Living Room TV and friends</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="devices reveal">
+      <p class="section-kicker">Endpoints</p>
+      <h2 class="section-title">Any DLNA MediaRenderer will do</h2>
+      <p class="section-lead">Run <code style="color:var(--teal)">castor scan</code> on the same LAN. Chromecast support exists but is still experimental.</p>
+      <div class="brand-ticker" aria-label="Supported brands">
+        <span class="brand-chip">Samsung</span>
+        <span class="brand-chip">LG</span>
+        <span class="brand-chip">Sony Bravia</span>
+        <span class="brand-chip">Panasonic</span>
+        <span class="brand-chip">Philips</span>
+        <span class="brand-chip">Hisense</span>
+        <span class="brand-chip">TCL</span>
+        <span class="brand-chip">VIZIO</span>
+        <span class="brand-chip">Sharp</span>
+        <span class="brand-chip">Kodi</span>
+        <span class="brand-chip">VLC</span>
+        <span class="brand-chip">Plex</span>
+      </div>
+    </section>
+
+    <section class="start reveal">
+      <p class="section-kicker">Quick start</p>
+      <h2 class="section-title">Point, scan, cast</h2>
+      <div class="start-grid">
+        <div class="code-block">
+          <header>
+            <span>config.yaml + shell</span>
+            <span>native · LAN required</span>
+          </header>
+          <pre><span class="c"># Tell Castor which TV to use</span>
+<span class="g">device:</span>
+  name: <span class="y">"Living Room TV"</span>
+  type: dlna
+
+<span class="c"># Cast a page or direct stream</span>
+$ <span class="g">castor cast player</span> https://example.com/watch/…
+
+<span class="c"># Or the interactive title browser</span>
+$ <span class="g">castor cast</span></pre>
+        </div>
+        <aside class="start-aside">
+          <p>Native binary preferred — it shares your TV’s network for SSDP discovery. Needs Chrome/Chromium, ffmpeg, and ffprobe on <code>PATH</code>. Homebrew cask on macOS; Docker with <code>--network host</code> on Linux LAN boxes only.</p>
+          <ol>
+            <li>Install via <code>brew install --cask stupside/tap/castor</code> or build with Go + cmake.</li>
+            <li>Run <code>castor scan</code>, copy the exact device name into <code>config.yaml</code>.</li>
+            <li>Cast a player URL — or add TMDB + your own authorized sources for the interactive browser.</li>
+          </ol>
+          <div class="cta-row" style="margin-top: 1.5rem;">
+            <a class="btn btn-primary" href="https://github.com/stupside/castor#installation" target="_blank" rel="noopener">Install guide</a>
+            <a class="btn btn-ghost" href="https://github.com/stupside/castor/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="legal reveal">
+      <div class="legal-box">
+        <h2>Purpose &amp; disclaimer</h2>
+        <p>Castor hosts nothing and ships no catalog — it casts only pages, stream URLs, or sources you supply and are authorized to use. It does not decrypt or circumvent DRM. Lawful use is on you; do not use it to infringe copyright.</p>
+      </div>
+    </section>
+
+    <footer>
+      <div>
+        <a href="https://github.com/stupside/castor" target="_blank" rel="noopener">stupside/castor</a>
+        · Showcase #31 · DuckWare
+      </div>
+      <a href="./">← Back to catalog</a>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var nodes = document.querySelectorAll(".reveal");
+      if (!("IntersectionObserver" in window)) {
+        nodes.forEach(function (n) { n.classList.add("visible"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add("visible");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+      nodes.forEach(function (n) { io.observe(n); });
+    })();
+  </script>
+</body>
+</html>
