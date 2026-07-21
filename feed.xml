@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Mon, 20 Jul 2026 08:40:00 GMT</lastBuildDate>
-    <pubDate>Mon, 20 Jul 2026 08:40:00 GMT</pubDate>
+    <lastBuildDate>Tue, 21 Jul 2026 16:50:00 GMT</lastBuildDate>
+    <pubDate>Tue, 21 Jul 2026 16:50:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -247,6 +247,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/croc.html</guid>
       <pubDate>Mon, 20 Jul 2026 08:40:00 GMT</pubDate>
       <description>Securely send files between any two computers with a short code phrase — end-to-end encrypted, resumable, and free of port-forwarding.</description>
+    </item>
+
+    <item>
+      <title>Castor: Terminal-to-TV Streaming</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/castor.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/castor.html</guid>
+      <pubDate>Tue, 21 Jul 2026 16:50:00 GMT</pubDate>
+      <description>Cast real web video streams to your TV from the terminal — extract, transcode, and DLNA-cast at full quality with optional burned-in Whisper subtitles.</description>
     </item>
   </channel>
 </rss>
