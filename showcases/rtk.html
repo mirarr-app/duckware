@@ -4,205 +4,917 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>rtk Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of rtk, the Rust CLI proxy that compresses dev command output to cut LLM token usage by 60-90%.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare showcase of rtk: a Rust CLI proxy that compresses git, test, lint, and filesystem output so coding agents burn 60–90% fewer tokens.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #000000;
+      --bg-panel: #050805;
+      --bg-elevated: #0a0f0a;
+      --green: #33ff66;
+      --green-dim: #1a9940;
+      --green-glow: rgba(51, 255, 102, 0.35);
+      --green-faint: rgba(51, 255, 102, 0.08);
+      --red: #ff3344;
+      --red-dim: #991a28;
+      --red-glow: rgba(255, 51, 68, 0.4);
+      --muted: #5a7a5a;
+      --text: #c8e6c8;
+      --text-bright: #e8ffe8;
+      --border: #1a3a1a;
+      --border-bright: #2a5a2a;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --sans: "Space Grotesk", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ── Full-bleed terminal chrome shell ── */
+    .term-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border-bright);
+      margin: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(51, 255, 102, 0.06), transparent 55%),
+        linear-gradient(180deg, #030603 0%, #000 40%, #020402 100%);
+      position: relative;
+    }
+
+    .term-shell::before {
+      content: "";
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.12) 2px,
+        rgba(0, 0, 0, 0.12) 4px
+      );
+      z-index: 50;
+      opacity: 0.35;
+    }
+
+    .term-titlebar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 1rem;
+      background: #080c08;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+
+    .term-dots { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .term-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #333;
+    }
+    .term-dot.r { background: #ff5f56; }
+    .term-dot.y { background: #ffbd2e; }
+    .term-dot.g { background: #27c93f; }
+
+    .term-title {
+      flex: 1;
+      text-align: center;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .term-title span { color: var(--green-dim); }
+
+    .term-nav {
+      display: flex;
+      gap: 0.85rem;
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .term-nav a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .term-nav a:hover { color: var(--green); }
+
+    .term-body {
+      flex: 1;
+      width: min(960px, 100%);
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Prompt / typing line ── */
+    .prompt-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+      font-size: clamp(0.8rem, 2.2vw, 0.95rem);
+      color: var(--muted);
+    }
+
+    .prompt-user { color: var(--green); font-weight: 600; }
+    .prompt-path { color: var(--green-dim); }
+    .prompt-cmd {
+      color: var(--text-bright);
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid var(--green);
+      animation: type-in 2.4s steps(28, end) 0.4s both, blink-caret 0.85s step-end infinite;
+      max-width: 100%;
+    }
+
+    @keyframes type-in {
+      from { width: 0; }
+      to { width: 28ch; }
+    }
+
+    @keyframes blink-caret {
+      50% { border-color: transparent; }
+    }
+
+    /* ── Brand hero ── */
+    .hero {
+      margin-bottom: 2.5rem;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .meta-row .tag {
+      color: var(--green);
+      border: 1px solid var(--border-bright);
+      padding: 0.15rem 0.45rem;
+      background: var(--green-faint);
+    }
+
+    .brand {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: clamp(3.2rem, 12vw, 5.5rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      color: var(--green);
+      text-shadow: 0 0 40px var(--green-glow);
+      margin-bottom: 0.75rem;
+    }
+
+    .brand .cursor {
+      display: inline-block;
+      width: 0.45em;
+      height: 0.85em;
+      background: var(--green);
+      margin-left: 0.08em;
+      vertical-align: -0.05em;
+      animation: blink-block 1s step-end infinite;
+    }
+
+    @keyframes blink-block {
+      50% { opacity: 0; }
+    }
+
+    .lede {
+      font-family: var(--sans);
+      font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+      font-weight: 500;
+      color: var(--text-bright);
+      max-width: 36ch;
+      line-height: 1.35;
+      margin-bottom: 0.75rem;
+    }
+
+    .sublede {
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 52ch;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.65rem 1.1rem;
+      border: 1px solid var(--green);
+      background: var(--green);
+      color: #000;
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+    .btn:hover {
+      text-decoration: none;
+      box-shadow: 0 0 24px var(--green-glow);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--green);
+    }
+    .btn-ghost:hover {
+      background: var(--green-faint);
+    }
+
+    /* ── Token meter: fat → thin pipe ── */
+    .meter-section {
+      margin: 2.5rem 0;
+      border: 1px solid var(--border);
+      background: var(--bg-panel);
+      padding: 1.25rem 1.1rem 1.4rem;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .section-label::before {
+      content: "// ";
+      color: var(--green-dim);
+    }
+
+    .meter-compare {
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    @media (min-width: 720px) {
+      .meter-compare {
+        grid-template-columns: 1fr auto 1fr;
+        align-items: end;
+        gap: 1rem;
+      }
+    }
+
+    .pipe-block { min-width: 0; }
+
+    .pipe-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+      font-size: 0.7rem;
+    }
+
+    .pipe-label .side { color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .pipe-label .tokens { color: var(--text-bright); font-weight: 600; }
+    .pipe-label .tokens.after { color: var(--green); }
+    .pipe-label .tokens.before { color: var(--red); }
+
+    .pipe {
+      position: relative;
+      height: 28px;
+      background: #111;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .pipe-fill {
+      height: 100%;
+      transform-origin: left center;
+    }
+
+    .pipe-fill.fat {
+      width: 100%;
+      background: linear-gradient(90deg, var(--red-dim), var(--red));
+      box-shadow: inset 0 0 20px var(--red-glow);
+      animation: fat-pulse 2.2s ease-in-out infinite;
+    }
+
+    .pipe-fill.thin {
+      width: 25%;
+      background: linear-gradient(90deg, var(--green-dim), var(--green));
+      box-shadow: 0 0 16px var(--green-glow);
+      animation: drain-in 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both;
+    }
+
+    @keyframes fat-pulse {
+      0%, 100% { opacity: 0.85; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes drain-in {
+      from { width: 100%; background: linear-gradient(90deg, var(--red-dim), var(--red)); box-shadow: inset 0 0 20px var(--red-glow); }
+      to { width: 25%; background: linear-gradient(90deg, var(--green-dim), var(--green)); box-shadow: 0 0 16px var(--green-glow); }
+    }
+
+    .pipe-noise {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0,
+        transparent 3px,
+        rgba(0,0,0,0.25) 3px,
+        rgba(0,0,0,0.25) 4px
+      );
+      pointer-events: none;
+    }
+
+    .meter-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0;
+    }
+
+    .savings-badge {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      background: var(--red);
+      color: #fff;
+      padding: 0.35rem 0.65rem;
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 92% 100%, 0 100%);
+      box-shadow: 0 0 18px var(--red-glow);
+      animation: badge-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 2s both;
+    }
+
+    @keyframes badge-pop {
+      from { transform: scale(0.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .meter-arrow svg {
+      width: 28px;
+      height: 28px;
+      color: var(--green);
+    }
+
+    .meter-caption {
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .meter-caption code { color: var(--green); }
+
+    /* ── Diff command demo ── */
+    .diff-grid {
+      display: grid;
+      gap: 1rem;
+      margin: 2.5rem 0;
+    }
+
+    @media (min-width: 760px) {
+      .diff-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .cmd-panel {
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      display: flex;
+      flex-direction: column;
+      min-height: 280px;
+    }
+
+    .cmd-panel.compressed {
+      border-color: var(--green-dim);
+      box-shadow: 0 0 0 1px rgba(51, 255, 102, 0.12);
+    }
+
+    .cmd-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: #060a06;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem;
+    }
+
+    .cmd-bar .cmd { color: var(--text-bright); }
+    .cmd-bar .cmd em { font-style: normal; color: var(--green); font-weight: 600; }
+
+    .token-count {
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.04em;
+    }
+    .token-count.bad {
+      background: var(--red);
+      color: #fff;
+    }
+    .token-count.good {
+      background: var(--green);
+      color: #000;
+    }
+
+    .cmd-body {
+      padding: 0.85rem 0.9rem;
+      font-size: 0.72rem;
+      line-height: 1.65;
+      flex: 1;
+      overflow: hidden;
+      color: var(--muted);
+    }
+
+    .cmd-body .add { color: #5dff8a; }
+    .cmd-body .del { color: #ff6b78; }
+    .cmd-body .meta { color: #7a9a7a; }
+    .cmd-body .hl { color: var(--text-bright); }
+    .cmd-body .ok { color: var(--green); font-weight: 600; }
+
+    .cmd-body.raw .blur-line {
+      opacity: 0.35;
+      filter: blur(0.4px);
+    }
+
+    /* ── Prose sections ── */
+    .audit {
+      margin: 2.75rem 0;
+    }
+
+    .audit h2 {
+      font-family: var(--sans);
+      font-size: clamp(1.4rem, 3.5vw, 1.85rem);
+      font-weight: 650;
+      color: var(--text-bright);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.85rem;
+    }
+
+    .audit h2::before {
+      content: "$ ";
+      color: var(--green);
+      font-family: var(--mono);
+      font-weight: 500;
+      font-size: 0.85em;
+    }
+
+    .audit p {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      max-width: 62ch;
+      color: var(--text);
+    }
+
+    .audit p strong { color: var(--text-bright); font-weight: 600; }
+
+    .strengths {
+      display: grid;
+      gap: 0.85rem;
+      margin-top: 1.25rem;
+    }
+
+    @media (min-width: 700px) {
+      .strengths { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .strength {
+      border-left: 2px solid var(--green);
+      padding: 0.75rem 0.9rem;
+      background: var(--green-faint);
+    }
+
+    .strength h3 {
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--green);
+      margin-bottom: 0.4rem;
+    }
+
+    .strength p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin: 0;
+      max-width: none;
+      line-height: 1.55;
+    }
+
+    /* ── Strategy strip ── */
+    .strategies {
+      margin: 2.5rem 0;
+      border: 1px dashed var(--border-bright);
+      padding: 1.1rem;
+      background: rgba(51, 255, 102, 0.03);
+    }
+
+    .strat-grid {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    @media (min-width: 640px) {
+      .strat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .strat {
+      display: flex;
+      gap: 0.65rem;
+      font-size: 0.78rem;
+    }
+
+    .strat-num {
+      color: var(--red);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .strat-body strong {
+      display: block;
+      color: var(--text-bright);
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+    .strat-body span { color: var(--muted); }
+
+    /* ── Install block ── */
+    .install {
+      margin: 2.5rem 0;
+      border: 1px solid var(--border);
+      background: #030603;
+    }
+
+    .install-bar {
+      padding: 0.5rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .install pre {
+      padding: 1rem 1.1rem;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      line-height: 1.7;
+    }
+
+    .install .c { color: var(--muted); }
+    .install .g { color: var(--green); }
+    .install .w { color: var(--text-bright); }
+
+    .install-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      padding: 0 1.1rem 1.1rem;
+      font-size: 0.8rem;
+    }
+
+    /* ── Footer ── */
+    .term-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .term-footer a {
+      color: var(--green-dim);
+    }
+    .term-footer a:hover { color: var(--green); }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--green);
+      border: 1px solid var(--border-bright);
+      padding: 0.55rem 0.9rem;
+      background: var(--green-faint);
+      text-decoration: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .back-link:hover {
+      border-color: var(--green);
+      box-shadow: 0 0 16px var(--green-glow);
+      text-decoration: none;
+    }
+
+    /* ── Reduced motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .prompt-cmd {
+        animation: none;
+        border-right: none;
+        width: auto;
+        white-space: normal;
+      }
+      .brand .cursor { animation: none; opacity: 1; }
+      .pipe-fill.fat { animation: none; }
+      .pipe-fill.thin {
+        animation: none;
+        width: 25%;
+        background: linear-gradient(90deg, var(--green-dim), var(--green));
+      }
+      .savings-badge { animation: none; }
+      .btn, .back-link { transition: none; }
+    }
+
+    @media (max-width: 520px) {
+      .term-nav { display: none; }
+      .term-body { padding: 1.15rem 0.85rem 2.5rem; }
+      .meter-arrow svg { transform: rotate(90deg); }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
+  <div class="term-shell">
+    <header class="term-titlebar">
+      <div class="term-dots" aria-hidden="true">
+        <span class="term-dot r"></span>
+        <span class="term-dot y"></span>
+        <span class="term-dot g"></span>
       </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+      <div class="term-title">rtk@duckware — <span>token compression proxy</span> — showcase #14</div>
+      <nav class="term-nav" aria-label="Page">
+        <a href="./">catalog</a>
+        <a href="https://github.com/rtk-ai/rtk" target="_blank" rel="noopener">source</a>
+      </nav>
+    </header>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
-      <div style="flex-grow: 1;">
-        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+    <main class="term-body">
+      <div class="prompt-line" aria-hidden="true">
+        <span class="prompt-user">agent@session</span>
+        <span class="prompt-path">~/project</span>
+        <span>$</span>
+        <span class="prompt-cmd">rtk git diff --stat</span>
+      </div>
+
+      <section class="hero">
+        <div class="meta-row">
           <span>rtk-ai/rtk</span>
-          <span>•</span>
           <span>July 8, 2026</span>
-          <span>•</span>
-          <span style="color: var(--color-body-strong);">Showcase #14</span>
+          <span class="tag">CLI</span>
+          <span class="tag">Rust</span>
+          <span class="tag">AI Tools</span>
         </div>
-        
-        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-          rtk
-        </h1>
-        
-        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-          A transparent CLI proxy that shrinks command output before it floods your LLM context.
+        <h1 class="brand">rtk<span class="cursor" aria-hidden="true"></span></h1>
+        <p class="lede">Shrink the pipe between your shell and the model.</p>
+        <p class="sublede">
+          A single Rust binary that filters command output before it hits the context window —
+          cutting token spend 60–90% on the commands agents run all day.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="https://www.rtk-ai.app/" target="_blank" rel="noopener">Website</a>
+          <a class="btn btn-ghost" href="https://github.com/rtk-ai/rtk" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn btn-ghost" href="https://github.com/rtk-ai/rtk/releases" target="_blank" rel="noopener">Releases</a>
+        </div>
+      </section>
+
+      <section class="meter-section" aria-labelledby="meter-heading">
+        <p class="section-label" id="meter-heading">token pipe — before / after</p>
+        <div class="meter-compare">
+          <div class="pipe-block">
+            <div class="pipe-label">
+              <span class="side">raw stdout</span>
+              <span class="tokens before">10,000 tok</span>
+            </div>
+            <div class="pipe" aria-hidden="true">
+              <div class="pipe-fill fat"></div>
+              <div class="pipe-noise"></div>
+            </div>
+          </div>
+
+          <div class="meter-arrow">
+            <span class="savings-badge">−75%</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          </div>
+
+          <div class="pipe-block">
+            <div class="pipe-label">
+              <span class="side">via rtk</span>
+              <span class="tokens after">2,500 tok</span>
+            </div>
+            <div class="pipe" aria-hidden="true">
+              <div class="pipe-fill thin"></div>
+              <div class="pipe-noise"></div>
+            </div>
+          </div>
+        </div>
+        <p class="meter-caption">
+          Typical <code>git diff</code> compression in a mid-size repo.
+          Session totals often land near <strong style="color:var(--green)">−80%</strong> across git, test, lint, and filesystem commands.
+        </p>
+      </section>
+
+      <section aria-labelledby="diff-heading">
+        <p class="section-label" id="diff-heading">command compression — git diff</p>
+        <div class="diff-grid">
+          <article class="cmd-panel">
+            <div class="cmd-bar">
+              <span class="cmd">$ git diff</span>
+              <span class="token-count bad">~10,000 TOK</span>
+            </div>
+            <div class="cmd-body raw">
+              <div class="meta">diff --git a/src/main.rs b/src/main.rs</div>
+              <div class="meta">index a1b2c3d..e4f5g6h 100644</div>
+              <div class="meta">--- a/src/main.rs</div>
+              <div class="meta">+++ b/src/main.rs</div>
+              <div class="blur-line">@@ -12,48 +12,91 @@ use std::io;</div>
+              <div class="del">-fn parse_args(raw: &amp;str) -&gt; Vec&lt;String&gt; {</div>
+              <div class="del">-    raw.split_whitespace().map(String::from).collect()</div>
+              <div class="del">-}</div>
+              <div class="add">+fn parse_args(raw: &amp;str) -&gt; Result&lt;Vec&lt;String&gt;, Error&gt; {</div>
+              <div class="add">+    let parts: Vec&lt;_&gt; = raw.split_whitespace().map(String::from).collect();</div>
+              <div class="add">+    if parts.is_empty() { return Err(Error::Empty); }</div>
+              <div class="add">+    Ok(parts)</div>
+              <div class="add">+}</div>
+              <div class="blur-line">@@ -200,120 +243,188 @@ mod tests {</div>
+              <div class="blur-line del">-    // … 80 more hunks of boilerplate …</div>
+              <div class="blur-line add">+    // … noise the model does not need …</div>
+              <div class="blur-line meta">Binary files a/assets/logo.png and b/assets/logo.png differ</div>
+            </div>
+          </article>
+
+          <article class="cmd-panel compressed">
+            <div class="cmd-bar">
+              <span class="cmd">$ <em>rtk</em> git diff</span>
+              <span class="token-count good">~2,500 TOK</span>
+            </div>
+            <div class="cmd-body">
+              <div class="ok">diff condensed · 3 files · −75%</div>
+              <div class="hl">src/main.rs</div>
+              <div class="meta">  parse_args: now returns Result, rejects empty input</div>
+              <div class="del">  −3  <span class="add">+6</span>  fn parse_args</div>
+              <div class="hl">src/error.rs</div>
+              <div class="meta">  + Error::Empty variant</div>
+              <div class="del">  −0  <span class="add">+4</span></div>
+              <div class="hl">tests/cli.rs</div>
+              <div class="meta">  assert empty argv → Err</div>
+              <div class="del">  −2  <span class="add">+11</span></div>
+              <div class="ok" style="margin-top:0.75rem">binary assets omitted · hunks grouped by symbol</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="audit">
+        <h2>What is rtk?</h2>
+        <p>
+          Coding agents burn context on stdout they barely need: full test harness chatter,
+          thousand-line diffs, permission columns from <code style="color:var(--green)">ls</code>,
+          and linter dumps that bury the one failing rule. You still pay for every token.
+          <strong>rtk</strong> (Rust Token Killer) sits between the shell and the agent as a
+          transparent proxy — the real command still runs; only the text that returns is filtered,
+          grouped, truncated, and deduplicated for the model.
+        </p>
+        <p>
+          It ships as one Rust binary with no runtime deps, covers 100+ everyday commands, and
+          adds under 10ms of overhead. Hook into Claude Code, Cursor, Codex, Gemini CLI, and
+          other agents so <code style="color:var(--green)">git status</code> becomes
+          <code style="color:var(--green)">rtk git status</code> automatically — the agent sees
+          the compact form without changing how you prompt.
         </p>
 
-        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-          <a href="https://www.rtk-ai.app/" class="btn-primary" target="_blank" rel="noopener">Visit Website</a>
-          <a href="https://github.com/rtk-ai/rtk" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
-        </div>
-      </div>
-      
-      <!-- Brand Icon Badge -->
-      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
-        <img src="https://avatars.githubusercontent.com/u/258253854?v=4" alt="rtk logo" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Primary Feature Mockup -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">The Core Idea</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); max-width: 650px;">
-          <div class="mockup-header">
-            <div class="mockup-controls">
-              <span class="mockup-dot red"></span>
-              <span class="mockup-dot yellow"></span>
-              <span class="mockup-dot green"></span>
-            </div>
-            <div class="mockup-title">agent session</div>
-            <div style="width: 36px;"></div>
-          </div>
-          <div class="mockup-body" style="font-size: 14px; line-height: 1.8;">
-            <span class="token-comment"># Without rtk — raw git diff floods context</span><br>
-            <span class="token-cmd">git diff</span> <span class="token-comment">→ 10,000 tokens</span><br><br>
-            <span class="token-comment"># With rtk — filtered, structured summary</span><br>
-            <span class="token-cmd">rtk git diff</span> <span class="token-success">→ 2,500 tokens (-75%)</span>
-          </div>
+        <div class="strengths">
+          <article class="strength">
+            <h3>Command-aware filters</h3>
+            <p>
+              Not generic compression. Each tool — git, cargo test, pytest, rg, docker, aws —
+              has a tailored reducer that keeps failures, hunks, and structure while dropping noise.
+            </p>
+          </article>
+          <article class="strength">
+            <h3>Hook, don’t rewrite prompts</h3>
+            <p>
+              <code style="color:var(--green)">rtk init</code> installs rewrite hooks for major
+              coding agents. Bash tool calls are rewritten before execution; adoption is
+              transparent across sessions and subagents.
+            </p>
+          </article>
+          <article class="strength">
+            <h3>Native speed, measurable gain</h3>
+            <p>
+              Sub-10ms proxy cost vs tens of thousands of tokens saved per session.
+              <code style="color:var(--green)">rtk gain</code> graphs what you actually saved —
+              proof, not vibes.
+            </p>
+          </article>
         </div>
       </section>
 
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is rtk?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Coding agents like Claude Code spend a large fraction of their context window on command output — verbose test logs, thousand-line diffs, directory listings, linter reports. You pay for every token whether the model needs it or not. <strong>rtk</strong> (Rust Token Killer) sits between your shell and the agent as a transparent proxy, intercepting stdout from common dev commands and returning a compressed, structured version that preserves what matters.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            It is a single Rust binary with no runtime dependencies, supports over 100 commands out of the box, and adds less than 10ms of overhead per invocation. In a typical 30-minute agent session, users report roughly 80% fewer tokens consumed across git, test, lint, and filesystem operations.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Command-Aware Compression</span>
-              <p class="text-body-sm">
-                rtk does not apply generic gzip-style shrinking. Each supported command — <code>git diff</code>, <code>cargo test</code>, <code>rg</code>, <code>pytest</code>, <code>docker ps</code>, and dozens more — has a tailored filter that extracts signal and discards noise. A test run returns pass/fail summaries instead of full stack traces; a diff returns changed hunks instead of entire files.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Drop-In Proxy, Zero Workflow Change</span>
-              <p class="text-body-sm">
-                Prefix commands with <code>rtk</code> or configure your agent to route through it automatically. The underlying tool still runs normally — rtk only transforms what comes back. No plugins, no API keys, no changes to your project. Install via Homebrew or a one-line curl script and you are running in seconds.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Single Binary, Native Speed</span>
-              <p class="text-body-sm">
-                Written in Rust and shipped as one self-contained executable, rtk avoids the dependency chains that make other dev tools fragile to install. Sub-10ms per-call overhead means compression pays for itself immediately — the tokens you save on a single <code>cargo test</code> output dwarf the proxy cost.
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Installation</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Install via Homebrew on macOS or the quick-install script on Linux:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">bash</div>
+      <section class="strategies" aria-labelledby="strat-heading">
+        <p class="section-label" id="strat-heading">four reduction strategies</p>
+        <div class="strat-grid">
+          <div class="strat">
+            <span class="strat-num">01</span>
+            <div class="strat-body">
+              <strong>Smart filtering</strong>
+              <span>Strip comments, whitespace padding, and boilerplate the model already knows.</span>
             </div>
-            <div class="mockup-body">
-              <span class="token-cmd">brew install rtk</span><br><br>
-              <span class="token-comment"># or on Linux/macOS</span><br>
-              <span class="token-cmd">curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh</span>
+          </div>
+          <div class="strat">
+            <span class="strat-num">02</span>
+            <div class="strat-body">
+              <strong>Grouping</strong>
+              <span>Aggregate files by directory, errors by rule, tests by failure reason.</span>
+            </div>
+          </div>
+          <div class="strat">
+            <span class="strat-num">03</span>
+            <div class="strat-body">
+              <strong>Truncation</strong>
+              <span>Keep the signal window; cut redundancy that only pads context length.</span>
+            </div>
+          </div>
+          <div class="strat">
+            <span class="strat-num">04</span>
+            <div class="strat-body">
+              <strong>Deduplication</strong>
+              <span>Collapse repeated log lines into counts so stack spam becomes one line.</span>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
+      <section class="install" aria-labelledby="install-heading">
+        <div class="install-bar">
+          <span id="install-heading">~/ install</span>
+          <span>homebrew · curl · cargo</span>
+        </div>
+        <pre><span class="c"># Homebrew</span>
+<span class="g">brew install rtk</span>
+
+<span class="c"># Quick install (Linux / macOS)</span>
+<span class="w">curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh</span>
+
+<span class="c"># Wire into your agent, then restart it</span>
+<span class="g">rtk init -g</span>                 <span class="c"># Claude Code / Copilot</span>
+<span class="g">rtk init -g --agent cursor</span>  <span class="c"># Cursor</span>
+<span class="g">rtk gain</span>                    <span class="c"># verify savings</span></pre>
+        <div class="install-links">
+          <a href="https://www.rtk-ai.app/" target="_blank" rel="noopener">rtk-ai.app →</a>
+          <a href="https://github.com/rtk-ai/rtk" target="_blank" rel="noopener">source →</a>
+          <a href="https://github.com/rtk-ai/rtk/releases" target="_blank" rel="noopener">binaries →</a>
+          <a href="https://discord.gg/RySmvNF5kF" target="_blank" rel="noopener">discord →</a>
+        </div>
       </section>
 
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
-      </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
-
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+      <footer class="term-footer">
+        <a class="back-link" href="./">← all showcases</a>
+        <span>DuckWare curation · showcase #14 · rtk</span>
+      </footer>
+    </main>
+  </div>
 </body>
 </html>

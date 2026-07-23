@@ -4,194 +4,867 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>autobrr Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of autobrr, the modern download automation tool for torrents and Usenet with real-time IRC indexer monitoring.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare audit of autobrr: real-time IRC indexer monitoring and filter-driven torrent/Usenet automation that pushes releases to download clients the moment they announce.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy-void: #05080f;
+      --navy-deep: #0a1220;
+      --navy-panel: #0e1a2e;
+      --navy-raised: #132238;
+      --navy-line: #1c3354;
+      --electric: #2ea8ff;
+      --electric-dim: rgba(46, 168, 255, 0.18);
+      --electric-glow: rgba(46, 168, 255, 0.45);
+      --lime: #b8f53a;
+      --lime-dim: rgba(184, 245, 58, 0.16);
+      --lime-glow: rgba(184, 245, 58, 0.5);
+      --amber: #ffc14a;
+      --text: #d7e4f5;
+      --text-soft: #8aa0bd;
+      --text-faint: #5a7190;
+      --danger: #ff5e6c;
+      --font-sans: "Outfit", sans-serif;
+      --font-mono: "Roboto Mono", ui-monospace, monospace;
+      --radius: 10px;
+      --max: 1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--navy-void);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--electric); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* Atmospheric grid */
+    .ops-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 80% 50% at 15% -10%, rgba(46, 168, 255, 0.12), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 20%, rgba(184, 245, 58, 0.06), transparent 50%),
+        linear-gradient(180deg, var(--navy-void) 0%, var(--navy-deep) 40%, var(--navy-void) 100%);
+    }
+
+    .ops-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(46, 168, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(46, 168, 255, 0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 75%);
+      pointer-events: none;
+    }
+
+    .wrap {
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* Top bar */
+    .ops-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--navy-line);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      color: var(--text-soft);
+      flex-wrap: wrap;
+    }
+
+    .ops-bar a {
+      color: var(--text-soft);
+      text-decoration: none;
+    }
+    .ops-bar a:hover { color: var(--electric); }
+
+    .status-cluster {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .led {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 8px var(--lime-glow);
+      animation: led-pulse 2.4s ease-in-out infinite;
+    }
+
+    .led.blue {
+      background: var(--electric);
+      box-shadow: 0 0 8px var(--electric-glow);
+      animation-delay: 0.6s;
+    }
+
+    .led.amber {
+      background: var(--amber);
+      box-shadow: 0 0 8px rgba(255, 193, 74, 0.5);
+      animation: none;
+    }
+
+    @keyframes led-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    /* Hero — mission control */
+    .hero {
+      padding: 2.75rem 0 3.5rem;
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 2.5rem;
+      align-items: stretch;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.15rem;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .meta-row .tag {
+      color: var(--electric);
+      border: 1px solid var(--electric-dim);
+      background: var(--electric-dim);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    .brand {
+      font-size: clamp(2.75rem, 6vw, 4.25rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: #f0f7ff;
+    }
+
+    .brand span {
+      color: var(--electric);
+      text-shadow: 0 0 28px var(--electric-glow);
+    }
+
+    .headline {
+      font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+      font-weight: 500;
+      color: var(--text);
+      max-width: 28ch;
+      line-height: 1.35;
+    }
+
+    .lede {
+      color: var(--text-soft);
+      max-width: 42ch;
+      font-size: 1rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.35rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      padding: 0.7rem 1.15rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--electric);
+      color: #041018;
+      box-shadow: 0 0 20px var(--electric-dim);
+    }
+    .btn-primary:hover {
+      background: #5cbcff;
+      text-decoration: none;
+      box-shadow: 0 0 28px var(--electric-glow);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--navy-line);
+    }
+    .btn-ghost:hover {
+      border-color: var(--electric);
+      color: var(--electric);
+      text-decoration: none;
+      background: var(--electric-dim);
+    }
+
+    /* Signal feed panel */
+    .feed-panel {
+      background: linear-gradient(160deg, var(--navy-panel) 0%, #0a1528 100%);
+      border: 1px solid var(--navy-line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow:
+        0 0 0 1px rgba(46, 168, 255, 0.06),
+        0 24px 60px rgba(0, 0, 0, 0.45);
+      position: relative;
+    }
+
+    .feed-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 70%, rgba(184, 245, 58, 0.04));
+      pointer-events: none;
+    }
+
+    .feed-chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--navy-line);
+      background: rgba(0, 0, 0, 0.25);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-faint);
+    }
+
+    .feed-chrome .live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--lime);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    .feed-body {
+      flex: 1;
+      padding: 0.85rem 1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      min-height: 280px;
+    }
+
+    .feed-line {
+      display: grid;
+      grid-template-columns: 4.2rem 1fr auto;
+      gap: 0.65rem;
+      align-items: baseline;
+      padding: 0.4rem 0.55rem;
+      border-radius: 4px;
+      border-left: 2px solid transparent;
+      color: var(--text-soft);
+      opacity: 0;
+      animation: feed-in 0.55s ease forwards;
+    }
+
+    .feed-line:nth-child(1) { animation-delay: 0.15s; }
+    .feed-line:nth-child(2) { animation-delay: 0.55s; }
+    .feed-line:nth-child(3) { animation-delay: 0.95s; }
+    .feed-line:nth-child(4) { animation-delay: 1.35s; }
+    .feed-line:nth-child(5) { animation-delay: 1.75s; }
+    .feed-line:nth-child(6) { animation-delay: 2.15s; border-left-color: var(--lime); background: var(--lime-dim); animation-name: feed-hit; }
+
+    .feed-line .ts { color: var(--text-faint); }
+    .feed-line .chan { color: var(--electric); }
+    .feed-line .payload { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .feed-line .action { color: var(--lime); font-weight: 600; white-space: nowrap; }
+
+    @keyframes feed-in {
+      from { opacity: 0; transform: translateX(-8px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes feed-hit {
+      0% { opacity: 0; transform: translateX(-8px); box-shadow: none; }
+      40% { opacity: 1; transform: translateX(0); box-shadow: 0 0 18px var(--lime-dim); }
+      100% { opacity: 1; transform: translateX(0); box-shadow: 0 0 0 transparent; }
+    }
+
+    .drop-pulse {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 0 0 var(--lime-glow);
+      animation: drop-ring 2.8s ease-out infinite;
+      animation-delay: 2.2s;
+    }
+
+    @keyframes drop-ring {
+      0% { box-shadow: 0 0 0 0 var(--lime-glow); opacity: 1; }
+      70% { box-shadow: 0 0 0 16px transparent; opacity: 0.35; }
+      100% { box-shadow: 0 0 0 0 transparent; opacity: 0; }
+    }
+
+    /* Pipeline */
+    .section {
+      padding: 3.25rem 0;
+      border-top: 1px solid var(--navy-line);
+    }
+
+    .section-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--electric);
+      margin-bottom: 0.65rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      color: #eef5ff;
+    }
+
+    .section-lede {
+      color: var(--text-soft);
+      max-width: 58ch;
+      margin-bottom: 2rem;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      position: relative;
+    }
+
+    .pipe-node {
+      background: var(--navy-panel);
+      border: 1px solid var(--navy-line);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.15rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pipe-node::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--electric), transparent);
+      opacity: 0.55;
+    }
+
+    .pipe-node:nth-child(2)::after {
+      background: linear-gradient(90deg, transparent, var(--lime), transparent);
+    }
+
+    .pipe-node h3 {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--electric);
+      margin-bottom: 0.55rem;
+    }
+
+    .pipe-node:nth-child(2) h3 { color: var(--lime); }
+    .pipe-node:nth-child(3) h3 { color: var(--amber); }
+
+    .pipe-node p {
+      font-size: 0.92rem;
+      color: var(--text-soft);
+    }
+
+    .pipe-flow {
+      display: none;
+    }
+
+    @media (min-width: 800px) {
+      .pipeline {
+        gap: 1.5rem;
+      }
+      .pipe-connector {
+        position: absolute;
+        top: 50%;
+        width: calc(33.333% - 1rem);
+        height: 2px;
+        background: repeating-linear-gradient(
+          90deg,
+          var(--navy-line) 0 6px,
+          transparent 6px 12px
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+      .pipe-connector.c1 { left: calc(33.333% - 0.5rem); transform: translateY(-50%); }
+      .pipe-connector.c2 { left: calc(66.666% - 0.5rem); transform: translateY(-50%); }
+      .pipe-connector .packet {
+        position: absolute;
+        top: -3px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--electric);
+        box-shadow: 0 0 10px var(--electric-glow);
+        animation: packet-move 2.8s linear infinite;
+      }
+      .pipe-connector.c2 .packet {
+        background: var(--lime);
+        box-shadow: 0 0 10px var(--lime-glow);
+        animation-delay: 1.4s;
+      }
+    }
+
+    @keyframes packet-move {
+      0% { left: 0; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { left: calc(100% - 8px); opacity: 0; }
+    }
+
+    /* Audit + strengths */
+    .split {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .prose p {
+      color: var(--text-soft);
+      margin-bottom: 1rem;
+      max-width: 62ch;
+    }
+
+    .prose p:last-child { margin-bottom: 0; }
+
+    .strengths {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .strength {
+      background: var(--navy-raised);
+      border: 1px solid var(--navy-line);
+      border-left: 3px solid var(--electric);
+      border-radius: 6px;
+      padding: 1rem 1.1rem;
+    }
+
+    .strength:nth-child(2) { border-left-color: var(--lime); }
+    .strength:nth-child(3) { border-left-color: var(--amber); }
+
+    .strength h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: #eef5ff;
+    }
+
+    .strength p {
+      font-size: 0.88rem;
+      color: var(--text-soft);
+    }
+
+    /* Screenshot */
+    .shot-frame {
+      border: 1px solid var(--navy-line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(46, 168, 255, 0.08);
+    }
+
+    .shot-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.85rem;
+      background: var(--navy-panel);
+      border-bottom: 1px solid var(--navy-line);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-faint);
+    }
+
+    .shot-bar .dots {
+      display: flex;
+      gap: 5px;
+      margin-right: 0.5rem;
+    }
+
+    .shot-bar .dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--navy-line);
+    }
+    .shot-bar .dots span:nth-child(1) { background: var(--danger); }
+    .shot-bar .dots span:nth-child(2) { background: var(--amber); }
+    .shot-bar .dots span:nth-child(3) { background: var(--lime); }
+
+    .shot-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      vertical-align: middle;
+    }
+
+    /* Spec strip */
+    .spec-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    .spec {
+      background: var(--navy-panel);
+      border: 1px solid var(--navy-line);
+      border-radius: 8px;
+      padding: 1.1rem 1rem;
+      text-align: left;
+    }
+
+    .spec .val {
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--lime);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .spec .lbl {
+      font-size: 0.8rem;
+      color: var(--text-faint);
+    }
+
+    /* CTA band */
+    .cta-band {
+      margin: 1rem 0 3.5rem;
+      padding: 2rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--navy-line);
+      background:
+        linear-gradient(135deg, var(--electric-dim), transparent 55%),
+        var(--navy-panel);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+    }
+
+    .cta-band h2 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .cta-band p {
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      max-width: 40ch;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--navy-line);
+      padding: 1.5rem 0 2.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    footer a { color: var(--text-soft); }
+    footer a:hover { color: var(--electric); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        padding-top: 2rem;
+      }
+      .split { grid-template-columns: 1fr; }
+      .pipeline { grid-template-columns: 1fr; }
+      .pipe-connector { display: none; }
+      .spec-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 520px) {
+      .feed-line {
+        grid-template-columns: 1fr;
+        gap: 0.15rem;
+      }
+      .feed-line .action { justify-self: start; }
+      .spec-strip { grid-template-columns: 1fr 1fr; }
+      .cta-band { padding: 1.35rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .led,
+      .feed-line,
+      .drop-pulse,
+      .pipe-connector .packet {
+        animation: none !important;
+      }
+      .feed-line { opacity: 1; transform: none; }
+      .drop-pulse { opacity: 0.7; box-shadow: 0 0 8px var(--lime-glow); }
+    }
+  </style>
 </head>
 <body>
+  <div class="ops-bg" aria-hidden="true"></div>
+  <div class="ops-grid" aria-hidden="true"></div>
 
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
+  <div class="wrap">
+    <header class="ops-bar">
+      <a href="./">← All showcases</a>
+      <div class="status-cluster">
+        <span class="status-pill"><span class="led" aria-hidden="true"></span> IRC listeners online</span>
+        <span class="status-pill"><span class="led blue" aria-hidden="true"></span> Filters armed</span>
+        <span class="status-pill"><span class="led amber" aria-hidden="true"></span> Showcase #13</span>
       </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+    </header>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-        <span>autobrr/autobrr</span>
-        <span>•</span>
-        <span>July 7, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #13</span>
+    <section class="hero" aria-labelledby="brand">
+      <div class="hero-copy">
+        <div class="meta-row">
+          <span>autobrr / autobrr</span>
+          <span class="tag">Automation</span>
+          <span class="tag">Torrents</span>
+          <span class="tag">Self-Hosted</span>
+        </div>
+        <h1 class="brand" id="brand">auto<span>brr</span></h1>
+        <p class="headline">Download automation hub — catch the announce, not the RSS lag.</p>
+        <p class="lede">Mission control for torrent and Usenet pipelines: listen on IRC, match against your filters, and push the release into qBittorrent, Radarr, Sonarr, or a watch folder before the swarm fills up.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/autobrr/autobrr" target="_blank" rel="noopener">View source</a>
+          <a class="btn btn-ghost" href="https://autobrr.com/" target="_blank" rel="noopener">Documentation</a>
+          <a class="btn btn-ghost" href="https://github.com/autobrr/autobrr/releases" target="_blank" rel="noopener">Releases</a>
+        </div>
       </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        autobrr
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Catch torrents the moment they drop — IRC-speed automation for your entire download stack.
-      </p>
 
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://autobrr.com/" class="btn-primary" target="_blank" rel="noopener">Read Documentation</a>
-        <a href="https://github.com/autobrr/autobrr" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Dashboard Screenshot -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Dashboard Interface</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-          <div class="mockup-header">
-            <div class="mockup-controls">
-              <span class="mockup-dot red"></span>
-              <span class="mockup-dot yellow"></span>
-              <span class="mockup-dot green"></span>
-            </div>
-            <div class="mockup-title">front-dark.png</div>
-            <div style="width: 36px;"></div>
+      <aside class="feed-panel" aria-label="Simulated IRC announce feed">
+        <div class="feed-chrome">
+          <span class="live"><span class="led" aria-hidden="true"></span> Signal feed</span>
+          <span>#announce · real-time</span>
+        </div>
+        <div class="feed-body">
+          <div class="feed-line">
+            <span class="ts">14:02:11</span>
+            <span class="payload"><span class="chan">PTP</span> NEW · Drama.S01E04.1080p</span>
+            <span class="action">scan</span>
           </div>
-          <img src="https://github.com/autobrr/autobrr/raw/develop/.github/images/front-dark.png" alt="autobrr dashboard showing filters and release monitoring" style="width: 100%; height: auto; display: block;">
-        </div>
-      </section>
-
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is autobrr?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Private tracker users know the race: new releases appear, and the first seeders build ratio fastest. Tools like Radarr and Sonarr poll RSS feeds on a schedule — useful, but too slow to join the initial swarm on competitive indexers. Legacy automation scripts like autodl-irssi solved this with IRC, but they are brittle, hard to configure, and show their age.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>autobrr</strong> modernizes that workflow into a single self-hosted application. It watches indexer IRC announce channels in real time, matches releases against your filters, and dispatches torrent files to qBittorrent, Deluge, Radarr, Sonarr, or a watch folder — all through a clean web UI with both dark and light themes.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Real-Time IRC Announce Monitoring</span>
-              <p class="text-body-sm">
-                Indexers broadcast new uploads to IRC the instant they hit the site. autobrr sits in those channels and reacts in milliseconds — not on the next RSS poll cycle. That speed difference is what separates early seeders from everyone still refreshing a feed.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Filter-Driven Automation</span>
-              <p class="text-body-sm">
-                Each filter is a rule set: match on release name, size, category, indexer, or regex patterns, then trigger an action. Actions can push to a download client, forward to Radarr or Sonarr for library import, or drop a torrent into a watch folder. Complex workflows that used to require multiple tools now live in one place.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Unified Torrent and Usenet Stack</span>
-              <p class="text-body-sm">
-                autobrr draws from the best ideas in trackarr, autodl-irssi, and flexget, then unifies torrent and Usenet automation under one roof. Whether you maintain ratio on private trackers or automate a Usenet pipeline, the same filter-and-action model applies across both ecosystems.
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">How a Filter Works</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            A typical setup monitors an indexer's IRC channel, matches incoming announces, and routes approved releases to your media stack:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">filter flow</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-comment"># IRC announce arrives from indexer</span><br>
-              <span class="token-cmd">→ Filter: match "2160p" + category "Movies"</span><br>
-              <span class="token-cmd">→ Action: send to Radarr + qBittorrent</span><br>
-              <span class="token-success">✓ Release grabbed · seeding within seconds</span>
-            </div>
+          <div class="feed-line">
+            <span class="ts">14:02:11</span>
+            <span class="payload">filter · title regex · reject</span>
+            <span class="action">—</span>
+          </div>
+          <div class="feed-line">
+            <span class="ts">14:02:18</span>
+            <span class="payload"><span class="chan">BTN</span> NEW · Synthwave.Live.2024.FLAC</span>
+            <span class="action">scan</span>
+          </div>
+          <div class="feed-line">
+            <span class="ts">14:02:18</span>
+            <span class="payload">filter · category mismatch</span>
+            <span class="action">—</span>
+          </div>
+          <div class="feed-line">
+            <span class="ts">14:02:24</span>
+            <span class="payload"><span class="chan">RED</span> NEW · Night.Drive.EP.24bit</span>
+            <span class="action">match</span>
+          </div>
+          <div class="feed-line">
+            <span class="ts">14:02:24</span>
+            <span class="payload">action → qBittorrent · category music</span>
+            <span class="action">PUSHED</span>
           </div>
         </div>
-      </section>
+        <span class="drop-pulse" aria-hidden="true"></span>
+      </aside>
+    </section>
 
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
+    <section class="section" aria-labelledby="pipeline-title">
+      <p class="section-kicker">Release path</p>
+      <h2 class="section-title" id="pipeline-title">Indexer → filter → client</h2>
+      <p class="section-lede">RSS is too slow for early swarm participation. autobrr sits on IRC announce channels (and Torznab / Newznab / RSS when IRC is not available), evaluates every drop against your rules, then fires the action you configured.</p>
 
-    </div>
-  </main>
+      <div class="pipeline" style="position: relative;">
+        <div class="pipe-connector c1" aria-hidden="true"><span class="packet"></span></div>
+        <div class="pipe-connector c2" aria-hidden="true"><span class="packet"></span></div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
+        <article class="pipe-node">
+          <h3>01 · Indexer</h3>
+          <p>Live IRC announces across 75+ trackers, plus RSS, Torznab, and Newznab feeds for indexers without channels — torrents and Usenet in one place.</p>
+        </article>
+        <article class="pipe-node">
+          <h3>02 · Filter</h3>
+          <p>Rule sets with RegEx, size, resolution, tags, and more. Matches become actions; noise gets discarded before it ever touches a client.</p>
+        </article>
+        <article class="pipe-node">
+          <h3>03 · Client</h3>
+          <p>Push to qBittorrent, Deluge, rTorrent, Transmission, Porla, the *arr suite, SABnzbd, watch folders, webhooks, or custom exec scripts.</p>
+        </article>
       </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
+    <section class="section" aria-labelledby="audit-title">
+      <p class="section-kicker">Software audit</p>
+      <h2 class="section-title" id="audit-title">Why this belongs in a download stack</h2>
+      <div class="split">
+        <div class="prose">
+          <p>Most media automation still polls RSS. That works for casual libraries; it fails when ratio, freeleech windows, or first-seed advantage matter. Tracker IRC channels publish the moment a torrent lands. autobrr is the listener that turns those announces into deliberate downloads instead of a later RSS scrape.</p>
+          <p>You define filters once — titles, formats, sizes, freeleech flags — and wire actions to the tools you already run. One instance can fan out to multiple remote clients and *arr apps. Built in Go with a React UI, it stays light enough for seedboxes, Docker, and bare-metal systemd hosts alike, with SQLite or Postgres, OIDC, and reverse-proxy base-path support for real deployments.</p>
+          <p>Think of it as the ops layer between “something uploaded” and “my client is already hashing.” If autodl-irssi, trackarr, and FlexGet each solved a slice of that problem, autobrr is the unified console that keeps the signal feed, the rules, and the push targets in one dark-mode dashboard.</p>
+        </div>
+        <div class="strengths">
+          <article class="strength">
+            <h3>IRC-speed acquisition</h3>
+            <p>Join the initial swarm instead of waiting for feed refresh cycles — critical for ratio and scarce freeleech drops.</p>
+          </article>
+          <article class="strength">
+            <h3>One filter surface</h3>
+            <p>Torrents, Usenet, magnets, RegEx rules, and multi-client actions share the same mental model and mobile-friendly UI.</p>
+          </article>
+          <article class="strength">
+            <h3>Homelab-ready ops</h3>
+            <p>Docker/k8s images, seedbox installers, Discord/Telegram notifications, and OIDC so it fits locked-down reverse proxies.</p>
+          </article>
+        </div>
       </div>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
+    <section class="section" aria-labelledby="ui-title">
+      <p class="section-kicker">Control surface</p>
+      <h2 class="section-title" id="ui-title">The dashboard that watches the wire</h2>
+      <p class="section-lede">A Go backend and React front end give you a single pane for IRC status, filter hits, and client actions — dark by default, readable on a phone at 2 a.m. when a freeleech hits.</p>
+      <figure class="shot-frame">
+        <div class="shot-bar">
+          <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <span>autobrr · dashboard · dark</span>
+        </div>
+        <img
+          src="https://github.com/autobrr/autobrr/raw/develop/.github/images/front-dark.png"
+          alt="autobrr dark-mode web UI showing download automation dashboard"
+          width="1200"
+          height="700"
+          loading="lazy"
+        >
+      </figure>
+    </section>
+
+    <section class="section" aria-labelledby="spec-title">
+      <p class="section-kicker">At a glance</p>
+      <h2 class="section-title" id="spec-title">Stack signals</h2>
+      <div class="spec-strip">
+        <div class="spec">
+          <div class="val">75+</div>
+          <div class="lbl">IRC-capable trackers</div>
+        </div>
+        <div class="spec">
+          <div class="val">Go + React</div>
+          <div class="lbl">Lightweight cross-platform core</div>
+        </div>
+        <div class="spec">
+          <div class="val">:7474</div>
+          <div class="lbl">Default web UI port</div>
+        </div>
+        <div class="spec">
+          <div class="val">GPLv2+</div>
+          <div class="lbl">Open source license</div>
+        </div>
       </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
+    </section>
 
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+    <section class="cta-band" aria-label="Next steps">
+      <div>
+        <h2>Arm the filters</h2>
+        <p>Install via Docker, brew, or a seedbox one-click, then point IRC, filters, and clients at the stack you already trust.</p>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://autobrr.com/installation/linux" target="_blank" rel="noopener">Install guide</a>
+        <a class="btn btn-ghost" href="https://discord.autobrr.com" target="_blank" rel="noopener">Community Discord</a>
+      </div>
+    </section>
+
+    <footer>
+      <span>DuckWare showcase #13 · curated audit, not affiliated with autobrr</span>
+      <span>
+        <a href="./">Catalog</a>
+        ·
+        <a href="https://github.com/autobrr/autobrr" target="_blank" rel="noopener">GitHub</a>
+        ·
+        <a href="https://autobrr.com/" target="_blank" rel="noopener">autobrr.com</a>
+      </span>
+    </footer>
+  </div>
 </body>
 </html>

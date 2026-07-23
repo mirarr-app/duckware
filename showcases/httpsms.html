@@ -4,214 +4,899 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>httpSMS Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of httpSMS, the open-source service that turns your Android phone into an SMS gateway with a simple HTTP API.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="Audit of httpSMS: turn an Android phone into a programmable SMS gateway with a REST API, inbound webhooks, and a self-hostable stack.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050806;
+      --bg-elev: #0b1210;
+      --bg-panel: #0e1714;
+      --line: rgba(52, 211, 153, 0.18);
+      --line-strong: rgba(52, 211, 153, 0.42);
+      --emerald: #34d399;
+      --emerald-dim: #10b981;
+      --emerald-glow: rgba(52, 211, 153, 0.35);
+      --white: #f4f7f5;
+      --mute: #8fa399;
+      --mute-dim: #5f7268;
+      --danger: #f87171;
+      --phone-bezel: #121a17;
+      --font: "Plus Jakarta Sans", system-ui, sans-serif;
+      --mono: "Fira Code", ui-monospace, monospace;
+      --radius: 14px;
+      --max: 1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--white);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 15% -10%, rgba(16, 185, 129, 0.14), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 20%, rgba(52, 211, 153, 0.08), transparent 50%),
+        linear-gradient(180deg, transparent 0%, rgba(5, 8, 6, 0.4) 100%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 47px,
+          rgba(52, 211, 153, 0.03) 47px,
+          rgba(52, 211, 153, 0.03) 48px
+        );
+    }
+
+    a { color: var(--emerald); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* —— Top bar —— */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 2.5rem;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--mute);
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .back:hover { color: var(--emerald); text-decoration: none; }
+    .back svg { width: 16px; height: 16px; }
+
+    .meta-chip {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--emerald);
+      border: 1px solid var(--line-strong);
+      background: rgba(52, 211, 153, 0.08);
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* —— Hero: Phone ↔ API —— */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 2.5rem;
+      align-items: center;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 3.5rem;
+    }
+
+    .hero-copy .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--emerald);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .signal-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 0 0 var(--emerald-glow);
+      animation: signal-pulse 2s ease-out infinite;
+    }
+
+    @keyframes signal-pulse {
+      0% { box-shadow: 0 0 0 0 var(--emerald-glow); }
+      70% { box-shadow: 0 0 0 12px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+
+    .hero-copy h1 {
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 0.85rem;
+    }
+
+    .hero-copy h1 span {
+      color: var(--emerald);
+    }
+
+    .hero-lede {
+      font-size: 1.1rem;
+      color: var(--mute);
+      max-width: 36ch;
+      margin-bottom: 1.75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.7rem 1.15rem;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .btn:hover { text-decoration: none; transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--emerald);
+      color: #04110c;
+    }
+    .btn-primary:hover { background: #6ee7b7; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--white);
+      border-color: var(--line-strong);
+    }
+    .btn-ghost:hover {
+      border-color: var(--emerald);
+      color: var(--emerald);
+    }
+
+    /* Bridge stage */
+    .bridge {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      align-items: stretch;
+      min-height: 420px;
+    }
+
+    /* Phone frame */
+    .phone {
+      width: 188px;
+      background: var(--phone-bezel);
+      border-radius: 28px;
+      border: 2px solid #1e2b25;
+      padding: 10px 8px 14px;
+      box-shadow:
+        0 0 0 1px rgba(52, 211, 153, 0.12),
+        0 24px 48px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 56px;
+      height: 6px;
+      border-radius: 4px;
+      background: #0a100e;
+      z-index: 2;
+    }
+
+    .phone-screen {
+      flex: 1;
+      background: #07110d;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(52, 211, 153, 0.1);
+    }
+
+    .phone-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.15rem 0.7rem 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--mute);
+    }
+
+    .bars {
+      display: flex;
+      gap: 2px;
+      align-items: flex-end;
+      height: 10px;
+    }
+    .bars span {
+      width: 3px;
+      background: var(--emerald);
+      border-radius: 1px;
+      opacity: 0.85;
+      animation: bar-pulse 1.8s ease-in-out infinite;
+    }
+    .bars span:nth-child(1) { height: 3px; animation-delay: 0s; }
+    .bars span:nth-child(2) { height: 5px; animation-delay: 0.15s; }
+    .bars span:nth-child(3) { height: 7px; animation-delay: 0.3s; }
+    .bars span:nth-child(4) { height: 10px; animation-delay: 0.45s; }
+
+    @keyframes bar-pulse {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 1; }
+    }
+
+    .thread-head {
+      padding: 0.5rem 0.7rem;
+      border-bottom: 1px solid rgba(52, 211, 153, 0.12);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .thread-head small {
+      display: block;
+      font-weight: 400;
+      color: var(--mute-dim);
+      font-size: 0.58rem;
+      margin-top: 2px;
+    }
+
+    .bubbles {
+      flex: 1;
+      padding: 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      overflow: hidden;
+    }
+
+    .bubble {
+      max-width: 92%;
+      padding: 0.45rem 0.55rem;
+      border-radius: 12px;
+      font-size: 0.62rem;
+      line-height: 1.45;
+      animation: bubble-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .bubble.out {
+      align-self: flex-end;
+      background: rgba(52, 211, 153, 0.18);
+      color: var(--white);
+      border-bottom-right-radius: 4px;
+      animation-delay: 0.2s;
+    }
+
+    .bubble.in {
+      align-self: flex-start;
+      background: #14201b;
+      color: var(--mute);
+      border: 1px solid var(--line);
+      border-bottom-left-radius: 4px;
+      animation-delay: 1.1s;
+    }
+
+    .bubble.in.webhook {
+      border-color: var(--emerald-dim);
+      color: var(--white);
+      box-shadow: 0 0 16px rgba(52, 211, 153, 0.15);
+      animation-delay: 2s;
+      position: relative;
+    }
+
+    .bubble.in.webhook::after {
+      content: "→ webhook";
+      position: absolute;
+      bottom: -1.15rem;
+      left: 0;
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      color: var(--emerald);
+      letter-spacing: 0.04em;
+      opacity: 0;
+      animation: label-fade 0.4s ease 2.4s both;
+    }
+
+    @keyframes bubble-in {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes label-fade {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .phone-footer {
+      padding: 0.45rem 0.55rem 0.55rem;
+      display: flex;
+      gap: 0.35rem;
+      align-items: center;
+    }
+    .fake-input {
+      flex: 1;
+      height: 22px;
+      border-radius: 11px;
+      background: #0c1512;
+      border: 1px solid rgba(52, 211, 153, 0.15);
+    }
+    .send-pip {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--emerald);
+      display: grid;
+      place-items: center;
+    }
+    .send-pip svg { width: 10px; height: 10px; fill: #04110c; }
+
+    /* API panels */
+    .api-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      min-width: 0;
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.55rem 0.85rem;
+      background: rgba(52, 211, 153, 0.06);
+      border-bottom: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--mute);
+    }
+
+    .panel-head .method {
+      color: var(--emerald);
+      font-weight: 600;
+    }
+
+    .status-ok {
+      color: var(--emerald);
+      font-weight: 500;
+    }
+
+    .panel pre {
+      margin: 0;
+      padding: 0.85rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      line-height: 1.55;
+      color: #c5d4cb;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .panel pre .key { color: #6ee7b7; }
+    .panel pre .str { color: #a7f3d0; }
+    .panel pre .num { color: #fde68a; }
+    .panel pre .cmt { color: var(--mute-dim); }
+
+    .bridge-link {
+      display: none;
+    }
+
+    /* —— Audit sections —— */
+    .section {
+      margin-bottom: 3.25rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--emerald);
+      margin-bottom: 0.75rem;
+    }
+
+    .section h2 {
+      font-size: clamp(1.55rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .prose {
+      color: var(--mute);
+      font-size: 1.02rem;
+      max-width: 62ch;
+    }
+
+    .prose + .prose { margin-top: 1rem; }
+
+    .prose strong { color: var(--white); font-weight: 600; }
+
+    /* Strengths */
+    .strengths {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1.75rem;
+    }
+
+    .strength {
+      padding: 1.25rem 1.15rem;
+      border-top: 2px solid var(--emerald-dim);
+      background: linear-gradient(180deg, rgba(52, 211, 153, 0.07), transparent 70%);
+    }
+
+    .strength h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.45rem;
+      letter-spacing: -0.02em;
+    }
+
+    .strength p {
+      font-size: 0.9rem;
+      color: var(--mute);
+      line-height: 1.55;
+    }
+
+    /* Flow strip */
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      counter-reset: step;
+    }
+
+    .flow-step {
+      position: relative;
+      padding: 1.1rem 1rem 1.1rem 1.1rem;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      counter-increment: step;
+    }
+
+    .flow-step::before {
+      content: "0" counter(step);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--emerald);
+      display: block;
+      margin-bottom: 0.45rem;
+      letter-spacing: 0.06em;
+    }
+
+    .flow-step h3 {
+      font-size: 0.92rem;
+      font-weight: 650;
+      margin-bottom: 0.35rem;
+    }
+
+    .flow-step p {
+      font-size: 0.82rem;
+      color: var(--mute);
+      line-height: 1.5;
+    }
+
+    /* Curl block */
+    .curl-block {
+      margin-top: 1.5rem;
+      background: #070d0b;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .curl-block .panel-head {
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .curl-block pre {
+      padding: 1.1rem 1.2rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: #d1e0d7;
+      overflow-x: auto;
+    }
+
+    .curl-block .flag { color: var(--emerald); }
+    .curl-block .url { color: #a7f3d0; }
+    .curl-block .hdr { color: #fde68a; }
+
+    /* Screenshot */
+    .shot {
+      margin-top: 1.5rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--bg-elev);
+    }
+
+    .shot img {
+      display: block;
+      width: 100%;
+      height: auto;
+      vertical-align: middle;
+    }
+
+    .shot figcaption {
+      padding: 0.75rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--mute-dim);
+      border-top: 1px solid var(--line);
+    }
+
+    /* Tags + footer */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 2rem 0 1.5rem;
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--mute);
+      border: 1px solid var(--line);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    .page-footer {
+      border-top: 1px solid var(--line);
+      padding: 2rem 0 3rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .page-footer p {
+      font-size: 0.85rem;
+      color: var(--mute-dim);
+    }
+
+    .page-footer .cta-row { margin: 0; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .bridge {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 1.25rem;
+      }
+
+      .phone { width: 200px; min-height: 360px; }
+
+      .api-stack { width: 100%; }
+
+      .strengths { grid-template-columns: 1fr; }
+
+      .flow { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .flow { grid-template-columns: 1fr; }
+      .hero-copy h1 { font-size: 2.15rem; }
+      .meta-chip { font-size: 0.62rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .signal-dot,
+      .bars span,
+      .bubble,
+      .bubble.in.webhook::after {
+        animation: none !important;
+      }
+      .bubble { opacity: 1; transform: none; }
+      .bubble.in.webhook::after { opacity: 1; }
+      .btn:hover { transform: none; }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="back" href="./">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        All showcases
       </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
-      </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+      <span class="meta-chip">Showcase #09 · NdoleStudio/httpsms</span>
+    </header>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-        <span>NdoleStudio/httpsms</span>
-        <span>•</span>
-        <span>July 2, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #09</span>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="signal-dot" aria-hidden="true"></span> Android SMS over HTTP</p>
+        <h1 id="hero-title">http<span>SMS</span></h1>
+        <p class="hero-lede">
+          Turn a physical Android handset into a programmable SMS gateway —
+          REST out, webhooks in, your SIM as the last mile.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://httpsms.com/" target="_blank" rel="noopener">Open httpsms.com</a>
+          <a class="btn btn-ghost" href="https://github.com/NdoleStudio/httpsms" target="_blank" rel="noopener">Source on GitHub</a>
+          <a class="btn btn-ghost" href="https://docs.httpsms.com" target="_blank" rel="noopener">API docs</a>
+        </div>
       </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        httpSMS
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Your Android phone, exposed as a programmable SMS gateway over HTTP.
+
+      <div class="bridge" aria-label="Phone to API bridge illustration">
+        <div class="phone" aria-hidden="true">
+          <div class="phone-screen">
+            <div class="phone-status">
+              <span>9:41</span>
+              <div class="bars"><span></span><span></span><span></span><span></span></div>
+            </div>
+            <div class="thread-head">
+              +1 800 555 0100
+              <small>via SIM · httpSMS</small>
+            </div>
+            <div class="bubbles">
+              <div class="bubble out">Your verification code is 482910</div>
+              <div class="bubble in">Got it — thanks!</div>
+              <div class="bubble in webhook">Reply YES to confirm delivery window</div>
+            </div>
+            <div class="phone-footer">
+              <div class="fake-input"></div>
+              <div class="send-pip">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="api-stack">
+          <div class="panel">
+            <div class="panel-head">
+              <span><span class="method">POST</span> /v1/messages/send</span>
+              <span class="status-ok">202 Accepted</span>
+            </div>
+            <pre><span class="cmt">// outbound — API → phone → carrier</span>
+{
+  <span class="key">"from"</span>: <span class="str">"+18005550199"</span>,
+  <span class="key">"to"</span>: <span class="str">"+18005550100"</span>,
+  <span class="key">"content"</span>: <span class="str">"Your verification code is 482910"</span>
+}</pre>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <span><span class="method">POST</span> your-webhook</span>
+              <span class="status-ok">inbound SMS</span>
+            </div>
+            <pre><span class="cmt">// phone received SMS → pushed to your endpoint</span>
+{
+  <span class="key">"type"</span>: <span class="str">"message.phone.received"</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"contact"</span>: <span class="str">"+18005550100"</span>,
+    <span class="key">"content"</span>: <span class="str">"Reply YES to confirm…"</span>,
+    <span class="key">"owner"</span>: <span class="str">"+18005550199"</span>
+  }
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="what-it-is">
+      <p class="section-label">What it is</p>
+      <h2 id="what-it-is">A real phone on the other end of every request</h2>
+      <p class="prose">
+        Virtual SMS providers are convenient until a region, a carrier, or a compliance rule
+        blocks them. <strong>httpSMS</strong> takes a different bet: keep a real Android device
+        online, install its companion app, and treat that handset’s SIM as the transport.
+        Your backend speaks a plain HTTP API; the phone does the actual send and receive.
+      </p>
+      <p class="prose">
+        The hosted path at <a href="https://httpsms.com/" target="_blank" rel="noopener">httpsms.com</a>
+        covers the common case — API key, push notification to the app, delivery reports —
+        while the open-source monorepo (API, web dashboard, Android client, Docker Compose)
+        lets you run the same stack on your own infrastructure when data residency or cost
+        matters more than convenience.
       </p>
 
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://httpsms.com/" class="btn-primary" target="_blank" rel="noopener">Visit httpSMS</a>
-        <a href="https://github.com/NdoleStudio/httpsms" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
-      </div>
-    </div>
-  </header>
+      <figure class="shot">
+        <img
+          src="https://user-images.githubusercontent.com/4196457/194767449-f12d84a0-22f1-4787-afb2-17398fb459f6.png"
+          alt="httpSMS dashboard showing SMS messages and gateway status"
+          width="1200"
+          height="675"
+          loading="lazy"
+        >
+        <figcaption>Upstream dashboard — messages, phones, and gateway status in one place</figcaption>
+      </figure>
+    </section>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Primary Feature Visual -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Platform Overview</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-          <div class="mockup-header">
-            <div class="mockup-controls">
-              <span class="mockup-dot red"></span>
-              <span class="mockup-dot yellow"></span>
-              <span class="mockup-dot green"></span>
-            </div>
-            <div class="mockup-title">httpsms-header.png</div>
-            <div style="width: 36px;"></div>
-          </div>
-          <img src="https://user-images.githubusercontent.com/4196457/194767449-f12d84a0-22f1-4787-afb2-17398fb459f6.png" alt="httpSMS platform header showing SMS gateway workflow" style="width: 100%; height: auto; display: block;">
+    <section class="section" aria-labelledby="how-it-moves">
+      <p class="section-label">How a message moves</p>
+      <h2 id="how-it-moves">Accept fast, deliver on the device</h2>
+      <p class="prose">
+        Outbound traffic is asynchronous by design. You <code style="font-family:var(--mono);font-size:0.9em;color:var(--emerald)">POST /v1/messages/send</code>
+        with an <code style="font-family:var(--mono);font-size:0.9em;color:var(--emerald)">x-api-key</code>,
+        get a quick acceptance, and the platform schedules a push to the Android app. The phone
+        fetches the payload, fires the native SMS API, then reports send and delivery status
+        back. Inbound texts reverse the path: the app captures the message and forwards it
+        to the webhook you registered.
+      </p>
+
+      <div class="flow">
+        <div class="flow-step">
+          <h3>Authenticate</h3>
+          <p>API keys live in the dashboard settings and ride every request as a header.</p>
         </div>
-      </section>
+        <div class="flow-step">
+          <h3>Queue &amp; push</h3>
+          <p>The API accepts the message, then notifies the paired Android app over push.</p>
+        </div>
+        <div class="flow-step">
+          <h3>Send on-device</h3>
+          <p>The app uses the phone’s SMS stack — including dual-SIM selection when needed.</p>
+        </div>
+        <div class="flow-step">
+          <h3>Webhook back</h3>
+          <p>Inbound SMS and delivery events land on your endpoint for automation.</p>
+        </div>
+      </div>
 
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is httpSMS?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Commercial SMS APIs work well in the US and Europe, but many regions cannot buy virtual phone numbers at all. Developers in those markets are left stitching together brittle workarounds or paying for gateways that do not support their local carriers. <strong>httpSMS</strong> takes a different approach: your own Android handset becomes the gateway.
+      <div class="curl-block">
+        <div class="panel-head">
+          <span>curl · send SMS</span>
+          <span>api.httpsms.com</span>
+        </div>
+        <pre><span class="flag">curl</span> --request POST <span class="url">'https://api.httpsms.com/v1/messages/send'</span> \
+  --header <span class="hdr">'x-api-key: YOUR_API_KEY'</span> \
+  --header <span class="hdr">'Content-Type: application/json'</span> \
+  --data-raw '{
+    "from": "+18005550199",
+    "to": "+18005550100",
+    "content": "This is a sample text message"
+  }'</pre>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="why-it-matters">
+      <p class="section-label">Why it earns a showcase</p>
+      <h2 id="why-it-matters">Three strengths that hold up under scrutiny</h2>
+      <div class="strengths">
+        <article class="strength">
+          <h3>Carrier-native reach</h3>
+          <p>
+            Because messages leave a real SIM, you keep the routing and reputation of a
+            consumer line — useful for locales where rented virtual numbers fail silently.
           </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            Install the Android app, pair it with the service, and send SMS messages by calling a straightforward HTTP API. Inbound texts arriving on the phone are forwarded to a webhook you configure. The entire stack — API server, web dashboard, and mobile client — is open source and self-hostable.
+        </article>
+        <article class="strength">
+          <h3>Developer-shaped surface</h3>
+          <p>
+            REST endpoints, SDKs (Go, JS, and friends), scheduled sends, optional E2E
+            encryption, and MMS attachments make it feel like infrastructure, not a hobby script.
           </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Real SIM, Real Delivery</span>
-              <p class="text-body-sm">
-                Messages go out through your phone's native SMS stack, not a rented short code. That means local carrier rates, local number identity, and delivery to numbers that commercial APIs often cannot reach. Your Android device stays online and the API queues outbound messages until the app picks them up via push notification.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Bidirectional HTTP Integration</span>
-              <p class="text-body-sm">
-                Outbound is a single REST call — POST your message body, from number, and recipient. Inbound SMS events are delivered to your webhook endpoint as they arrive on the handset, so you can build two-way flows like OTP verification, appointment reminders, or alert systems without polling.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Full-Stack Open Source</span>
-              <p class="text-body-sm">
-                The monorepo ships three components: a Go API backend, an Android companion app, and a Nuxt/Vuetify web dashboard for managing phones, API keys, and message history. Docker Compose brings the server side up locally, and the hosted version at httpsms.com is available if you prefer not to run your own infrastructure.
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Sending a Message</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            The API accepts a JSON payload and returns immediately while the Android app handles delivery asynchronously:
+        </article>
+        <article class="strength">
+          <h3>Self-host when you must</h3>
+          <p>
+            Docker Compose boots the API and web UI against your own Firebase and SMTP;
+            the Android APK pairs to that private control plane instead of the public cloud.
           </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">curl</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">curl -X POST https://api.httpsms.com/v1/messages/send \</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;-H "x-api-key: YOUR_API_KEY" \</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;-H "Content-Type: application/json" \</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;-d '{"content": "Hello!", "from": "+1234567890", "to": "+0987654321"}'</span><br><br>
-              <span class="token-success">202 Accepted — message queued for delivery</span>
-            </div>
-          </div>
-        </div>
+        </article>
+      </div>
+    </section>
 
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Self-Hosting</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Run the full stack on your own infrastructure with Docker Compose. Configure Firebase credentials for push notifications and you have a private SMS gateway:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">bash</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">git clone https://github.com/NdoleStudio/httpsms.git</span><br>
-              <span class="token-cmd">cp web/.env.docker web/.env</span><br>
-              <span class="token-cmd">cp api/.env.docker api/.env</span><br>
-              <span class="token-cmd">docker compose up --build</span>
-            </div>
-          </div>
-        </div>
-      </section>
+    <section class="section" aria-labelledby="audit-notes">
+      <p class="section-label">Audit notes</p>
+      <h2 id="audit-notes">Who this is for — and what to watch</h2>
+      <p class="prose">
+        httpSMS fits teams that already operate (or can operate) an Android device with a
+        working SMS plan: OTP pipelines in stubborn markets, two-way support threads that
+        must look like ordinary texts, or homelab automations that refuse to rent a Twilio
+        number. Pair the phone with a stable power and data setup; the gateway is only as
+        reliable as the handset staying online.
+      </p>
+      <p class="prose">
+        Treat rate limits, carrier spam filters, and local telecom rules as first-class
+        constraints — the API will not paper over them. For production, prefer the documented
+        webhook events for inbound and delivery state rather than polling, keep API keys
+        rotated from the settings panel, and if you self-host, budget time for Firebase
+        credentials and Turnstile keys before <code style="font-family:var(--mono);font-size:0.9em;color:var(--emerald)">docker compose up</code>.
+      </p>
+    </section>
 
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
+    <div class="tags" aria-label="Tags">
+      <span class="tag">SMS</span>
+      <span class="tag">HTTP API</span>
+      <span class="tag">Android</span>
     </div>
-  </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
+    <footer class="page-footer">
+      <p>DuckWare showcase #09 · curated audit, not an official httpSMS page</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/NdoleStudio/httpsms/releases" target="_blank" rel="noopener">Get the Android APK</a>
+        <a class="btn btn-ghost" href="./">Back to catalog</a>
       </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
-
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+    </footer>
+  </div>
 </body>
 </html>

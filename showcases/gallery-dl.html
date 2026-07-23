@@ -4,219 +4,796 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>gallery-dl Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of gallery-dl, the cross-platform command-line tool for downloading image galleries from hundreds of hosting sites.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare audit of gallery-dl: a cross-platform CLI that downloads image galleries from hundreds of hosts with JSON config, programmable filenames, and cookie or OAuth auth.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #070605;
+      --ink-2: #0e0c0a;
+      --ink-3: #161310;
+      --panel: #1a1612;
+      --line: rgba(232, 168, 74, 0.14);
+      --line-strong: rgba(232, 168, 74, 0.32);
+      --amber: #e8a84a;
+      --amber-soft: #f0c078;
+      --amber-dim: #9a6b28;
+      --cream: #f3ebe0;
+      --cream-mute: #b8a994;
+      --ok: #7cb87a;
+      --skip: #8a8070;
+      --fail: #c07058;
+      --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --max: 1080px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% -10%, rgba(232, 168, 74, 0.08), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 100% 80%, rgba(154, 107, 40, 0.06), transparent 50%),
+        var(--ink);
+      color: var(--cream);
+      font-family: var(--serif);
+      font-size: 1.0625rem;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.035;
+      background-image:
+        linear-gradient(rgba(243, 235, 224, 0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(243, 235, 224, 0.5) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent);
+    }
+
+    a { color: var(--amber); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+    a:hover { color: var(--amber-soft); }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* —— top bar —— */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 0 0;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      color: var(--cream-mute);
+    }
+
+    .topbar a.back {
+      color: var(--cream-mute);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      padding: 0.45rem 0.75rem;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .topbar a.back:hover {
+      color: var(--amber);
+      border-color: var(--line-strong);
+      background: rgba(232, 168, 74, 0.06);
+    }
+
+    .topbar .meta { display: flex; flex-wrap: wrap; gap: 0.65rem 1.1rem; }
+
+    .topbar .meta span::before {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      margin-right: 0.55rem;
+      border-radius: 50%;
+      background: var(--amber-dim);
+      vertical-align: middle;
+    }
+
+    /* —— hero —— */
+    .hero {
+      padding: 3.5rem 0 2.5rem;
+      display: grid;
+      gap: 2.25rem;
+    }
+
+    .brand {
+      font-family: var(--mono);
+      font-size: clamp(2.4rem, 7vw, 4.25rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--amber);
+      text-shadow: 0 0 40px rgba(232, 168, 74, 0.15);
+    }
+
+    .brand .slash {
+      color: var(--amber-dim);
+      font-weight: 400;
+    }
+
+    .lede {
+      max-width: 36rem;
+      font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+      font-weight: 400;
+      color: var(--cream);
+      line-height: 1.45;
+    }
+
+    .lede em {
+      font-style: italic;
+      color: var(--amber-soft);
+    }
+
+    .sub {
+      max-width: 38rem;
+      color: var(--cream-mute);
+      font-size: 1.02rem;
+    }
+
+    /* terminal command */
+    .cmd-shell {
+      position: relative;
+      background: var(--ink-2);
+      border: 1px solid var(--line-strong);
+      overflow: hidden;
+    }
+
+    .cmd-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        transparent 40%,
+        rgba(232, 168, 74, 0.07) 50%,
+        transparent 60%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 4.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .cmd-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--cream-mute);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .cmd-chrome .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--amber-dim);
+    }
+
+    .cmd-chrome .dot.live {
+      background: var(--amber);
+      box-shadow: 0 0 8px rgba(232, 168, 74, 0.7);
+      animation: pulse-dot 1.8s ease-in-out infinite;
+    }
+
+    .cmd-body {
+      padding: 1.35rem 1.15rem 1.5rem;
+      font-family: var(--mono);
+      font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+      line-height: 1.55;
+      color: var(--cream);
+      position: relative;
+    }
+
+    .cmd-body .prompt { color: var(--amber-dim); user-select: none; }
+    .cmd-body .bin { color: var(--amber); font-weight: 500; }
+    .cmd-body .url { color: var(--amber-soft); }
+    .cmd-body .cursor {
+      display: inline-block;
+      width: 0.55em;
+      height: 1.05em;
+      margin-left: 0.12em;
+      background: var(--amber);
+      vertical-align: text-bottom;
+      animation: blink 1.05s step-end infinite;
+    }
+
+    /* archive status line */
+    .status-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1.5rem;
+      padding: 0.85rem 1rem;
+      background: var(--ink-3);
+      border: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.03em;
+      color: var(--cream-mute);
+    }
+
+    .status-line .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .status-line .pill strong {
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    .status-line .ok { color: var(--ok); }
+    .status-line .skip { color: var(--skip); }
+    .status-line .amber { color: var(--amber); }
+
+    .progress-track {
+      flex: 1 1 8rem;
+      min-width: 6rem;
+      height: 3px;
+      background: rgba(232, 168, 74, 0.12);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 72%;
+      background: linear-gradient(90deg, var(--amber-dim), var(--amber), var(--amber-soft));
+      background-size: 200% 100%;
+      animation: progress-shimmer 2.4s linear infinite;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      animation: bar-sweep 2.2s ease-in-out infinite;
+    }
+
+    /* —— masonry strip —— */
+    .masonry-section {
+      margin: 0.5rem 0 3.5rem;
+    }
+
+    .masonry-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-bottom: 0.85rem;
+    }
+
+    .masonry {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-auto-rows: 52px;
+      gap: 6px;
+    }
+
+    .thumb {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.92);
+      animation: thumb-in 0.55s var(--ease) forwards;
+    }
+
+    .thumb::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(145deg, rgba(232, 168, 74, 0.18), transparent 55%),
+        repeating-linear-gradient(
+          -12deg,
+          transparent,
+          transparent 6px,
+          rgba(232, 168, 74, 0.04) 6px,
+          rgba(232, 168, 74, 0.04) 7px
+        );
+    }
+
+    .thumb::after {
+      content: attr(data-ext);
+      position: absolute;
+      bottom: 4px;
+      right: 5px;
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.04em;
+      color: rgba(243, 235, 224, 0.45);
+      text-transform: uppercase;
+    }
+
+    .thumb.t-tall { grid-row: span 2; }
+    .thumb.t-wide { grid-column: span 2; }
+    .thumb.t-big { grid-column: span 2; grid-row: span 2; }
+
+    .thumb:nth-child(1) { animation-delay: 0.05s; }
+    .thumb:nth-child(2) { animation-delay: 0.18s; }
+    .thumb:nth-child(3) { animation-delay: 0.28s; }
+    .thumb:nth-child(4) { animation-delay: 0.38s; }
+    .thumb:nth-child(5) { animation-delay: 0.48s; }
+    .thumb:nth-child(6) { animation-delay: 0.58s; }
+    .thumb:nth-child(7) { animation-delay: 0.68s; }
+    .thumb:nth-child(8) { animation-delay: 0.78s; }
+    .thumb:nth-child(9) { animation-delay: 0.88s; }
+    .thumb:nth-child(10) { animation-delay: 0.98s; }
+    .thumb:nth-child(11) { animation-delay: 1.08s; }
+    .thumb:nth-child(12) { animation-delay: 1.18s; }
+    .thumb:nth-child(13) { animation-delay: 1.28s; }
+    .thumb:nth-child(14) { animation-delay: 1.38s; }
+    .thumb:nth-child(15) { animation-delay: 1.48s; }
+    .thumb:nth-child(16) { animation-delay: 1.58s; }
+
+    .thumb .shade {
+      position: absolute;
+      inset: 0;
+      opacity: 0.55;
+    }
+
+    .thumb:nth-child(3n) .shade { background: linear-gradient(160deg, #3a2a18, #1a120c); }
+    .thumb:nth-child(3n+1) .shade { background: linear-gradient(160deg, #2a2218, #120e0a); }
+    .thumb:nth-child(3n+2) .shade { background: linear-gradient(160deg, #4a3820, #1e160e); }
+
+    /* —— sections —— */
+    section.block {
+      padding: 2.75rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .block-kicker {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.85rem;
+    }
+
+    .block h2 {
+      font-size: clamp(1.55rem, 3.5vw, 2.1rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      max-width: 22ch;
+    }
+
+    .block p {
+      color: var(--cream-mute);
+      max-width: 40rem;
+      margin-bottom: 1rem;
+    }
+
+    .block p:last-child { margin-bottom: 0; }
+
+    .block p strong { color: var(--cream); font-weight: 600; }
+
+    /* strengths */
+    .strengths {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 1.75rem;
+    }
+
+    @media (min-width: 720px) {
+      .strengths { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    }
+
+    .strength {
+      padding: 1.25rem 0 0;
+      border-top: 1px solid var(--line-strong);
+    }
+
+    .strength h3 {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--amber);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.55rem;
+    }
+
+    .strength p {
+      font-size: 0.95rem;
+      margin: 0;
+      max-width: none;
+    }
+
+    /* config / log split */
+    .split {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (min-width: 800px) {
+      .split { grid-template-columns: 1fr 1fr; align-items: stretch; }
+    }
+
+    .panel {
+      background: var(--ink-2);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cream-mute);
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .panel-head .tag { color: var(--amber); }
+
+    pre.code {
+      padding: 1rem 0.95rem 1.15rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      line-height: 1.55;
+      color: var(--cream-mute);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    pre.code .k { color: var(--amber); }
+    pre.code .s { color: var(--amber-soft); }
+    pre.code .c { color: var(--skip); }
+    pre.code .ok { color: var(--ok); }
+    pre.code .sk { color: var(--skip); }
+
+    /* log lines */
+    .log {
+      padding: 0.85rem 0.95rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      line-height: 1.7;
+      color: var(--cream-mute);
+    }
+
+    .log .row { display: grid; grid-template-columns: 4.5rem 1fr; gap: 0.5rem; }
+    .log .ts { color: var(--amber-dim); }
+    .log .dl { color: var(--ok); }
+    .log .dup { color: var(--skip); }
+    .log .auth { color: var(--amber); }
+
+    /* tags + CTA */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1.5rem 0 2rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+    }
+
+    .tags span {
+      border: 1px solid var(--line-strong);
+      color: var(--amber-soft);
+      padding: 0.35rem 0.65rem;
+    }
+
+    .ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      padding: 0.75rem 1.15rem;
+      border: 1px solid var(--amber);
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--amber);
+      color: var(--ink);
+    }
+
+    .btn-primary:hover {
+      background: var(--amber-soft);
+      color: var(--ink);
+      border-color: var(--amber-soft);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--amber);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(232, 168, 74, 0.08);
+      color: var(--amber-soft);
+    }
+
+    /* footer */
+    footer.foot {
+      margin-top: 1rem;
+      padding: 2rem 0 3rem;
+      border-top: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      color: var(--cream-mute);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    footer.foot a {
+      color: var(--cream-mute);
+      text-decoration: none;
+    }
+
+    footer.foot a:hover { color: var(--amber); }
+
+    /* animations */
+    @keyframes shimmer {
+      0%, 100% { background-position: 100% 0; }
+      50% { background-position: 0% 0; }
+    }
+
+    @keyframes progress-shimmer {
+      0% { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    @keyframes bar-sweep {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(232, 168, 74, 0.5); }
+      50% { opacity: 0.55; box-shadow: 0 0 12px rgba(232, 168, 74, 0.85); }
+    }
+
+    @keyframes thumb-in {
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 700px) {
+      .masonry {
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 44px;
+      }
+      .hero { padding-top: 2.5rem; }
+      .status-line { gap: 0.55rem 1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .cmd-shell::before,
+      .progress-fill,
+      .progress-fill::after,
+      .cmd-body .cursor,
+      .cmd-chrome .dot.live {
+        animation: none !important;
+      }
+      .thumb {
+        opacity: 1;
+        transform: none;
+        animation: none !important;
+      }
+      .progress-fill { width: 72%; }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <div class="meta">
+        <span>Showcase #10</span>
+        <span>mikf/gallery-dl</span>
       </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
+    </header>
+
+    <section class="hero" aria-labelledby="brand">
+      <div>
+        <h1 class="brand" id="brand">gallery-dl<span class="slash">/</span></h1>
+        <p class="lede" style="margin-top: 1.15rem;">
+          Universal gallery downloader for people who curate collections, not screenshots.
+        </p>
+        <p class="sub" style="margin-top: 0.85rem;">
+          Point it at a gallery URL and it walks the site’s structure—boards, albums, tags, timelines—then writes files with names and folders you define. Hundreds of extractors, one CLI.
+        </p>
+      </div>
+
+      <div class="cmd-shell" role="img" aria-label="Terminal running gallery-dl against a gallery URL">
+        <div class="cmd-chrome">
+          <span class="dot live" aria-hidden="true"></span>
+          <span>download session · archive awake</span>
+        </div>
+        <div class="cmd-body">
+          <span class="prompt">$</span>
+          <span class="bin"> gallery-dl</span>
+          <span class="url"> "https://example.com/gallery/…"</span><span class="cursor" aria-hidden="true"></span>
+        </div>
+        <div class="status-line" aria-live="polite">
+          <span class="pill amber"><strong>ARCHIVE</strong> · dedup on</span>
+          <span class="pill ok">↓ 148 saved</span>
+          <span class="pill skip">⊘ 23 skipped</span>
+          <span class="pill"><strong>72%</strong></span>
+          <div class="progress-track" aria-hidden="true"><div class="progress-fill"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="masonry-section">
+      <p class="masonry-label">Incoming · thumbnail strip filling as files land</p>
+      <div class="masonry" aria-hidden="true">
+        <div class="thumb t-tall" data-ext="jpg" style="--d:1"><div class="shade"></div></div>
+        <div class="thumb" data-ext="png" style="--d:2"><div class="shade"></div></div>
+        <div class="thumb t-wide" data-ext="webp" style="--d:3"><div class="shade"></div></div>
+        <div class="thumb" data-ext="jpg" style="--d:4"><div class="shade"></div></div>
+        <div class="thumb t-big" data-ext="png" style="--d:5"><div class="shade"></div></div>
+        <div class="thumb" data-ext="gif" style="--d:6"><div class="shade"></div></div>
+        <div class="thumb t-tall" data-ext="jpg" style="--d:7"><div class="shade"></div></div>
+        <div class="thumb" data-ext="png" style="--d:8"><div class="shade"></div></div>
+        <div class="thumb t-wide" data-ext="jpg" style="--d:9"><div class="shade"></div></div>
+        <div class="thumb" data-ext="webp" style="--d:10"><div class="shade"></div></div>
+        <div class="thumb" data-ext="jpg" style="--d:11"><div class="shade"></div></div>
+        <div class="thumb t-tall" data-ext="png" style="--d:12"><div class="shade"></div></div>
+        <div class="thumb" data-ext="jpg" style="--d:13"><div class="shade"></div></div>
+        <div class="thumb" data-ext="png" style="--d:14"><div class="shade"></div></div>
+        <div class="thumb t-wide" data-ext="jpg" style="--d:15"><div class="shade"></div></div>
+        <div class="thumb" data-ext="webp" style="--d:16"><div class="shade"></div></div>
       </div>
     </div>
-  </nav>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-        <span>mikf/gallery-dl</span>
-        <span>•</span>
-        <span>July 4, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #10</span>
-      </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        gallery-dl
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        One command to archive image galleries from hundreds of sites — with the config depth of a proper Unix tool.
+    <section class="block" aria-labelledby="what">
+      <p class="block-kicker">01 · What it is</p>
+      <h2 id="what">A site-aware archivist, not a dumb wget.</h2>
+      <p>
+        <strong>gallery-dl</strong> is a cross-platform Python CLI that downloads image galleries and collections from a long list of hosting sites—art boards, social timelines, manga readers, boorus, and more. You pass URLs; extractors negotiate pagination, metadata, and formats so you get a coherent local tree instead of a pile of anonymous blobs.
+      </p>
+      <p>
+        Configuration is deep JSON (YAML/TOML optional): base directories, per-site overrides, filters, and filename templates that can pull IDs, tags, artists, dates, and chapter numbers into the path. Cookies, browser cookie import, username/password, and OAuth cover private or logged-in content when a public scrape is not enough.
+      </p>
+    </section>
+
+    <section class="block" aria-labelledby="why">
+      <p class="block-kicker">02 · Why it earns a shelf</p>
+      <h2 id="why">Built for people who re-run the same collection for years.</h2>
+      <p>
+        The archive database remembers what you already have. Revisit a tag search or an artist page and gallery-dl skips duplicates instead of rewriting disks—critical when collections grow into tens of thousands of files. Optional yt-dlp/FFmpeg hooks extend the same workflow to video and Pixiv ugoira without abandoning the gallery model.
       </p>
 
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://gdl-org.github.io/docs/configuration.html" class="btn-primary" target="_blank" rel="noopener">Read Documentation</a>
-        <a href="https://codeberg.org/mikf/gallery-dl" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
+      <div class="strengths">
+        <article class="strength">
+          <h3>Extractor breadth</h3>
+          <p>Hundreds of site-specific extractors share one invocation pattern: pass a URL (or force an extractor prefix) and let the tool walk galleries the way the site structures them.</p>
+        </article>
+        <article class="strength">
+          <h3>Programmable layout</h3>
+          <p>Filename and directory templates turn remote metadata into predictable local paths—artist / tags / date / id—so archives stay searchable without a separate renamer.</p>
+        </article>
+        <article class="strength">
+          <h3>Auth that matches reality</h3>
+          <p>When CAPTCHA or private feeds block a bare session, cookies-from-browser and OAuth flows unlock the same libraries you already browse signed-in.</p>
+        </article>
       </div>
-    </div>
-  </header>
+    </section>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Primary Feature Mockup -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Typical Usage</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); max-width: 700px;">
-          <div class="mockup-header">
-            <div class="mockup-controls">
-              <span class="mockup-dot red"></span>
-              <span class="mockup-dot yellow"></span>
-              <span class="mockup-dot green"></span>
-            </div>
-            <div class="mockup-title">bash</div>
-            <div style="width: 36px;"></div>
+    <section class="block" aria-labelledby="ops">
+      <p class="block-kicker">03 · Config &amp; download log</p>
+      <h2 id="ops">JSON on the left. Dedup on the right.</h2>
+      <p>
+        A typical setup mounts a config under <code style="font-family:var(--mono);font-size:0.9em;color:var(--amber-soft);">~/.config/gallery-dl/</code>, enables the archive, and tunes extractors per host. Below is the feeling of a live run—not a transcript of a real scrape.
+      </p>
+
+      <div class="split">
+        <div class="panel">
+          <div class="panel-head">
+            <span>config.json</span>
+            <span class="tag">excerpt</span>
           </div>
-          <div class="mockup-body" style="font-size: 14px; line-height: 1.8;">
-            <span class="token-cmd">gallery-dl "https://danbooru.donmai.us/posts?tags=bonocho"</span><br>
-            <span class="token-success">./danbooru/bonocho/1234567.jpg</span><br>
-            <span class="token-success">./danbooru/bonocho/1234568.jpg</span><br>
-            <span class="token-comment"># 847 files saved to disk</span>
+          <pre class="code"><span class="c">// illustrative — not a dump of defaults</span>
+{
+  <span class="k">"extractor"</span>: {
+    <span class="k">"base-directory"</span>: <span class="s">"~/Archives"</span>,
+    <span class="k">"archive"</span>: <span class="s">"~/Archives/.archive.db"</span>,
+    <span class="k">"filename"</span>: <span class="s">"{category}_{id}.{extension}"</span>,
+    <span class="k">"directory"</span>: [<span class="s">"{category}"</span>, <span class="s">"{search_tags}"</span>]
+  },
+  <span class="k">"downloader"</span>: {
+    <span class="k">"retries"</span>: <span class="s">4</span>,
+    <span class="k">"rate"</span>: <span class="s">null</span>
+  }
+}</pre>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <span>session.log</span>
+            <span class="tag">archive · dedup</span>
           </div>
-        </div>
-      </section>
-
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is gallery-dl?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            If <code>yt-dlp</code> is the standard for pulling video from the web, <strong>gallery-dl</strong> occupies the same niche for still images and comics. It is a Python command-line program that accepts a URL, identifies the hosting site, and downloads every image in a gallery or collection — paginated albums, manga chapters, artist portfolios, and tagged search results included.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            The project maintains extractors for a vast and growing list of image hosts, from mainstream platforms to niche communities. It runs on Linux, macOS, and Windows, ships as a pip package or standalone executable, and rewards power users with granular configuration that rivals tools ten times its age.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Extractor-per-Site Architecture</span>
-              <p class="text-body-sm">
-                Each supported host gets a dedicated extractor module that understands its pagination, metadata, and media URLs. When a site changes its API, only that extractor needs updating — the core download engine, filename logic, and archive system stay untouched. The supported-sites list spans art communities, booru-style boards, manga readers, and social platforms.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Filename Templates and Archive Control</span>
-              <p class="text-body-sm">
-                Output paths are fully programmable via format strings — embed artist names, tags, chapter numbers, or timestamps directly into directory structures. Built-in archive databases skip already-downloaded files across runs, and chapter filters let you grab only the range you need (e.g. chapters 10–20 in French).
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Flexible Authentication</span>
-              <p class="text-body-sm">
-                Private galleries and rate-limited sites are handled through username/password pairs, browser cookie import (<code>--cookies-from-browser firefox</code>), or OAuth flows for platforms like Flickr, DeviantArt, and Pixiv. Credentials live in a JSON config file so scheduled runs do not need interactive prompts.
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Installation</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Install from PyPI, grab a standalone binary, or use your system package manager — Homebrew, Scoop, Snap, and Nix all ship it:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">bash</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">python -m pip install -U gallery-dl</span><br>
-              <span class="token-comment"># or: brew install gallery-dl</span><br>
-              <span class="token-comment"># or: scoop install gallery-dl</span>
-            </div>
+          <div class="log">
+            <div class="row"><span class="ts">17:02:01</span><span class="auth">oauth:pixiv · token ok</span></div>
+            <div class="row"><span class="ts">17:02:04</span><span>extractor · 312 posts queued</span></div>
+            <div class="row"><span class="ts">17:02:09</span><span class="dl">↓ saved  pixiv_88421033.jpg</span></div>
+            <div class="row"><span class="ts">17:02:09</span><span class="dl">↓ saved  pixiv_88421041.png</span></div>
+            <div class="row"><span class="ts">17:02:11</span><span class="dup">⊘ skip   already in archive</span></div>
+            <div class="row"><span class="ts">17:02:14</span><span class="dup">⊘ skip   already in archive</span></div>
+            <div class="row"><span class="ts">17:02:18</span><span class="dl">↓ saved  pixiv_88421102.webp</span></div>
+            <div class="row"><span class="ts">17:04:40</span><span class="ok">done · 148 new · 164 unchanged</span></div>
           </div>
         </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Configuration</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Per-site settings merge from a JSON config file found in standard XDG paths. Override download directories, set default filename formats, and store credentials in one place:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">config.json</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">{</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;"extractor": {</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;&nbsp;&nbsp;"base-directory": "~/Downloads/galleries",</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;&nbsp;&nbsp;"archive": "~/Downloads/gdl-archive.sqlite3"</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;}</span><br>
-              <span class="token-cmd">}</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
       </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
+    <section class="block" style="border-bottom: none; padding-bottom: 1.5rem;">
+      <p class="block-kicker">04 · Get it</p>
+      <h2>Install once. Revisit collections forever.</h2>
+      <p>
+        Stable builds ship on PyPI (<code style="font-family:var(--mono);font-size:0.9em;color:var(--amber-soft);">pip install -U gallery-dl</code>); Homebrew, Scoop, Chocolatey, Snap, Docker, and standalone executables cover the rest. Active development has moved to Codeberg, with the GitHub mirror still widely linked.
+      </p>
+      <div class="tags" aria-label="Tags">
+        <span>CLI</span>
+        <span>Python</span>
+        <span>Downloader</span>
       </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
+      <div class="ctas">
+        <a class="btn btn-primary" href="https://github.com/mikf/gallery-dl" target="_blank" rel="noopener">GitHub repository</a>
+        <a class="btn btn-ghost" href="https://codeberg.org/mikf/gallery-dl" target="_blank" rel="noopener">Codeberg (active)</a>
+        <a class="btn btn-ghost" href="https://pypi.org/project/gallery-dl/" target="_blank" rel="noopener">PyPI package</a>
       </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
+    </section>
 
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+    <footer class="foot">
+      <span>DuckWare showcase #10 · gallery-dl</span>
+      <a href="./">Return to catalog</a>
+    </footer>
+  </div>
 </body>
 </html>
