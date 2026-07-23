@@ -4,200 +4,1077 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deface Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of deface, the command-line tool for automatic face anonymization in videos and photos via detection and blur or box filters.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare showcase of Deface: a Python CLI that detects faces in videos and photos, then anonymizes them with blur, black boxes, or mosaic — including batch runs, webcam demos, and optional ONNX GPU acceleration.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #07090f;
+      --bg: #0b0f18;
+      --bg-elevated: #121826;
+      --bg-panel: #151d2e;
+      --ink: #e8eef8;
+      --ink-soft: #a8b4c8;
+      --ink-mute: #6b7a94;
+      --teal: #4ecdc4;
+      --teal-soft: #7ddad3;
+      --teal-dim: rgba(78, 205, 196, 0.14);
+      --teal-glow: rgba(78, 205, 196, 0.35);
+      --slate-line: rgba(168, 180, 200, 0.12);
+      --danger-soft: #2a3144;
+      --font-sans: "DM Sans", system-ui, sans-serif;
+      --font-serif: "Source Serif 4", Georgia, serif;
+      --radius: 14px;
+      --max: 1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-deep);
+      color: var(--ink);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(78, 205, 196, 0.08), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 20%, rgba(40, 70, 120, 0.18), transparent 50%),
+        linear-gradient(180deg, #0b0f18 0%, #07090f 100%);
+    }
+
+    a { color: var(--teal-soft); text-decoration: none; }
+    a:hover { color: var(--teal); }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 2.5rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* —— Top bar —— */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 0 0.5rem;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+      letter-spacing: 0.01em;
+      transition: color 0.2s ease;
+    }
+
+    .back:hover { color: var(--ink); }
+
+    .meta-chip {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--ink-mute);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .meta-chip em {
+      font-style: normal;
+      color: var(--teal);
+    }
+
+    /* —— Hero —— */
+    .hero {
+      padding: 2.5rem 0 3.5rem;
+      display: grid;
+      gap: 2.75rem;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
+        align-items: center;
+        gap: 3rem;
+        padding: 3.25rem 0 4.5rem;
+      }
+    }
+
+    .brand {
+      font-family: var(--font-serif);
+      font-size: clamp(3.25rem, 8vw, 5.25rem);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .brand span {
+      display: block;
+      background: linear-gradient(120deg, var(--ink) 40%, var(--teal-soft) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lede {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 2.4vw, 1.45rem);
+      font-weight: 400;
+      color: var(--ink-soft);
+      line-height: 1.45;
+      max-width: 28ch;
+      margin-bottom: 1rem;
+    }
+
+    .support {
+      font-size: 0.95rem;
+      color: var(--ink-mute);
+      max-width: 36ch;
+      margin-bottom: 1.75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--teal);
+      color: #061018;
+      box-shadow: 0 0 0 0 var(--teal-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--teal-soft);
+      color: #061018;
+      box-shadow: 0 8px 28px var(--teal-glow);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--slate-line);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--teal);
+      color: var(--teal-soft);
+      background: var(--teal-dim);
+    }
+
+    /* —— Before/after reveal —— */
+    .reveal {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      isolation: isolate;
+      aspect-ratio: 16 / 10;
+      background: var(--bg-elevated);
+      border: 1px solid var(--slate-line);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      user-select: none;
+      touch-action: none;
+      cursor: ew-resize;
+    }
+
+    .reveal img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .reveal__after { z-index: 1; }
+
+    .reveal__before-clip {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      width: 52%;
+      overflow: hidden;
+      border-right: 2px solid rgba(232, 238, 248, 0.85);
+    }
+
+    .reveal__before-clip img {
+      width: var(--reveal-w, 100%);
+      max-width: none;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .reveal__handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 52%;
+      z-index: 4;
+      width: 0;
+      transform: translateX(-50%);
+    }
+
+    .reveal__knob {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(11, 15, 24, 0.85);
+      border: 2px solid var(--teal);
+      box-shadow: 0 0 0 6px var(--teal-dim), 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    .reveal__label {
+      position: absolute;
+      z-index: 3;
+      top: 0.85rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+
+    .reveal__label--before {
+      left: 0.85rem;
+      background: rgba(7, 9, 15, 0.72);
+      color: var(--ink-soft);
+      border: 1px solid var(--slate-line);
+    }
+
+    .reveal__label--after {
+      right: 0.85rem;
+      background: var(--teal-dim);
+      color: var(--teal-soft);
+      border: 1px solid rgba(78, 205, 196, 0.35);
+    }
+
+    .face-pulse {
+      position: absolute;
+      z-index: 3;
+      border-radius: 50%;
+      border: 1.5px solid rgba(78, 205, 196, 0.55);
+      box-shadow: 0 0 0 0 var(--teal-glow);
+      pointer-events: none;
+      animation: blur-pulse 2.8s ease-in-out infinite;
+      opacity: 0.75;
+    }
+
+    .face-pulse--1 { width: 9%; height: 14%; left: 18%; top: 36%; }
+    .face-pulse--2 { width: 7%; height: 11%; left: 48%; top: 42%; }
+    .face-pulse--3 { width: 8%; height: 12%; left: 72%; top: 38%; }
+
+    @keyframes blur-pulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.35);
+        filter: blur(0px);
+        opacity: 0.55;
+      }
+      50% {
+        box-shadow: 0 0 18px 4px rgba(78, 205, 196, 0.25);
+        filter: blur(1px);
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes wipe-hint {
+      0%, 100% { left: 48%; }
+      50% { left: 56%; }
+    }
+
+    .reveal:not(.is-dragged) .reveal__handle {
+      animation: wipe-hint 4.5s ease-in-out infinite;
+    }
+
+    .reveal:not(.is-dragged) .reveal__before-clip {
+      animation: wipe-clip 4.5s ease-in-out infinite;
+    }
+
+    @keyframes wipe-clip {
+      0%, 100% { width: 48%; }
+      50% { width: 56%; }
+    }
+
+    /* —— Sections —— */
+    section.block {
+      padding: 3.5rem 0;
+      border-top: 1px solid var(--slate-line);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.75rem;
+    }
+
+    .block h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.75rem, 3.5vw, 2.35rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.85rem;
+      max-width: 22ch;
+    }
+
+    .block > .intro {
+      color: var(--ink-soft);
+      font-size: 1.02rem;
+      max-width: 54ch;
+      margin-bottom: 2rem;
+    }
+
+    .prose p {
+      color: var(--ink-soft);
+      font-size: 1.02rem;
+      margin-bottom: 1rem;
+      max-width: 62ch;
+    }
+
+    .prose strong { color: var(--ink); font-weight: 600; }
+
+    /* —— Pipeline —— */
+    .pipeline {
+      display: grid;
+      gap: 0.75rem;
+      counter-reset: step;
+    }
+
+    @media (min-width: 720px) {
+      .pipeline {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+      }
+    }
+
+    .pipe-step {
+      position: relative;
+      padding: 1.25rem 1.15rem 1.35rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--slate-line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .pipe-step::before {
+      counter-increment: step;
+      content: "0" counter(step);
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: var(--teal);
+      opacity: 0.85;
+      margin-bottom: 0.65rem;
+      letter-spacing: -0.02em;
+    }
+
+    .pipe-step h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--ink);
+    }
+
+    .pipe-step p {
+      font-size: 0.85rem;
+      color: var(--ink-mute);
+      line-height: 1.5;
+    }
+
+    .pipe-step::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .pipe-step:hover::after { opacity: 0.7; }
+
+    /* —— Modes —— */
+    .modes {
+      display: grid;
+      gap: 1rem;
+    }
+
+    @media (min-width: 800px) {
+      .modes { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .mode {
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--slate-line);
+      background: var(--bg-panel);
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .mode:hover {
+      border-color: rgba(78, 205, 196, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .mode__media {
+      aspect-ratio: 16 / 11;
+      overflow: hidden;
+      background: var(--bg-deep);
+      position: relative;
+    }
+
+    .mode__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: filter 0.4s ease, transform 0.4s ease;
+    }
+
+    .mode:hover .mode__media img {
+      transform: scale(1.03);
+    }
+
+    .mode--blur .mode__media img { filter: none; }
+    .mode--box .mode__media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 55%, rgba(7, 9, 15, 0.35));
+      pointer-events: none;
+    }
+
+    .mode__body {
+      padding: 1.15rem 1.2rem 1.35rem;
+      flex: 1;
+    }
+
+    .mode__body h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .mode__body p {
+      font-size: 0.88rem;
+      color: var(--ink-mute);
+    }
+
+    .mode__tag {
+      display: inline-block;
+      margin-top: 0.85rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--teal);
+      background: var(--teal-dim);
+      padding: 0.25rem 0.55rem;
+      border-radius: 4px;
+    }
+
+    /* —— CLI + webcam —— */
+    .split-feat {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 800px) {
+      .split-feat {
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 2rem;
+        align-items: stretch;
+      }
+    }
+
+    .cli-pane {
+      background: #080c14;
+      border: 1px solid var(--slate-line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cli-pane__bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--slate-line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .cli-pane__bar span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger-soft);
+      border: 1px solid var(--slate-line);
+    }
+
+    .cli-pane__bar span:nth-child(1) { background: #5a3a42; }
+    .cli-pane__bar span:nth-child(2) { background: #4a4530; }
+    .cli-pane__bar span:nth-child(3) { background: #2f4a42; }
+
+    .cli-pane__title {
+      margin-left: auto;
+      font-size: 0.72rem;
+      color: var(--ink-mute);
+      letter-spacing: 0.04em;
+    }
+
+    .cli-pane pre {
+      padding: 1.25rem 1.35rem 1.5rem;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      overflow-x: auto;
+      flex: 1;
+    }
+
+    .cli-pane .cmt { color: var(--ink-mute); }
+    .cli-pane .cmd { color: var(--teal-soft); }
+    .cli-pane .flag { color: #c4d4ec; }
+
+    .feat-card {
+      padding: 1.5rem 1.4rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--slate-line);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.85rem;
+    }
+
+    .feat-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 500;
+    }
+
+    .feat-card p {
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+    }
+
+    .cam-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+
+    .cam-dot i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 0 0 var(--teal-glow);
+      animation: live-pulse 1.8s ease-out infinite;
+    }
+
+    @keyframes live-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.5); }
+      70% { box-shadow: 0 0 0 10px rgba(78, 205, 196, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0); }
+    }
+
+    /* —— ONNX / strengths —— */
+    .strengths {
+      display: grid;
+      gap: 1rem;
+    }
+
+    @media (min-width: 720px) {
+      .strengths { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .strength {
+      padding: 1.4rem 1.25rem;
+      border-left: 2px solid var(--teal);
+      background: linear-gradient(90deg, var(--teal-dim), transparent 70%);
+      border-radius: 0 10px 10px 0;
+    }
+
+    .strength h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.45rem;
+    }
+
+    .strength p {
+      font-size: 0.9rem;
+      color: var(--ink-mute);
+    }
+
+    .gpu-strip {
+      margin-top: 2rem;
+      padding: 1.5rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid rgba(78, 205, 196, 0.22);
+      background:
+        radial-gradient(ellipse at 0% 50%, var(--teal-dim), transparent 55%),
+        var(--bg-panel);
+      display: grid;
+      gap: 1rem;
+    }
+
+    @media (min-width: 700px) {
+      .gpu-strip {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+      }
+    }
+
+    .gpu-strip h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 0.35rem;
+    }
+
+    .gpu-strip p {
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+      max-width: 48ch;
+    }
+
+    .gpu-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      justify-content: flex-end;
+    }
+
+    .gpu-tags span {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      background: rgba(7, 9, 15, 0.55);
+      border: 1px solid var(--slate-line);
+      color: var(--ink-soft);
+    }
+
+    /* —— Footer CTA —— */
+    .closeout {
+      text-align: center;
+      padding: 4rem 0 3rem;
+      border-top: 1px solid var(--slate-line);
+    }
+
+    .closeout h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      max-width: none;
+    }
+
+    .closeout p {
+      color: var(--ink-mute);
+      margin-bottom: 1.5rem;
+      margin-inline: auto;
+      max-width: 40ch;
+    }
+
+    .closeout .cta-row { justify-content: center; }
+
+    .site-foot {
+      padding: 1.5rem 0 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--ink-mute);
+      border-top: 1px solid var(--slate-line);
+    }
+
+    .site-foot a { color: var(--ink-soft); }
+    .site-foot a:hover { color: var(--teal); }
+
+    /* —— Reduced motion —— */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .face-pulse,
+      .reveal:not(.is-dragged) .reveal__handle,
+      .reveal:not(.is-dragged) .reveal__before-clip,
+      .cam-dot i {
+        animation: none !important;
+      }
+      .btn, .mode, .pipe-step::after, .mode__media img {
+        transition: none !important;
+      }
+      .btn:hover, .mode:hover { transform: none; }
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <p class="meta-chip">Showcase <em>#19</em> · ORB-HD/deface · July 12, 2026</p>
+    </header>
 
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
+    <section class="hero" aria-label="Deface introduction">
+      <div>
+        <h1 class="brand"><span>Deface</span></h1>
+        <p class="lede">Identity redacted — faces dissolve into blur, boxes, or mosaic before anyone else sees the footage.</p>
+        <p class="support">A calm Python CLI for privacy-minded video and photo anonymization: detect every face, apply a filter, export. Batch directories, tune thresholds, or preview on a live webcam.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/ORB-HD/deface" target="_blank" rel="noopener">View source</a>
+          <a class="btn btn-ghost" href="https://pypi.org/project/deface/" target="_blank" rel="noopener">Install from PyPI</a>
+        </div>
       </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-        <span>ORB-HD/deface</span>
-        <span>•</span>
-        <span>July 12, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #19</span>
+      <div
+        class="reveal"
+        id="reveal"
+        role="img"
+        aria-label="Interactive before and after comparison of a city street: original faces versus anonymized output"
+      >
+        <img
+          class="reveal__after"
+          src="https://raw.githubusercontent.com/ORB-HD/deface/master/examples/city_anonymized.jpg"
+          alt="Anonymized street scene with faces blurred"
+          width="960"
+          height="600"
+        >
+        <div class="reveal__before-clip" id="reveal-clip">
+          <img
+            id="reveal-before"
+            src="https://raw.githubusercontent.com/ORB-HD/deface/master/examples/city.jpg"
+            alt="Original street scene with visible faces"
+            width="960"
+            height="600"
+          >
+        </div>
+        <span class="reveal__label reveal__label--before">Original</span>
+        <span class="reveal__label reveal__label--after">Anonymized</span>
+        <span class="face-pulse face-pulse--1" aria-hidden="true"></span>
+        <span class="face-pulse face-pulse--2" aria-hidden="true"></span>
+        <span class="face-pulse face-pulse--3" aria-hidden="true"></span>
+        <div class="reveal__handle" id="reveal-handle" aria-hidden="true">
+          <div class="reveal__knob">⟷</div>
+        </div>
       </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        Deface
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Automatic face anonymization for videos and photos — detect, blur, and export from the command line.
+    </section>
+
+    <section class="block prose" aria-labelledby="what-heading">
+      <p class="eyebrow">Audit note</p>
+      <h2 id="what-heading">What Deface actually does</h2>
+      <p>
+        Publishing field recordings, dashcam clips, or research video often means redacting bystanders by hand — dragging blur boxes frame by frame and hoping they stay aligned as people move. That workflow does not scale when you have folders of media or privacy rules that demand consistent coverage.
       </p>
+      <p>
+        <strong>Deface</strong> is a command-line tool that runs a CenterFace detector on every video frame or still image, then paints an anonymization filter over each hit. Point it at a file, a directory, or <code style="color:var(--teal-soft)">cam</code> for a live webcam demo. By default it writes an <code style="color:var(--teal-soft)">_anonymized</code> sibling and drops audio unless you ask to keep it — a deliberate privacy-first posture for footage that should not leak identifiable voices either.
+      </p>
+    </section>
 
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://github.com/ORB-HD/deface" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-        <a href="https://pypi.org/project/deface/" class="btn-secondary-ghost" target="_blank" rel="noopener">PyPI Package</a>
+    <section class="block" aria-labelledby="pipeline-heading">
+      <p class="eyebrow">Detection pipeline</p>
+      <h2 id="pipeline-heading">Find the face. Mask the region. Write the frame.</h2>
+      <p class="intro">Each frame is scored independently with CenterFace (trained on WIDER FACE), so poses, scales, and partial occlusions still get a bounding box. Those boxes become elliptical or rectangular masks for the filter you choose.</p>
+      <div class="pipeline">
+        <article class="pipe-step">
+          <h3>Ingest</h3>
+          <p>Pass a path, a shell glob, or a whole directory. Photos and videos share the same entry point.</p>
+        </article>
+        <article class="pipe-step">
+          <h3>Detect</h3>
+          <p>CenterFace scores every candidate. Tune <code style="color:var(--teal-soft)">--thresh</code> when you see false positives or missed faces.</p>
+        </article>
+        <article class="pipe-step">
+          <h3>Mask</h3>
+          <p>Expand coverage with <code style="color:var(--teal-soft)">--mask-scale</code>, switch to boxes, or downscale inference with <code style="color:var(--teal-soft)">--scale</code> on high-res media.</p>
+        </article>
+        <article class="pipe-step">
+          <h3>Replace</h3>
+          <p>Apply blur, solid black, mosaic, a custom image, or leave detections unmarked for debugging.</p>
+        </article>
       </div>
-    </div>
-  </header>
+    </section>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Before/After Examples -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Before &amp; After</h3>
-        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">city.jpg — original</div>
-            </div>
-            <img src="https://github.com/ORB-HD/deface/raw/master/examples/city.jpg" alt="Original street scene with visible faces" style="width: 100%; height: auto; display: block;">
+    <section class="block" aria-labelledby="modes-heading">
+      <p class="eyebrow">Anonymization modes</p>
+      <h2 id="modes-heading">Blur, box, or mosaic — same detection, different redaction language</h2>
+      <p class="intro">Defaults favor a strong Gaussian blur inside an ellipse. When you need harder redaction or a documentary look, swap the filter without changing the rest of the pipeline.</p>
+      <div class="modes">
+        <article class="mode mode--blur">
+          <div class="mode__media">
+            <img
+              src="https://raw.githubusercontent.com/ORB-HD/deface/master/examples/city_anonymized.jpg"
+              alt="Default blur anonymization on a city street"
+              loading="lazy"
+              width="640"
+              height="440"
+            >
           </div>
-
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">city_anonymized.jpg</div>
-            </div>
-            <img src="https://github.com/ORB-HD/deface/raw/master/examples/city_anonymized.jpg" alt="Anonymized output with blurred faces" style="width: 100%; height: auto; display: block;">
+          <div class="mode__body">
+            <h3>Blur</h3>
+            <p>Strong Gaussian blur over elliptical face regions — the default that keeps scenes readable while identities dissolve.</p>
+            <span class="mode__tag">--replacewith blur</span>
           </div>
-        </div>
-      </section>
-
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Deface?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Publishing field recordings, dashcam footage, or research video often means redacting bystanders by hand — frame by frame in an editor, or hoping a blur rectangle stays aligned as people move. For batch workflows or privacy-sensitive datasets, that manual step does not scale.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>deface</strong> is a Python CLI that detects human faces in each video frame or still image, then applies an anonymization filter to every detected region. Point it at a file path, a directory of media, or a live webcam feed and get an output with blurred ellipses, black boxes, mosaics, or custom replacement images — no GUI required.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">CenterFace Detection, Frame by Frame</span>
-              <p class="text-body-sm">
-                Built on the CenterFace neural network trained on the WIDER FACE dataset. Each frame is analyzed independently for robust detection across scales, poses, and partial occlusions. Bounding boxes drive ellipse masks or rectangular overlays wherever a face is found.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Flexible Anonymization Modes</span>
-              <p class="text-body-sm">
-                Default output applies strong Gaussian blur inside elliptical face regions. Switch to solid black boxes, mosaic tiles, a custom image, or no filter at all. Tune detection thresholds, mask scale, and downsample resolution for high-res inputs without sacrificing throughput.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Batch Processing and Hardware Backends</span>
-              <p class="text-body-sm">
-                Process single files, glob patterns, or entire directories in one command. Optional ONNX Runtime backends offload inference to CUDA, DirectML, or OpenVINO when available. Live preview mode works with attached webcams for quick testing before batch runs.
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Basic Usage</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Install via pip, then pass a video or image path. Output defaults to the input filename with an <code>_anonymized</code> suffix:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">terminal</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">python3 -m pip install deface</span><br><br>
-              <span class="token-cmd">deface myvideos/vid1.mp4</span><br>
-              <span class="token-comment"># → myvideos/vid1_anonymized.mp4</span><br><br>
-              <span class="token-cmd">deface cam</span><br>
-              <span class="token-comment"># live webcam demo</span>
-            </div>
+        </article>
+        <article class="mode mode--box">
+          <div class="mode__media">
+            <img
+              src="https://raw.githubusercontent.com/ORB-HD/deface/master/examples/city_anonymized_boxes.jpg"
+              alt="Solid black box anonymization"
+              loading="lazy"
+              width="640"
+              height="440"
+            >
           </div>
+          <div class="mode__body">
+            <h3>Solid boxes</h3>
+            <p>Opaque black rectangles for zero-detail redaction. Pair with <code style="color:var(--teal-soft)">--boxes</code> when ellipses are not enough.</p>
+            <span class="mode__tag">--boxes --replacewith solid</span>
+          </div>
+        </article>
+        <article class="mode mode--mosaic">
+          <div class="mode__media">
+            <img
+              src="https://raw.githubusercontent.com/ORB-HD/deface/master/examples/city_anonymized_mosaic.jpg"
+              alt="Mosaic tile anonymization"
+              loading="lazy"
+              width="640"
+              height="440"
+            >
+          </div>
+          <div class="mode__body">
+            <h3>Mosaic</h3>
+            <p>Pixel-block faces with a tunable tile width — familiar broadcast-style anonymization that still signals “someone was here.”</p>
+            <span class="mode__tag">--replacewith mosaic</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="batch-heading">
+      <p class="eyebrow">Batch CLI &amp; live preview</p>
+      <h2 id="batch-heading">One command for a folder. One shortcut for a webcam.</h2>
+      <p class="intro">Deface is built for shell workflows — no GUI roadmap, just paths, flags, and ffmpeg under the hood for encoding.</p>
+      <div class="split-feat">
+        <div class="cli-pane" aria-label="Example deface commands">
+          <div class="cli-pane__bar">
+            <span></span><span></span><span></span>
+            <span class="cli-pane__title">shell</span>
+          </div>
+          <pre><span class="cmt"># install</span>
+<span class="cmd">python3 -m pip install deface</span>
+
+<span class="cmt"># single video → vid1_anonymized.mp4</span>
+<span class="cmd">deface</span> myvideos/vid1.mp4
+
+<span class="cmt"># batch an entire directory</span>
+<span class="cmd">deface</span> ./footage/
+
+<span class="cmt"># mosaic + keep audio</span>
+<span class="cmd">deface</span> clip.mp4 <span class="flag">--replacewith mosaic -k</span>
+
+<span class="cmt"># live webcam demo</span>
+<span class="cmd">deface cam</span></pre>
         </div>
-      </section>
-
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
+        <aside class="feat-card">
+          <span class="cam-dot"><i></i> Live capture</span>
+          <h3>Webcam before you commit the batch</h3>
+          <p>
+            Run <strong>deface cam</strong> (a shortcut for preview on <code style="color:var(--teal-soft)">&lt;video0&gt;</code>) to watch detection and filters on a live feed. Dial in threshold and mask scale on a short preview, then point the same flags at your directory of exports.
+          </p>
+          <p>
+            Need confidence overlays while tuning? <code style="color:var(--teal-soft)">--draw-scores</code> prints faceness scores above each hit so you can raise or lower <code style="color:var(--teal-soft)">--thresh</code> with evidence instead of guesswork.
+          </p>
+        </aside>
       </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
+    <section class="block" aria-labelledby="strengths-heading">
+      <p class="eyebrow">Why it holds up</p>
+      <h2 id="strengths-heading">Practical privacy tooling, not a research toy</h2>
+      <div class="strengths">
+        <article class="strength">
+          <h3>Frame-honest detection</h3>
+          <p>CenterFace on WIDER FACE handles crowded scenes and awkward angles well enough for automated redaction — not perfect, but tunable when it misses or overfires.</p>
+        </article>
+        <article class="strength">
+          <h3>Filters that match policy</h3>
+          <p>Blur for soft redaction, solid for hard blocks, mosaic for broadcast habit, or a custom replacement image when you need a branded cover.</p>
+        </article>
+        <article class="strength">
+          <h3>Shell-native scale</h3>
+          <p>Glob expansion, directory inputs, optional preview, and ffmpeg encoding knobs keep anonymization inside the same scripts that already move your media.</p>
+        </article>
       </div>
 
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
+      <div class="gpu-strip" aria-labelledby="onnx-heading">
+        <div>
+          <h3 id="onnx-heading">Optional ONNX Runtime acceleration</h3>
+          <p>
+            Install <code style="color:var(--teal-soft)">onnxruntime-gpu</code>, DirectML, or OpenVINO when you need faster inference. With a capable backend present, Deface prefers ONNX Runtime automatically and can target the fastest execution provider available.
+          </p>
+        </div>
+        <div class="gpu-tags">
+          <span>CUDA</span>
+          <span>DirectML</span>
+          <span>OpenVINO</span>
+          <span>--backend onnxrt</span>
+        </div>
       </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
+    </section>
 
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+    <section class="closeout" aria-labelledby="close-heading">
+      <h2 id="close-heading">Redact the faces. Keep the footage useful.</h2>
+      <p>Open source under MIT. Install from PyPI, read the flags, and run it on the next clip that should not leave identities intact.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/ORB-HD/deface" target="_blank" rel="noopener">GitHub repository</a>
+        <a class="btn btn-ghost" href="https://pypi.org/project/deface/" target="_blank" rel="noopener">PyPI package</a>
+        <a class="btn btn-ghost" href="./">← Catalog</a>
+      </div>
+    </section>
+
+    <footer class="site-foot">
+      <span>DuckWare Showcase #19 · Deface</span>
+      <span>
+        <a href="../">duckware</a>
+        ·
+        <a href="../feed.xml">RSS</a>
+        ·
+        <a href="https://github.com/ORB-HD/deface" target="_blank" rel="noopener">ORB-HD/deface</a>
+      </span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById("reveal");
+      if (!root) return;
+
+      var clip = document.getElementById("reveal-clip");
+      var handle = document.getElementById("reveal-handle");
+      var before = document.getElementById("reveal-before");
+      var dragging = false;
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function setPos(pct) {
+        pct = Math.max(4, Math.min(96, pct));
+        clip.style.width = pct + "%";
+        handle.style.left = pct + "%";
+        clip.style.animation = "none";
+        handle.style.animation = "none";
+        var w = root.getBoundingClientRect().width;
+        before.style.width = w + "px";
+        before.style.setProperty("--reveal-w", w + "px");
+      }
+
+      function syncBeforeWidth() {
+        var w = root.getBoundingClientRect().width;
+        before.style.width = w + "px";
+      }
+
+      function fromEvent(e) {
+        var rect = root.getBoundingClientRect();
+        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        return ((clientX - rect.left) / rect.width) * 100;
+      }
+
+      function start(e) {
+        dragging = true;
+        root.classList.add("is-dragged");
+        setPos(fromEvent(e));
+        e.preventDefault();
+      }
+
+      function move(e) {
+        if (!dragging) return;
+        setPos(fromEvent(e));
+        if (e.cancelable) e.preventDefault();
+      }
+
+      function end() {
+        dragging = false;
+      }
+
+      syncBeforeWidth();
+      window.addEventListener("resize", syncBeforeWidth);
+
+      root.addEventListener("mousedown", start);
+      window.addEventListener("mousemove", move);
+      window.addEventListener("mouseup", end);
+      root.addEventListener("touchstart", start, { passive: false });
+      window.addEventListener("touchmove", move, { passive: false });
+      window.addEventListener("touchend", end);
+
+      if (reduce) {
+        setPos(50);
+      } else {
+        /* keep CSS wipe animation until first interaction */
+        before.style.width = root.getBoundingClientRect().width + "px";
+      }
+    })();
+  </script>
 </body>
 </html>
