@@ -4,195 +4,940 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UniClipboard Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of UniClipboard, the privacy-first clipboard sync tool with peer-to-peer transport, end-to-end encryption, and no cloud account.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="Real-time clipboard sync across Windows, macOS, and Linux — peer-to-peer with end-to-end encryption, encrypted relay fallback, and no cloud account. Sync text, images, and files with searchable local history.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #e8eef5;
+      --ink-dim: #93a4b8;
+      --ink-faint: #5c6d82;
+      --void: #05070b;
+      --void-lift: #0b1018;
+      --void-panel: #101722;
+      --line: rgba(125, 211, 252, 0.14);
+      --signal: #5eead4;
+      --signal-deep: #14b8a6;
+      --packet: #7dd3fc;
+      --warn: #fbbf24;
+      --radius: 14px;
+      --font: "Sora", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--void);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    code, .mono { font-family: var(--mono); }
+
+    /* Atmosphere: soft mesh + faint clipboard grid */
+    .atmosphere {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 10%, rgba(20, 184, 166, 0.12), transparent 55%),
+        radial-gradient(ellipse 55% 45% at 90% 20%, rgba(125, 211, 252, 0.1), transparent 50%),
+        radial-gradient(ellipse 60% 40% at 50% 95%, rgba(94, 234, 212, 0.06), transparent 55%),
+        var(--void);
+    }
+
+    .atmosphere::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.35;
+      background-image:
+        linear-gradient(rgba(125, 211, 252, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(125, 211, 252, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 75%);
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 2.5rem));
+      margin-inline: auto;
+    }
+
+    /* Top bar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 0;
+      gap: 1rem;
+    }
+
+    .back {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      color: var(--ink-dim);
+      border: 1px solid var(--line);
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .back:hover {
+      color: var(--signal);
+      border-color: rgba(94, 234, 212, 0.4);
+      background: rgba(94, 234, 212, 0.06);
+    }
+
+    .mark {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: -0.02em;
+    }
+
+    .mark img {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+    }
+
+    .meta-pill {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .meta-pill em {
+      font-style: normal;
+      color: var(--signal);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 2.5rem 0 4rem;
+      display: grid;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        grid-template-columns: 1.05fr 0.95fr;
+        padding-top: 3.5rem;
+        padding-bottom: 5rem;
+      }
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--signal);
+      box-shadow: 0 0 0 0 rgba(94, 234, 212, 0.55);
+      animation: live-pulse 2.2s ease-out infinite;
+    }
+
+    @keyframes live-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(94, 234, 212, 0.55); }
+      70% { box-shadow: 0 0 0 12px rgba(94, 234, 212, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(94, 234, 212, 0); }
+    }
+
+    .brand {
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 1.02;
+      margin-bottom: 1rem;
+      background: linear-gradient(120deg, #f0f9ff 10%, var(--signal) 55%, var(--packet) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lede {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--ink-dim);
+      max-width: 34ch;
+      margin-bottom: 1.75rem;
+      font-weight: 400;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.7rem 1.15rem;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: transform 0.18s ease, background 0.18s, border-color 0.18s, box-shadow 0.18s;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--signal-deep), #0d9488);
+      color: #041016;
+      box-shadow: 0 8px 28px rgba(20, 184, 166, 0.28);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 10px 32px rgba(20, 184, 166, 0.4);
+    }
+
+    .btn-ghost {
+      background: rgba(16, 23, 34, 0.7);
+      border-color: var(--line);
+      color: var(--ink);
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(125, 211, 252, 0.35);
+      background: rgba(125, 211, 252, 0.06);
+    }
+
+    .trust-line {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.03em;
+    }
+
+    /* Sync stage (hero visual) */
+    .sync-stage {
+      position: relative;
+      background:
+        linear-gradient(160deg, rgba(16, 23, 34, 0.95), rgba(8, 12, 18, 0.98));
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 1.75rem 1.25rem 1.5rem;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(94, 234, 212, 0.04),
+        0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    .sync-stage::before {
+      content: "";
+      position: absolute;
+      inset: -40% -20%;
+      background: conic-gradient(from 200deg at 50% 50%, transparent, rgba(94, 234, 212, 0.07), transparent 40%);
+      animation: stage-spin 18s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes stage-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .stage-label {
+      position: relative;
+      z-index: 1;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+
+    .devices {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .device {
+      background: var(--void);
+      border: 1px solid rgba(125, 211, 252, 0.18);
+      border-radius: 12px;
+      padding: 0.85rem;
+      min-height: 148px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .device-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--signal);
+    }
+
+    .status i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--signal);
+      display: inline-block;
+      animation: live-pulse 2.4s ease-out infinite;
+    }
+
+    .clip-slot {
+      flex: 1;
+      background: var(--void-lift);
+      border-radius: 8px;
+      border: 1px dashed rgba(125, 211, 252, 0.2);
+      padding: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--ink-dim);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .clip-slot strong {
+      display: block;
+      color: var(--ink);
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      font-size: 0.82rem;
+    }
+
+    .clip-slot.sending::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(94, 234, 212, 0.12), transparent);
+      animation: sweep 2.8s ease-in-out infinite;
+    }
+
+    .clip-slot.receiving::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(270deg, transparent, rgba(125, 211, 252, 0.12), transparent);
+      animation: sweep 2.8s ease-in-out 0.9s infinite;
+    }
+
+    @keyframes sweep {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .pipe {
+      width: 72px;
+      height: 56px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pipe-track {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--signal-deep), var(--packet));
+      opacity: 0.55;
+    }
+
+    .pipe-lock {
+      position: relative;
+      z-index: 2;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--void-panel);
+      border: 1px solid rgba(94, 234, 212, 0.45);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 20px rgba(94, 234, 212, 0.25);
+      animation: lock-glow 2.6s ease-in-out infinite;
+      color: var(--signal);
+    }
+
+    .pipe-lock svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
+    @keyframes lock-glow {
+      0%, 100% { box-shadow: 0 0 12px rgba(94, 234, 212, 0.2); }
+      50% { box-shadow: 0 0 26px rgba(94, 234, 212, 0.45); }
+    }
+
+    .packet {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--signal);
+      box-shadow: 0 0 12px var(--signal);
+      z-index: 1;
+      animation: packet-fly 2.8s ease-in-out infinite;
+    }
+
+    .packet.alt {
+      background: var(--packet);
+      box-shadow: 0 0 12px var(--packet);
+      animation-delay: 1.4s;
+    }
+
+    @keyframes packet-fly {
+      0% { left: 4px; opacity: 0; transform: scale(0.6); }
+      12% { opacity: 1; transform: scale(1); }
+      48% { left: calc(100% - 14px); opacity: 1; }
+      55% { opacity: 0; }
+      100% { left: calc(100% - 14px); opacity: 0; }
+    }
+
+    .stage-foot {
+      position: relative;
+      z-index: 1;
+      margin-top: 1.1rem;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.04em;
+    }
+
+    .stage-foot span { color: var(--warn); }
+
+    /* Sections */
+    section.block {
+      padding: 3.5rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--packet);
+      margin-bottom: 0.85rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.55rem, 3.2vw, 2.15rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      max-width: 22ch;
+    }
+
+    .prose {
+      color: var(--ink-dim);
+      max-width: 62ch;
+      font-size: 1.02rem;
+    }
+
+    .prose + .prose { margin-top: 1rem; }
+
+    .prose strong { color: var(--ink); font-weight: 600; }
+
+    /* Flow path */
+    .flow {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 2.25rem;
+    }
+
+    @media (min-width: 760px) {
+      .flow {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0;
+        align-items: stretch;
+      }
+    }
+
+    .flow-step {
+      position: relative;
+      background: var(--void-lift);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.1rem 1rem;
+      min-height: 132px;
+    }
+
+    @media (min-width: 760px) {
+      .flow-step {
+        border-radius: 0;
+        border-right-width: 0;
+      }
+      .flow-step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+      .flow-step:last-child {
+        border-radius: 0 var(--radius) var(--radius) 0;
+        border-right-width: 1px;
+      }
+    }
+
+    .flow-num {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--signal);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.55rem;
+    }
+
+    .flow-step h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .flow-step p {
+      font-size: 0.8rem;
+      color: var(--ink-faint);
+      line-height: 1.45;
+    }
+
+    /* Strengths — signal strips, not cards */
+    .signals {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 2rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .signal-row {
+      display: grid;
+      gap: 1rem;
+      padding: 1.6rem 0;
+      border-bottom: 1px solid var(--line);
+      align-items: start;
+    }
+
+    @media (min-width: 720px) {
+      .signal-row {
+        grid-template-columns: 220px 1fr;
+        gap: 2rem;
+      }
+    }
+
+    .signal-row h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .signal-row h3::before {
+      content: "";
+      width: 10px;
+      height: 2px;
+      background: var(--signal);
+      flex-shrink: 0;
+    }
+
+    .signal-row p {
+      color: var(--ink-dim);
+      font-size: 0.95rem;
+      max-width: 58ch;
+    }
+
+    /* Demo frame */
+    .demo-frame {
+      margin-top: 1.75rem;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #000;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.5);
+    }
+
+    .demo-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 0.9rem;
+      background: var(--void-panel);
+      border-bottom: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--ink-faint);
+    }
+
+    .demo-chrome .dots {
+      display: flex;
+      gap: 5px;
+      margin-right: 0.5rem;
+    }
+
+    .demo-chrome .dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #334155;
+    }
+
+    .demo-chrome .dots span:nth-child(1) { background: #ef4444; opacity: 0.75; }
+    .demo-chrome .dots span:nth-child(2) { background: #eab308; opacity: 0.75; }
+    .demo-chrome .dots span:nth-child(3) { background: #22c55e; opacity: 0.75; }
+
+    /* CLI band */
+    .cli-band {
+      margin-top: 2rem;
+      background: #030508;
+      border: 1px solid rgba(94, 234, 212, 0.2);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .cli-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid rgba(94, 234, 212, 0.12);
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--ink-faint);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .cli-body {
+      padding: 1.25rem 1.15rem 1.4rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.85;
+      color: var(--ink-dim);
+      overflow-x: auto;
+    }
+
+    .cli-body .prompt { color: var(--signal); }
+    .cli-body .cmd { color: var(--ink); }
+    .cli-body .hint { color: var(--ink-faint); }
+
+    /* Footer */
+    .page-foot {
+      padding: 2.5rem 0 3rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--ink-faint);
+    }
+
+    .page-foot a {
+      color: var(--ink-dim);
+      transition: color 0.15s;
+    }
+
+    .page-foot a:hover { color: var(--signal); }
+
+    /* Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 1.5rem, 1120px); }
+      .devices { grid-template-columns: 1fr; gap: 0.75rem; }
+      .pipe {
+        width: 100%;
+        height: 40px;
+        transform: rotate(90deg);
+        margin: 0.25rem auto;
+      }
+      .meta-pill { display: none; }
+      .device { min-height: 120px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .eyebrow::before,
+      .status i,
+      .packet,
+      .clip-slot.sending::after,
+      .clip-slot.receiving::after,
+      .pipe-lock,
+      .sync-stage::before {
+        animation: none !important;
+      }
+      .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      .btn:hover { transform: none; }
+    }
+  </style>
 </head>
 <body>
+  <div class="atmosphere" aria-hidden="true"></div>
 
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
+  <div class="shell">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <div class="mark">
+        <img src="https://github.com/UniClipboard/UniClipboard/raw/main/assets/logo.png" alt="" width="28" height="28">
+        UniClipboard
       </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+      <span class="meta-pill">Showcase <em>#24</em> · Jul 2026</span>
+    </header>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
-      <div style="flex-grow: 1;">
-        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-          <span>UniClipboard/UniClipboard</span>
-          <span>•</span>
-          <span>July 16, 2026</span>
-          <span>•</span>
-          <span style="color: var(--color-body-strong);">Showcase #24</span>
-        </div>
-        
-        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-          UniClipboard
-        </h1>
-        
-        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-          Copy on one device, paste on another — peer-to-peer, encrypted, no cloud account.
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Live encrypted space</p>
+        <h1 class="brand">UniClipboard</h1>
+        <p class="lede">
+          Copy on one machine, paste on another — peer-to-peer, end-to-end encrypted, no cloud account in the middle.
         </p>
-
-        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-          <a href="https://github.com/UniClipboard/UniClipboard" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-          <a href="https://uniclipboard.app" class="btn-secondary-ghost" target="_blank" rel="noopener">Visit Website</a>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/UniClipboard/UniClipboard" target="_blank" rel="noopener">View source</a>
+          <a class="btn btn-ghost" href="https://uniclipboard.app" target="_blank" rel="noopener">uniclipboard.app</a>
+          <a class="btn btn-ghost" href="https://github.com/UniClipboard/UniClipboard/releases" target="_blank" rel="noopener">Releases</a>
         </div>
+        <p class="trust-line">Windows · macOS · Linux · iOS / Android companion</p>
       </div>
 
-      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
-        <img src="https://github.com/UniClipboard/UniClipboard/raw/main/assets/logo.png" alt="UniClipboard logo" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Demo Screenshot -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Cross-Device Sync</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-          <div class="mockup-header">
-            <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-            <div class="mockup-title">demo.png</div>
-          </div>
-          <img src="https://github.com/UniClipboard/UniClipboard/raw/main/assets/demo.png" alt="UniClipboard desktop and mobile clipboard sync demo" style="width: 100%; height: auto; display: block;">
-        </div>
-      </section>
-
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is UniClipboard?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Universal clipboard tools either lock you into one vendor's ecosystem or route everything through a cloud service you have to trust. If you run Windows and Linux, want searchable history, or need to verify the encryption yourself, the options narrow fast.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>UniClipboard</strong> syncs text, images, and files across desktops and mobile companions with no account and no central server reading your data. Devices join an encrypted "space" via invitation code and passphrase, connect peer-to-peer when possible, and fall back to a relay that only ever sees ciphertext. History is encrypted at rest with a searchable index that stays encrypted on disk.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">P2P First, Encrypted Relay Fallback</span>
-              <p class="text-body-sm">
-                Desktop devices pair with a one-time public key exchange — no email signup. Direct connections work on the same Wi-Fi or across networks via NAT hole-punching; when that fails, an encrypted relay carries ciphertext only. Connections recover automatically after sleep, Wi-Fi switches, or brief disconnects.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">XChaCha20-Poly1305 and Argon2id</span>
-              <p class="text-body-sm">
-                Payload encryption is independent of transport — a malicious relay cannot decrypt content. Keys derive from your passphrase via Argon2id, with the master key stored in the system keyring and per-space isolation so switching spaces re-encrypts local history under a new key.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Quick Panel, CLI, and Mobile Companion</span>
-              <p class="text-body-sm">
-                A keyboard-shortcut overlay previews text, links, images, and files without leaving your workflow. The <code>uniclip</code> CLI mirrors the GUI for headless servers and scripts. iOS and Android join as companions with QR pairing — share a phone screenshot to your desktop in seconds.
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Getting Started</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Create a space on your first device, then invite others with a short-lived code — or use the CLI for terminal workflows:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">terminal</div>
+      <div class="sync-stage" aria-label="Animated diagram of clipboard sync between two devices">
+        <p class="stage-label">Device A  →  ciphertext pipe  →  Device B</p>
+        <div class="devices">
+          <article class="device">
+            <div class="device-head">
+              <span>Laptop</span>
+              <span class="status"><i></i> paired</span>
             </div>
-            <div class="mockup-body">
-              <span class="token-cmd">curl -fsSL https://uniclipboard.app/install.sh | bash</span><br><br>
-              <span class="token-cmd">uniclip init</span><br>
-              <span class="token-cmd">uniclip invite</span><br>
-              <span class="token-cmd">uniclip join &lt;code&gt;</span>
+            <div class="clip-slot sending">
+              <strong>Copied</strong>
+              meeting notes.md · 12 KB
+            </div>
+          </article>
+
+          <div class="pipe" aria-hidden="true">
+            <div class="pipe-track"></div>
+            <span class="packet"></span>
+            <span class="packet alt"></span>
+            <div class="pipe-lock" title="End-to-end encrypted" aria-label="End-to-end encrypted">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+              </svg>
             </div>
           </div>
+
+          <article class="device">
+            <div class="device-head">
+              <span>Desktop</span>
+              <span class="status"><i></i> ready</span>
+            </div>
+            <div class="clip-slot receiving">
+              <strong>Incoming</strong>
+              decrypt → paste
+            </div>
+          </article>
         </div>
-      </section>
-
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
+        <p class="stage-foot">P2P when possible · <span>relay sees ciphertext only</span></p>
       </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
+    <section class="block reveal">
+      <p class="section-kicker">The gap it fills</p>
+      <h2 class="section-title">Clipboard sync without the vendor tax</h2>
+      <p class="prose">
+        Most “universal clipboard” options either lock you into one OS ecosystem or route every paste through a cloud service you have to trust with passwords, tokens, and screenshots. Mixed Windows/Linux desks, searchable history, and auditable crypto rarely show up in the same product.
+      </p>
+      <p class="prose">
+        <strong>UniClipboard</strong> treats the clipboard as a shared encrypted space: devices join with an invitation code and passphrase, talk peer-to-peer when they can, and fall back to a relay that never holds plaintext. Text, images, and files move with you — history stays encrypted at rest, including the search index.
+      </p>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
+    <section class="block reveal">
+      <p class="section-kicker">Path of a paste</p>
+      <h2 class="section-title">Copy once. Arrive encrypted.</h2>
+      <p class="prose">
+        Payload crypto is independent of transport. Whether the bytes travel direct or through a fallback relay, only your devices hold the keys.
+      </p>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num">01</div>
+          <h3>Copy</h3>
+          <p>Ctrl/Cmd+C on any paired desktop — text, image, or file.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">02</div>
+          <h3>Encrypt</h3>
+          <p>XChaCha20-Poly1305 AEAD; keys from Argon2id + system keyring.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">03</div>
+          <h3>Punch / relay</h3>
+          <p>Direct P2P or NAT hole-punch; encrypted relay if the path fails.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">04</div>
+          <h3>Decrypt</h3>
+          <p>Only space members can open the payload — never the relay.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">05</div>
+          <h3>Paste</h3>
+          <p>Arrive on the other machine (or phone companion) ready to paste.</p>
+        </div>
       </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
+    </section>
 
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+    <section class="block reveal">
+      <p class="section-kicker">Why it sticks</p>
+      <h2 class="section-title">Three signals that matter</h2>
+      <div class="signals">
+        <div class="signal-row">
+          <h3>P2P first, relay last</h3>
+          <p>
+            Pairing is a one-time public-key exchange — no email signup. Same Wi-Fi or cross-network hole-punching keeps traffic on your path when possible. Sleep, Wi-Fi flips, and brief drops recover without re-pairing.
+          </p>
+        </div>
+        <div class="signal-row">
+          <h3>Crypto you can name</h3>
+          <p>
+            XChaCha20-Poly1305 for payloads, Argon2id for passphrase derivation, master key in the OS keyring, per-space isolation so switching spaces re-encrypts local history. A hostile relay still only sees ciphertext.
+          </p>
+        </div>
+        <div class="signal-row">
+          <h3>Quick Panel, CLI, phone</h3>
+          <p>
+            A keyboard overlay previews clips without leaving your flow. The <code class="mono">uniclip</code> CLI mirrors the GUI for SSH and scripts. iOS and Android join as companions with QR pairing — share a phone screenshot to the desk in seconds.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block reveal">
+      <p class="section-kicker">In the wild</p>
+      <h2 class="section-title">Desktop sync, visible</h2>
+      <p class="prose">
+        History, devices, and the quick panel sit in a Tauri desktop shell — built to feel like part of the OS clipboard, not another tab you babysit.
+      </p>
+      <div class="demo-frame">
+        <div class="demo-chrome">
+          <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          UniClipboard · encrypted space
+        </div>
+        <img src="https://github.com/UniClipboard/UniClipboard/raw/main/assets/demo.png" alt="UniClipboard desktop and mobile clipboard sync demo">
+      </div>
+    </section>
+
+    <section class="block reveal">
+      <p class="section-kicker">Get a space running</p>
+      <h2 class="section-title">Install, invite, join</h2>
+      <p class="prose">
+        Create a space on the first device, then invite others with a short-lived code — or drive the same flow from the terminal.
+      </p>
+      <div class="cli-band">
+        <div class="cli-head">
+          <span>uniclip · headless flow</span>
+          <span>AGPL-3.0</span>
+        </div>
+        <div class="cli-body">
+          <div><span class="prompt">$</span> <span class="cmd">curl -fsSL https://uniclipboard.app/install.sh | bash</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">uniclip init</span> <span class="hint"># create encrypted space</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">uniclip invite</span> <span class="hint"># short-lived join code</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">uniclip join &lt;code&gt;</span></div>
+        </div>
+      </div>
+      <div class="cta-row" style="margin-top: 1.5rem;">
+        <a class="btn btn-primary" href="https://github.com/UniClipboard/UniClipboard/releases" target="_blank" rel="noopener">Download release</a>
+        <a class="btn btn-ghost" href="https://github.com/UniClipboard/UniClip" target="_blank" rel="noopener">Mobile companion</a>
+      </div>
+    </section>
+
+    <footer class="page-foot">
+      <span>DuckWare curation · Showcase #24</span>
+      <span>
+        <a href="./">Catalog</a>
+        ·
+        <a href="https://github.com/UniClipboard/UniClipboard" target="_blank" rel="noopener">Source</a>
+        ·
+        <a href="../feed.xml">RSS</a>
+      </span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var nodes = document.querySelectorAll(".reveal");
+      if (!nodes.length) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        nodes.forEach(function (n) { n.classList.add("visible"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add("visible");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+      nodes.forEach(function (n) { io.observe(n); });
+    })();
+  </script>
 </body>
 </html>
