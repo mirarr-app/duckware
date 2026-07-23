@@ -4,195 +4,879 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pixel Snapper Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of Sprite Fusion Pixel Snapper, the Rust tool that snaps messy AI-generated pixel art to a perfect grid with palette quantization.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare showcase of Sprite Fusion Pixel Snapper — a Rust CLI, WASM, and web tool that snaps messy AI pixel art onto a perfect grid with palette quantization.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #07080c;
+      --ink-2: #0c0e14;
+      --panel: #12151e;
+      --panel-2: #181c28;
+      --line: #2a3144;
+      --text: #e8ecf4;
+      --mute: #8b93a8;
+      --cyan: #29f0ff;
+      --magenta: #ff3d9a;
+      --lime: #b8ff3c;
+      --amber: #ffc14a;
+      --grid: rgba(41, 240, 255, 0.07);
+      --font-pixel: "Press Start 2P", monospace;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+      --max: 1080px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 17px;
+      line-height: 1.65;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(41, 240, 255, 0.08), transparent 55%),
+        radial-gradient(ellipse 40% 30% at 90% 20%, rgba(255, 61, 154, 0.06), transparent 50%);
+      background-size: 16px 16px, 16px 16px, 100% 100%, 100% 100%;
+      background-attachment: fixed;
+    }
+
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { color: var(--lime); }
+
+    img { max-width: 100%; height: auto; display: block; }
+
+    .wrap {
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* —— Top bar —— */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(10px);
+      background: rgba(7, 8, 12, 0.85);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 0;
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+    }
+
+    .back {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--mute);
+      letter-spacing: 0.04em;
+    }
+
+    .back:hover { color: var(--cyan); }
+
+    .badge {
+      font-family: var(--font-pixel);
+      font-size: 0.55rem;
+      color: var(--ink);
+      background: var(--lime);
+      padding: 0.45rem 0.55rem;
+      letter-spacing: 0.02em;
+      box-shadow: 3px 3px 0 var(--cyan);
+    }
+
+    /* —— Hero —— */
+    .hero {
+      padding: 3.5rem 0 2.5rem;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--mute);
+      margin-bottom: 1.75rem;
+    }
+
+    .meta-row span[data-accent] { color: var(--magenta); }
+
+    .brand {
+      font-family: var(--font-pixel);
+      font-size: clamp(1.15rem, 4.2vw, 2.05rem);
+      line-height: 1.45;
+      color: var(--text);
+      text-shadow:
+        3px 0 0 rgba(41, 240, 255, 0.35),
+        -2px 0 0 rgba(255, 61, 154, 0.3);
+      margin-bottom: 1.1rem;
+      animation: brand-glitch 4.5s ease-in-out infinite;
+    }
+
+    @keyframes brand-glitch {
+      0%, 92%, 100% { text-shadow: 3px 0 0 rgba(41, 240, 255, 0.35), -2px 0 0 rgba(255, 61, 154, 0.3); }
+      94% { text-shadow: -3px 0 0 rgba(41, 240, 255, 0.5), 2px 0 0 rgba(255, 61, 154, 0.45); }
+      96% { text-shadow: 2px 1px 0 rgba(184, 255, 60, 0.4), -1px 0 0 rgba(255, 61, 154, 0.35); }
+    }
+
+    .lede {
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+      color: var(--mute);
+      max-width: 36rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .lede strong { color: var(--text); font-weight: 600; }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 2.75rem;
+    }
+
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.7rem 1.15rem;
+      border: 2px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: var(--ink);
+      box-shadow: 4px 4px 0 var(--magenta);
+    }
+
+    .btn-primary:hover {
+      color: var(--ink);
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--magenta);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--lime);
+      border-color: var(--line);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--lime);
+      color: var(--lime);
+      transform: translate(-1px, -1px);
+      box-shadow: 3px 3px 0 rgba(184, 255, 60, 0.25);
+    }
+
+    /* —— Snap stage (hero visual) —— */
+    .snap-stage {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 720px) {
+      .snap-stage {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+      .snap-arrow { transform: rotate(90deg); margin: 0.25rem 0; }
+    }
+
+    .snap-panel {
+      background: var(--panel);
+      border: 2px solid var(--line);
+      padding: 0.85rem;
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .snap-panel::before {
+      content: attr(data-label);
+      position: absolute;
+      top: 0.55rem;
+      left: 0.55rem;
+      z-index: 2;
+      font-family: var(--font-pixel);
+      font-size: 0.45rem;
+      padding: 0.35rem 0.4rem;
+      background: var(--ink);
+      border: 1px solid var(--line);
+      color: var(--mute);
+    }
+
+    .snap-panel[data-state="after"]::before {
+      color: var(--ink);
+      background: var(--lime);
+      border-color: var(--lime);
+    }
+
+    .pixel-canvas {
+      aspect-ratio: 1;
+      width: 100%;
+      max-width: 220px;
+      margin: 1.6rem auto 0.4rem;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 0;
+      image-rendering: pixelated;
+    }
+
+    .px {
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      animation: pixel-pop 0.45s ease forwards;
+    }
+
+    .px:nth-child(1) { animation-delay: 0.02s; }
+    .px:nth-child(2) { animation-delay: 0.05s; }
+    .px:nth-child(3) { animation-delay: 0.08s; }
+    .px:nth-child(4) { animation-delay: 0.11s; }
+    .px:nth-child(5) { animation-delay: 0.14s; }
+    .px:nth-child(6) { animation-delay: 0.17s; }
+    .px:nth-child(7) { animation-delay: 0.2s; }
+    .px:nth-child(8) { animation-delay: 0.23s; }
+    .px:nth-child(n+9) { animation-delay: 0.26s; }
+    .px:nth-child(n+17) { animation-delay: 0.34s; }
+    .px:nth-child(n+25) { animation-delay: 0.42s; }
+    .px:nth-child(n+33) { animation-delay: 0.5s; }
+    .px:nth-child(n+41) { animation-delay: 0.58s; }
+    .px:nth-child(n+49) { animation-delay: 0.66s; }
+    .px:nth-child(n+57) { animation-delay: 0.74s; }
+
+    @keyframes pixel-pop {
+      from { opacity: 0; transform: scale(0.4) translate(var(--dx, 0), var(--dy, 0)); }
+      to { opacity: 1; transform: scale(1) translate(0, 0); }
+    }
+
+    /* Messy (before): irregular offsets via transform on cells */
+    .pixel-canvas.is-messy .px {
+      transform-origin: center;
+      border-radius: 15%;
+      filter: blur(0.35px);
+    }
+
+    .pixel-canvas.is-messy .px:nth-child(odd) { --dx: 2px; --dy: -1px; }
+    .pixel-canvas.is-messy .px:nth-child(3n) { --dx: -2px; --dy: 2px; }
+    .pixel-canvas.is-messy .px:nth-child(5n) { --dx: 1px; --dy: 2px; }
+    .pixel-canvas.is-messy .px:nth-child(7n) { --dx: -1px; --dy: -2px; }
+
+    .pixel-canvas.is-messy .px {
+      animation: messy-float 2.8s ease-in-out infinite;
+      animation-delay: calc(var(--i, 0) * 0.04s);
+      opacity: 1;
+    }
+
+    @keyframes messy-float {
+      0%, 100% { transform: translate(var(--dx, 0), var(--dy, 0)) scale(0.92); }
+      50% { transform: translate(calc(var(--dx, 0) * -1), calc(var(--dy, 0) * -1)) scale(1.05); }
+    }
+
+    .pixel-canvas.is-crisp {
+      outline: 1px solid rgba(41, 240, 255, 0.25);
+      box-shadow: 0 0 0 1px rgba(184, 255, 60, 0.15), inset 0 0 20px rgba(41, 240, 255, 0.05);
+      animation: grid-pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes grid-pulse {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(184, 255, 60, 0.15), inset 0 0 20px rgba(41, 240, 255, 0.05); }
+      50% { box-shadow: 0 0 0 2px rgba(41, 240, 255, 0.45), inset 0 0 28px rgba(184, 255, 60, 0.08); }
+    }
+
+    .snap-arrow {
+      font-family: var(--font-pixel);
+      font-size: 0.7rem;
+      color: var(--cyan);
+      animation: arrow-nudge 1.4s ease-in-out infinite;
+    }
+
+    @keyframes arrow-nudge {
+      0%, 100% { transform: translateX(0); opacity: 0.7; }
+      50% { transform: translateX(4px); opacity: 1; }
+    }
+
+    @media (max-width: 720px) {
+      @keyframes arrow-nudge {
+        0%, 100% { transform: rotate(90deg) translateX(0); opacity: 0.7; }
+        50% { transform: rotate(90deg) translateX(4px); opacity: 1; }
+      }
+    }
+
+    /* —— Evidence strip —— */
+    .evidence {
+      margin: 0.5rem 0 3.5rem;
+      border: 2px solid var(--line);
+      background: var(--panel);
+      position: relative;
+    }
+
+    .evidence-chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel-2);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--mute);
+    }
+
+    .evidence-chrome .dots { display: flex; gap: 0.35rem; }
+    .evidence-chrome .dot {
+      width: 8px; height: 8px;
+      background: var(--line);
+    }
+    .evidence-chrome .dot:nth-child(1) { background: var(--magenta); }
+    .evidence-chrome .dot:nth-child(2) { background: var(--amber); }
+    .evidence-chrome .dot:nth-child(3) { background: var(--lime); }
+
+    .magnifier {
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    .magnifier img {
+      width: 100%;
+      image-rendering: auto;
+      transition: transform 0.35s ease;
+    }
+
+    .magnifier:hover img {
+      transform: scale(1.08);
+    }
+
+    .magnifier-lens {
+      pointer-events: none;
+      position: absolute;
+      inset: auto;
+      width: 96px;
+      height: 96px;
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 0 1px var(--ink), inset 0 0 0 1px rgba(255, 61, 154, 0.4);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      background: transparent;
+      mix-blend-mode: exclusion;
+    }
+
+    .magnifier:hover .magnifier-lens { opacity: 0.85; }
+
+    /* —— Sections —— */
+    section.block {
+      padding: 2.75rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .sec-kicker {
+      font-family: var(--font-pixel);
+      font-size: 0.5rem;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .sec-kicker::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      background: var(--magenta);
+      box-shadow: 2px 2px 0 var(--cyan);
+      animation: snap-square 1.8s steps(2) infinite;
+    }
+
+    @keyframes snap-square {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(2px, -2px); }
+    }
+
+    .sec-title {
+      font-family: var(--font-pixel);
+      font-size: clamp(0.85rem, 2.4vw, 1.05rem);
+      line-height: 1.55;
+      margin-bottom: 1.1rem;
+      color: var(--text);
+    }
+
+    .sec-body {
+      color: var(--mute);
+      max-width: 40rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .sec-body strong { color: var(--text); font-weight: 600; }
+
+    /* —— Strength rails —— */
+    .rails {
+      display: grid;
+      gap: 1rem;
+    }
+
+    @media (min-width: 800px) {
+      .rails { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .rail {
+      background: var(--panel);
+      border: 2px solid var(--line);
+      border-top: 3px solid var(--accent, var(--cyan));
+      padding: 1.15rem 1.1rem 1.25rem;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .rail:hover {
+      border-color: var(--accent, var(--cyan));
+      transform: translateY(-3px);
+    }
+
+    .rail:nth-child(1) { --accent: var(--cyan); }
+    .rail:nth-child(2) { --accent: var(--magenta); }
+    .rail:nth-child(3) { --accent: var(--lime); }
+
+    .rail h3 {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.55rem;
+      color: var(--text);
+    }
+
+    .rail p {
+      font-size: 0.92rem;
+      color: var(--mute);
+      line-height: 1.55;
+    }
+
+    /* —— Palette strip —— */
+    .palette-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      image-rendering: pixelated;
+      animation: swatch-in 0.4s ease backwards;
+    }
+
+    .swatch:nth-child(1) { animation-delay: 0.05s; background: #0d2b45; }
+    .swatch:nth-child(2) { animation-delay: 0.1s; background: #203c56; }
+    .swatch:nth-child(3) { animation-delay: 0.15s; background: #544e68; }
+    .swatch:nth-child(4) { animation-delay: 0.2s; background: #8d697a; }
+    .swatch:nth-child(5) { animation-delay: 0.25s; background: #d08159; }
+    .swatch:nth-child(6) { animation-delay: 0.3s; background: #ffaa5e; }
+    .swatch:nth-child(7) { animation-delay: 0.35s; background: #ffd4a3; }
+    .swatch:nth-child(8) { animation-delay: 0.4s; background: #ffecd6; }
+
+    @keyframes swatch-in {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .palette-note {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--mute);
+    }
+
+    /* —— Surface triad —— */
+    .surfaces {
+      display: grid;
+      gap: 1rem;
+    }
+
+    @media (min-width: 760px) {
+      .surfaces { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .surface {
+      background: var(--ink-2);
+      border: 2px dashed var(--line);
+      padding: 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .surface::after {
+      content: "";
+      position: absolute;
+      top: 0; right: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 0 28px 28px 0;
+      border-color: transparent var(--accent, var(--cyan)) transparent transparent;
+      opacity: 0.85;
+    }
+
+    .surface:nth-child(1) { --accent: var(--cyan); }
+    .surface:nth-child(2) { --accent: var(--magenta); }
+    .surface:nth-child(3) { --accent: var(--lime); }
+
+    .surface .tag {
+      font-family: var(--font-pixel);
+      font-size: 0.45rem;
+      color: var(--accent, var(--cyan));
+      margin-bottom: 0.7rem;
+    }
+
+    .surface h3 {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .surface p {
+      font-size: 0.9rem;
+      color: var(--mute);
+    }
+
+    /* —— Terminal —— */
+    .term {
+      background: #05060a;
+      border: 2px solid var(--line);
+      margin-top: 1.25rem;
+      overflow-x: auto;
+    }
+
+    .term-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.85rem;
+      border-bottom: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--mute);
+    }
+
+    .term-bar .pulse {
+      width: 7px;
+      height: 7px;
+      background: var(--lime);
+      animation: blink 1.1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .term pre {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      padding: 1rem 1.1rem 1.2rem;
+      color: var(--text);
+      white-space: pre;
+    }
+
+    .term .c { color: var(--mute); }
+    .term .g { color: var(--lime); }
+    .term .m { color: var(--magenta); }
+    .term .y { color: var(--cyan); }
+
+    /* —— Detail shot —— */
+    .detail-frame {
+      margin-top: 1.5rem;
+      border: 2px solid var(--line);
+      background: var(--panel);
+    }
+
+    .detail-frame figcaption {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--mute);
+      padding: 0.65rem 0.9rem;
+      border-top: 1px solid var(--line);
+    }
+
+    /* —— Close —— */
+    .closeout {
+      text-align: center;
+      padding: 3rem 0 4rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .closeout p {
+      color: var(--mute);
+      max-width: 28rem;
+      margin: 0 auto 1.5rem;
+    }
+
+    .foot {
+      border-top: 1px solid var(--line);
+      padding: 1.5rem 0 2rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--mute);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .foot a { color: var(--mute); }
+    .foot a:hover { color: var(--cyan); }
+
+    /* —— Reduced motion —— */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+      .px, .pixel-canvas.is-messy .px { opacity: 1; transform: none; filter: none; }
+      .magnifier:hover img { transform: none; }
+      .brand { text-shadow: none; }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
-      </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-        <span>Hugo-Dz/spritefusion-pixel-snapper</span>
-        <span>•</span>
-        <span>July 15, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #23</span>
-      </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        Pixel Snapper
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Snap messy AI pixel art to a perfect grid — consistent cells, quantized palettes, scalable output.
-      </p>
-
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://github.com/Hugo-Dz/spritefusion-pixel-snapper" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-        <a href="https://spritefusion.com/pixel-snapper" class="btn-secondary-ghost" target="_blank" rel="noopener">Try Online</a>
-      </div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="back" href="./">← all showcases</a>
+      <span class="badge">#23</span>
     </div>
   </header>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Before/After Examples -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Grid Snapping in Action</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); margin-bottom: var(--space-lg);">
-          <div class="mockup-header">
-            <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-            <div class="mockup-title">hero.png</div>
-          </div>
-          <img src="https://github.com/Hugo-Dz/spritefusion-pixel-snapper/raw/main/static/hero.png" alt="Pixel Snapper before and after grid snapping comparison" style="width: 100%; height: auto; display: block;">
+  <main>
+    <div class="wrap hero">
+      <div class="meta-row">
+        <span>Hugo-Dz/spritefusion-pixel-snapper</span>
+        <span>Jul 15, 2026</span>
+        <span data-accent>Showcase #23</span>
+        <span>Rust · Pixel Art · Game Dev</span>
+      </div>
+
+      <h1 class="brand">PIXEL SNAPPER</h1>
+      <p class="lede">
+        <strong>Messy AI pixels in. Perfect grid out.</strong>
+        A Rust tool that detects cell size, snaps every texel onto a crisp lattice, and locks colors to a quantized — or fully custom — palette.
+      </p>
+
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/Hugo-Dz/spritefusion-pixel-snapper" target="_blank" rel="noopener">View Source</a>
+        <a class="btn btn-ghost" href="https://spritefusion.com/pixel-snapper" target="_blank" rel="noopener">Try Online</a>
+        <a class="btn btn-ghost" href="https://www.spritefusion.com/pixel-snapper#desktop-edition" target="_blank" rel="noopener">Desktop Edition</a>
+      </div>
+
+      <div class="snap-stage" aria-hidden="true">
+        <div class="snap-panel" data-label="BEFORE" data-state="before">
+          <div class="pixel-canvas is-messy" id="messy-grid"></div>
         </div>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-          <div class="mockup-header">
-            <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-            <div class="mockup-title">details.png</div>
-          </div>
-          <img src="https://github.com/Hugo-Dz/spritefusion-pixel-snapper/raw/main/static/details.png" alt="Pixel Snapper detail preservation including dithering" style="width: 100%; height: auto; display: block;">
+        <div class="snap-arrow">→</div>
+        <div class="snap-panel" data-label="AFTER" data-state="after">
+          <div class="pixel-canvas is-crisp" id="crisp-grid"></div>
+        </div>
+      </div>
+
+      <figure class="evidence">
+        <div class="evidence-chrome">
+          <div class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <span>static/hero.png — real before → after from the repo</span>
+        </div>
+        <div class="magnifier" id="magnifier">
+          <img src="https://raw.githubusercontent.com/Hugo-Dz/spritefusion-pixel-snapper/main/static/hero.png" alt="Pixel Snapper before and after comparison: inconsistent AI pixel art snapped to a clean grid" width="1200" height="600" loading="eager">
+          <div class="magnifier-lens" id="lens"></div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="wrap">
+      <section class="block">
+        <p class="sec-kicker">THE DRIFT PROBLEM</p>
+        <h2 class="sec-title">AI paints pixels. It does not honor grids.</h2>
+        <p class="sec-body">
+          Generative models can fake a retro look, but the underlying raster is soft: cell sizes wander, edges anti-alias, and colors smear outside any usable game palette. That output breaks tilemaps, scales into mush, and forces artists to redraw by hand.
+        </p>
+        <p class="sec-body">
+          <strong>Sprite Fusion Pixel Snapper</strong> was built for that gap. Feed it a PNG or JPEG (or a whole folder), and it auto-detects pixel size, aligns every cell to a uniform lattice, and quantizes color — defaulting to 16 colors or accepting a comma-separated hex palette you define. Dithering and fine texture survive the pass whenever the signal is there.
+        </p>
+      </section>
+
+      <section class="block">
+        <p class="sec-kicker">SNAP STRENGTHS</p>
+        <h2 class="sec-title">Three reasons the lattice holds</h2>
+        <div class="rails">
+          <article class="rail">
+            <h3>Cell detection + override</h3>
+            <p>Auto-finds the dominant pixel size, or pin it with <code>--pixel-size</code> when batch sheets share a known scale. Output stays resolution-consistent and scales cleanly.</p>
+          </article>
+          <article class="rail">
+            <h3>Palette quantization</h3>
+            <p>Reduce to <em>k</em> colors or lock to an exact custom palette. Same colors across a sprite sheet — no surprise hues sneaking in from the model.</p>
+          </article>
+          <article class="rail">
+            <h3>Detail-aware pass</h3>
+            <p>Designed to keep dither patterns and micro-contrast instead of flattening everything into muddy blobs. Usable assets, not just “prettier” screenshots.</p>
+          </article>
+        </div>
+
+        <div class="palette-row" aria-label="Example custom palette swatches">
+          <span class="swatch" title="#0d2b45"></span>
+          <span class="swatch" title="#203c56"></span>
+          <span class="swatch" title="#544e68"></span>
+          <span class="swatch" title="#8d697a"></span>
+          <span class="swatch" title="#d08159"></span>
+          <span class="swatch" title="#ffaa5e"></span>
+          <span class="swatch" title="#ffd4a3"></span>
+          <span class="swatch" title="#ffecd6"></span>
+        </div>
+        <p class="palette-note">Example --palette lock from the README — eight hex stops, zero drift.</p>
+      </section>
+
+      <section class="block">
+        <p class="sec-kicker">THREE SURFACES</p>
+        <h2 class="sec-title">CLI · WASM · Web — one snap core</h2>
+        <p class="sec-body">
+          Ship the algorithm wherever your art pipeline lives. Native binary for batch jobs, WebAssembly for embedding, and a hosted app when you just need to drop a file and download the fix.
+        </p>
+        <div class="surfaces">
+          <article class="surface">
+            <p class="tag">CLI</p>
+            <h3>Brew / Cargo binary</h3>
+            <p>Install via Homebrew or <code>cargo install</code>, then point at a file or directory. Built for sprite-sheet cleanup loops and CI-friendly batch runs.</p>
+          </article>
+          <article class="surface">
+            <p class="tag">WASM</p>
+            <h3>Embed process_image()</h3>
+            <p>wasm-pack the crate, call <code>process_image(bytes, k?, size?, palette?)</code> from JS, and keep snapping inside your own editor or exporter.</p>
+          </article>
+          <article class="surface">
+            <p class="tag">WEB</p>
+            <h3>spritefusion.com app</h3>
+            <p>No install — open the online Pixel Snapper (or the desktop edition) when you want a visual pass before committing assets.</p>
+          </article>
+        </div>
+
+        <div class="term">
+          <div class="term-bar"><span class="pulse" aria-hidden="true"></span> spritefusion-pixel-snapper — example invocations</div>
+          <pre><span class="c"># single image → 16-color snap</span>
+<span class="g">spritefusion-pixel-snapper</span> <span class="y">input.png</span> <span class="y">output.png</span> <span class="m">16</span>
+
+<span class="c"># batch a folder with fixed cell size</span>
+<span class="g">spritefusion-pixel-snapper</span> sprites/in sprites/out 16 <span class="m">--pixel-size 8</span>
+
+<span class="c"># lock an exact palette</span>
+<span class="g">spritefusion-pixel-snapper</span> input.png output.png <span class="m">--palette "0d2b45,203c56,544e68,8d697a"</span></pre>
         </div>
       </section>
 
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Pixel Snapper?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            AI image models produce convincing pixel-art aesthetics, but the underlying structure is wrong — cells drift in size, the implicit grid resolution shifts across the canvas, and colors bleed outside a fixed palette. Manually redrawing or hand-aligning every sprite defeats the purpose of using AI in the first place.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>Sprite Fusion Pixel Snapper</strong> is a Rust tool (with CLI, WASM, and web/desktop editions) that takes messy input and outputs grid-aligned pixel art. Pixels snap to a consistent cell size, colors quantize to a strict palette you can customize, and fine details like dithering are preserved where possible — making AI-generated sprites actually usable in tilemaps, isometric maps, and game asset pipelines.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Grid Detection and Palette Quantization</span>
-              <p class="text-body-sm">
-                Auto-detects pixel cell size or accepts a manual override with <code>--pixel-size</code>. Quantize to k colors or constrain output to an exact custom palette via comma-separated hex values. Batch-process entire directories in one command for sprite sheet cleanup workflows.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">CLI, WASM, and Browser Editions</span>
-              <p class="text-body-sm">
-                Run locally with <code>cargo run input.png output.png</code>, embed the WASM module in your own pipeline via <code>process_image()</code>, or use the hosted tool at spritefusion.com. Same core algorithm across all targets — no dependency on a proprietary cloud API.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Built for Game Asset Pipelines</span>
-              <p class="text-body-sm">
-                Designed for AI-generated sprites that need grid alignment, procedural 2D art that does not naturally fit a tile grid, and textures that must scale cleanly without anti-aliased blur. Part of the broader Sprite Fusion ecosystem for true pixel art generation.
-              </p>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Basic Usage</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Process a single image, batch a folder, or pin the grid size and palette explicitly:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">terminal</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">cargo run input.png output.png 16</span><br>
-              <span class="token-cmd">cargo run sprites/in sprites/out 16 --pixel-size 8</span><br>
-              <span class="token-cmd">cargo run input.png output.png --palette "0d2b45,ffecd6,ff4d6d"</span>
-            </div>
-          </div>
-        </div>
+      <section class="block">
+        <p class="sec-kicker">ZOOM ON DETAIL</p>
+        <h2 class="sec-title">What survives the snap</h2>
+        <p class="sec-body">
+          Beyond coarse alignment, Pixel Snapper aims to retain the texture that makes pixel art feel hand-authored — including dithering — so cleaned sprites still read as intentional, not posterized noise.
+        </p>
+        <figure class="detail-frame">
+          <img src="https://raw.githubusercontent.com/Hugo-Dz/spritefusion-pixel-snapper/main/static/details.png" alt="Close-up showing Pixel Snapper preserving dithering and fine detail after grid snap" width="1000" height="600" loading="lazy">
+          <figcaption>static/details.png — dither and micro-detail after quantization</figcaption>
+        </figure>
       </section>
 
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
+      <section class="closeout">
+        <p class="sec-kicker" style="justify-content: center;">NEXT MOVE</p>
+        <h2 class="sec-title" style="text-align: center;">Snap your next sprite sheet</h2>
+        <p>Part of the Sprite Fusion ecosystem for true pixel-art game assets. MIT-licensed by Hugo Duprez.</p>
+        <div class="cta-row" style="justify-content: center;">
+          <a class="btn btn-primary" href="https://spritefusion.com/pixel-snapper" target="_blank" rel="noopener">Open Web App</a>
+          <a class="btn btn-ghost" href="https://github.com/Hugo-Dz/spritefusion-pixel-snapper" target="_blank" rel="noopener">Star on GitHub</a>
+          <a class="btn btn-ghost" href="./">← Catalog</a>
+        </div>
       </section>
-
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
-      </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
+  <footer class="wrap foot">
+    <span>DuckWare Showcase #23 · Pixel Snapper</span>
+    <span>
+      <a href="../">duckware</a> ·
+      <a href="../feed.xml">rss</a> ·
+      <a href="https://github.com/mirarr-app/duckware" target="_blank" rel="noopener">repo</a>
+    </span>
   </footer>
 
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+  <script>
+    (function () {
+      var colors = [
+        "#0d2b45", "#203c56", "#544e68", "#8d697a",
+        "#d08159", "#ffaa5e", "#ffd4a3", "#ffecd6",
+        "#29f0ff", "#ff3d9a", "#b8ff3c", "#12151e"
+      ];
+      // Tiny 8×8 “sprite” silhouette — same map for messy + crisp
+      var map = [
+        11,11,0,0,0,0,11,11,
+        11,0,1,2,2,1,0,11,
+        0,1,3,4,4,3,1,0,
+        0,2,4,5,5,4,2,0,
+        0,2,4,5,5,4,2,0,
+        0,1,3,6,6,3,1,0,
+        11,0,1,7,7,1,0,11,
+        11,11,0,8,8,0,11,11
+      ];
+
+      function paint(el, messy) {
+        el.innerHTML = "";
+        for (var i = 0; i < 64; i++) {
+          var d = document.createElement("div");
+          d.className = "px";
+          d.style.background = colors[map[i]];
+          d.style.setProperty("--i", String(i));
+          if (messy) {
+            var dx = ((i * 7) % 5) - 2;
+            var dy = ((i * 3) % 5) - 2;
+            d.style.setProperty("--dx", dx + "px");
+            d.style.setProperty("--dy", dy + "px");
+          }
+          el.appendChild(d);
+        }
+      }
+
+      paint(document.getElementById("messy-grid"), true);
+      paint(document.getElementById("crisp-grid"), false);
+
+      var mag = document.getElementById("magnifier");
+      var lens = document.getElementById("lens");
+      if (mag && lens) {
+        mag.addEventListener("mousemove", function (e) {
+          var r = mag.getBoundingClientRect();
+          var x = e.clientX - r.left;
+          var y = e.clientY - r.top;
+          lens.style.left = (x - 48) + "px";
+          lens.style.top = (y - 48) + "px";
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
