@@ -4,187 +4,1175 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ternlight Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of ternlight, the WebAssembly embedding engine that ships model, tokenizer, and inference in a single 5–7 MB bundle.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare showcase of Ternlight: a WebAssembly embedding engine that ships model, tokenizer, and SIMD inference in a single 5–7 MB bundle for on-device semantic search.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #05070f;
+      --space: #080c18;
+      --panel: #0c1222;
+      --panel-lift: #121a2e;
+      --line: rgba(120, 170, 255, 0.12);
+      --line-strong: rgba(120, 170, 255, 0.28);
+      --text: #e8eefc;
+      --text-soft: #9aabd0;
+      --text-dim: #6b7a9a;
+      --electric: #5cb0ff;
+      --electric-bright: #8cc8ff;
+      --tern-gold: #e8c56a;
+      --tern-gold-soft: rgba(232, 197, 106, 0.18);
+      --glow-blue: rgba(92, 176, 255, 0.35);
+      --glow-gold: rgba(232, 197, 106, 0.25);
+      --font-display: "Sora", system-ui, sans-serif;
+      --font-body: "IBM Plex Sans", system-ui, sans-serif;
+      --font-mono: "IBM Plex Sans", ui-monospace, monospace;
+      --radius: 14px;
+      --max: 1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--void);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--electric-bright); text-decoration: none; }
+    a:hover { color: var(--tern-gold); }
+
+    code, .mono {
+      font-family: var(--font-mono);
+      font-size: 0.92em;
+    }
+
+    /* —— top bar —— */
+    .orbit-bar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1.5rem;
+      background: rgba(5, 7, 15, 0.82);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .orbit-bar a.back {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-soft);
+      text-transform: uppercase;
+    }
+
+    .orbit-bar a.back:hover { color: var(--electric-bright); }
+
+    .orbit-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      letter-spacing: 0.02em;
+    }
+
+    .orbit-meta .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--tern-gold);
+      box-shadow: 0 0 10px var(--glow-gold);
+      animation: soft-pulse 2.8s ease-in-out infinite;
+    }
+
+    /* —— hero constellation —— */
+    .constellation-hero {
+      position: relative;
+      min-height: min(92vh, 820px);
+      display: grid;
+      align-items: center;
+      padding: 3.5rem 1.5rem 4rem;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(92, 176, 255, 0.09), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 20% 70%, rgba(232, 197, 106, 0.06), transparent 50%),
+        linear-gradient(180deg, var(--void) 0%, var(--space) 55%, var(--panel) 100%);
+      overflow: hidden;
+    }
+
+    .starfield {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .starfield svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .node {
+      fill: var(--electric);
+      filter: drop-shadow(0 0 4px var(--glow-blue));
+      animation: float-node 7s ease-in-out infinite;
+    }
+
+    .node.gold {
+      fill: var(--tern-gold);
+      filter: drop-shadow(0 0 5px var(--glow-gold));
+      animation-duration: 9s;
+      animation-delay: -2s;
+    }
+
+    .node.dim {
+      fill: var(--electric-bright);
+      opacity: 0.45;
+      animation-duration: 11s;
+      animation-delay: -4s;
+    }
+
+    .edge {
+      stroke: var(--electric);
+      stroke-width: 0.6;
+      opacity: 0.22;
+      animation: edge-breathe 5.5s ease-in-out infinite;
+    }
+
+    .edge.gold-edge {
+      stroke: var(--tern-gold);
+      opacity: 0.18;
+      animation-delay: -1.5s;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      max-width: var(--max);
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-bottom: 1.25rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--text);
+    }
+
+    .brand-mark .light {
+      display: inline-block;
+      width: 0.55em;
+      height: 0.55em;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff6d0, var(--tern-gold) 45%, transparent 70%);
+      box-shadow: 0 0 22px var(--glow-gold), 0 0 48px rgba(92, 176, 255, 0.25);
+      animation: soft-pulse 2.4s ease-in-out infinite;
+      flex-shrink: 0;
+      align-self: center;
+      margin-left: 0.15em;
+    }
+
+    .eyebrow {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--electric);
+      margin-bottom: 0.85rem;
+    }
+
+    .hero-lede {
+      font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+      color: var(--text-soft);
+      max-width: 34rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.72rem 1.25rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3a8fd9, var(--electric));
+      color: #05070f;
+      box-shadow: 0 0 24px rgba(92, 176, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      color: #05070f;
+      box-shadow: 0 0 32px rgba(92, 176, 255, 0.45);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--line-strong);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--tern-gold);
+      color: var(--tern-gold);
+      background: var(--tern-gold-soft);
+    }
+
+    /* code panel in hero */
+    .embed-panel {
+      background: rgba(8, 12, 24, 0.88);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      box-shadow:
+        0 0 0 1px rgba(92, 176, 255, 0.06),
+        0 24px 60px rgba(0, 0, 0, 0.45),
+        0 0 40px rgba(92, 176, 255, 0.08);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .embed-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(18, 26, 46, 0.7);
+    }
+
+    .embed-panel-head .dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .embed-panel-head .dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      opacity: 0.5;
+    }
+
+    .embed-panel-head .dots span:nth-child(1) { background: #ff6b7a; opacity: 0.7; }
+    .embed-panel-head .dots span:nth-child(2) { background: var(--tern-gold); opacity: 0.7; }
+    .embed-panel-head .dots span:nth-child(3) { background: var(--electric); opacity: 0.7; }
+
+    .embed-panel-head .file {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    .embed-panel pre {
+      padding: 1.15rem 1.25rem 1.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--text-soft);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .tok-kw { color: var(--electric-bright); }
+    .tok-fn { color: var(--tern-gold); }
+    .tok-str { color: #a8d4ff; }
+    .tok-cm { color: var(--text-dim); font-style: italic; }
+    .tok-num { color: #9ee6a8; }
+
+    .banner-frame {
+      margin-top: 1.25rem;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      position: relative;
+      aspect-ratio: 21 / 7;
+      background: var(--panel);
+    }
+
+    .banner-frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(5, 7, 15, 0.55), transparent 30%, transparent 70%, rgba(5, 7, 15, 0.55)),
+        radial-gradient(ellipse at 50% 100%, rgba(92, 176, 255, 0.15), transparent 60%);
+    }
+
+    .banner-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(0.85) brightness(0.75) contrast(1.05);
+    }
+
+    /* —— sections —— */
+    .section {
+      padding: 5rem 1.5rem;
+      position: relative;
+    }
+
+    .section-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--tern-gold);
+      margin-bottom: 0.75rem;
+    }
+
+    .section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.15rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      max-width: 28ch;
+    }
+
+    .section .lead {
+      color: var(--text-soft);
+      max-width: 42rem;
+      margin-bottom: 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    /* audit */
+    .audit-band {
+      background: var(--space);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .audit-band p {
+      color: var(--text-soft);
+      max-width: 40rem;
+      margin-bottom: 1.1rem;
+      font-size: 1.05rem;
+    }
+
+    .audit-band p:last-child { margin-bottom: 0; }
+
+    .audit-band strong { color: var(--text); font-weight: 600; }
+
+    /* single bundle — three stacked layers visual */
+    .bundle-stage {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .wasm-stack {
+      position: relative;
+      height: 280px;
+      perspective: 800px;
+    }
+
+    .wasm-layer {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      height: 72px;
+      border-radius: 12px;
+      border: 1px solid var(--line-strong);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: linear-gradient(135deg, var(--panel-lift), var(--panel));
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      animation: layer-float 6s ease-in-out infinite;
+    }
+
+    .wasm-layer:nth-child(1) {
+      top: 12px;
+      z-index: 3;
+      border-color: rgba(232, 197, 106, 0.35);
+      animation-delay: 0s;
+    }
+
+    .wasm-layer:nth-child(2) {
+      top: 92px;
+      z-index: 2;
+      opacity: 0.95;
+      animation-delay: -1.2s;
+    }
+
+    .wasm-layer:nth-child(3) {
+      top: 172px;
+      z-index: 1;
+      opacity: 0.9;
+      animation-delay: -2.4s;
+    }
+
+    .wasm-layer .tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .wasm-layer .val {
+      color: var(--electric-bright);
+    }
+
+    .wasm-layer:nth-child(1) .val { color: var(--tern-gold); }
+
+    .bundle-copy h3 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .bundle-copy p {
+      color: var(--text-soft);
+      margin-bottom: 1rem;
+    }
+
+    .size-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.25rem;
+    }
+
+    .size-chip {
+      padding: 0.55rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      font-size: 0.85rem;
+    }
+
+    .size-chip em {
+      font-style: normal;
+      color: var(--tern-gold);
+      font-family: var(--font-display);
+      font-weight: 600;
+      margin-right: 0.35rem;
+    }
+
+    /* triad — tokenizer / model / SIMD */
+    .triad-band {
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 0%, rgba(92, 176, 255, 0.07), transparent 60%),
+        var(--void);
+    }
+
+    .triad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .triad-item {
+      padding: 1.5rem 1.35rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: linear-gradient(165deg, var(--panel-lift) 0%, var(--panel) 100%);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .triad-item:hover {
+      border-color: var(--line-strong);
+      box-shadow: 0 0 28px rgba(92, 176, 255, 0.1);
+    }
+
+    .triad-item::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--electric), transparent);
+      opacity: 0.55;
+    }
+
+    .triad-item:nth-child(2)::before {
+      background: linear-gradient(90deg, transparent, var(--tern-gold), transparent);
+    }
+
+    .triad-num {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      color: var(--text-dim);
+      margin-bottom: 0.85rem;
+    }
+
+    .triad-item h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+
+    .triad-item p {
+      font-size: 0.92rem;
+      color: var(--text-soft);
+    }
+
+    /* latency strip */
+    .latency-band {
+      background: var(--panel);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .latency-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .ms-display {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .ms-block {
+      flex: 1;
+      min-width: 140px;
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--void);
+      text-align: center;
+    }
+
+    .ms-block .figure {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--electric-bright);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+      text-shadow: 0 0 28px var(--glow-blue);
+    }
+
+    .ms-block.gold .figure {
+      color: var(--tern-gold);
+      text-shadow: 0 0 28px var(--glow-gold);
+    }
+
+    .ms-block .unit {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .ms-block .tier {
+      margin-top: 0.65rem;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-soft);
+    }
+
+    /* privacy */
+    .privacy-band {
+      background:
+        radial-gradient(circle at 15% 50%, rgba(232, 197, 106, 0.06), transparent 40%),
+        var(--space);
+    }
+
+    .privacy-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    .device-ring {
+      position: relative;
+      aspect-ratio: 1;
+      max-width: 320px;
+      margin: 0 auto;
+      border-radius: 50%;
+      border: 1px solid var(--line-strong);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(92, 176, 255, 0.12), transparent 55%),
+        var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 40px rgba(92, 176, 255, 0.08);
+    }
+
+    .device-ring::before,
+    .device-ring::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1px dashed rgba(92, 176, 255, 0.2);
+      animation: orbit-spin 28s linear infinite;
+    }
+
+    .device-ring::before {
+      inset: 12%;
+    }
+
+    .device-ring::after {
+      inset: 24%;
+      animation-direction: reverse;
+      animation-duration: 36s;
+      border-color: rgba(232, 197, 106, 0.18);
+    }
+
+    .device-core {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .device-core .glyph {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tern-gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .device-core p {
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      max-width: 12rem;
+      margin: 0 auto;
+    }
+
+    .privacy-points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+
+    .privacy-points li {
+      padding-left: 1.15rem;
+      border-left: 2px solid var(--electric);
+    }
+
+    .privacy-points li:nth-child(2) { border-left-color: var(--tern-gold); }
+
+    .privacy-points strong {
+      display: block;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .privacy-points span {
+      color: var(--text-soft);
+      font-size: 0.92rem;
+    }
+
+    /* use cases */
+    .uses-band {
+      background: var(--void);
+    }
+
+    .use-rail {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .use-cell {
+      padding: 1.35rem 1.4rem;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .use-cell:hover {
+      background: var(--panel-lift);
+      border-color: var(--line-strong);
+    }
+
+    .use-cell h3 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--electric-bright);
+    }
+
+    .use-cell:nth-child(even) h3 { color: var(--tern-gold); }
+
+    .use-cell p {
+      font-size: 0.9rem;
+      color: var(--text-soft);
+    }
+
+    /* closing CTA */
+    .close-band {
+      padding: 4.5rem 1.5rem 5rem;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 70% 80% at 50% 100%, rgba(92, 176, 255, 0.12), transparent 55%),
+        var(--panel);
+      border-top: 1px solid var(--line);
+    }
+
+    .close-band h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+      margin: 0 auto 0.75rem;
+      max-width: 22ch;
+    }
+
+    .close-band p {
+      color: var(--text-soft);
+      max-width: 34rem;
+      margin: 0 auto 1.75rem;
+    }
+
+    .close-band .cta-row {
+      justify-content: center;
+    }
+
+    .foot-note {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      max-width: var(--max);
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+
+    .foot-note a { color: var(--text-soft); }
+    .foot-note a:hover { color: var(--electric-bright); }
+
+    /* motion */
+    @keyframes soft-pulse {
+      0%, 100% { opacity: 0.75; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+
+    @keyframes float-node {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes edge-breathe {
+      0%, 100% { opacity: 0.14; }
+      50% { opacity: 0.32; }
+    }
+
+    @keyframes layer-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    @keyframes orbit-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-copy {
+      animation: rise-in 0.9s ease-out both;
+    }
+
+    .embed-panel {
+      animation: rise-in 1s ease-out 0.15s both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .btn:hover { transform: none; }
+    }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      .hero-grid,
+      .bundle-stage,
+      .latency-row,
+      .privacy-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .triad {
+        grid-template-columns: 1fr;
+      }
+
+      .constellation-hero {
+        min-height: auto;
+        padding-top: 2.5rem;
+        padding-bottom: 3rem;
+      }
+
+      .banner-frame {
+        aspect-ratio: 16 / 7;
+      }
+
+      .wasm-stack {
+        height: 260px;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .orbit-meta span.hide-sm { display: none; }
+      .use-rail { grid-template-columns: 1fr; }
+      .embed-panel pre { font-size: 0.7rem; }
+      .brand-mark { font-size: 2.1rem; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
-      </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-        <span>soycaporal/ternlight</span>
-        <span>•</span>
-        <span>July 10, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #17</span>
-      </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        Ternlight
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Semantic embeddings in a 5–7 MB WASM bundle — search on CPU, no API calls, no GPU.
-      </p>
-
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://github.com/soycaporal/ternlight" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-        <a href="https://ternlight-demo.vercel.app/" class="btn-secondary-ghost" target="_blank" rel="noopener">Live Demo</a>
-      </div>
+  <header class="orbit-bar">
+    <a class="back" href="./">← All showcases</a>
+    <div class="orbit-meta">
+      <span class="pulse-dot" aria-hidden="true"></span>
+      <span>Showcase #17</span>
+      <span class="hide-sm">·</span>
+      <span class="hide-sm">soycaporal/ternlight</span>
     </div>
   </header>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Banner Preview -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Project Banner</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4); overflow: hidden;">
-          <img src="https://github.com/soycaporal/ternlight/raw/main/docs/assets/banner.jpeg" alt="Ternlight project banner" style="width: 100%; height: auto; display: block;">
-        </div>
-      </section>
+  <section class="constellation-hero" aria-label="Ternlight hero">
+    <div class="starfield" aria-hidden="true">
+      <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+        <line class="edge" x1="120" y1="180" x2="280" y2="120"/>
+        <line class="edge gold-edge" x1="280" y1="120" x2="420" y2="220"/>
+        <line class="edge" x1="420" y1="220" x2="560" y2="140"/>
+        <line class="edge" x1="560" y1="140" x2="720" y2="200"/>
+        <line class="edge gold-edge" x1="720" y1="200" x2="880" y2="110"/>
+        <line class="edge" x1="880" y1="110" x2="1040" y2="190"/>
+        <line class="edge" x1="280" y1="120" x2="310" y2="320"/>
+        <line class="edge gold-edge" x1="420" y1="220" x2="510" y2="380"/>
+        <line class="edge" x1="560" y1="140" x2="640" y2="340"/>
+        <line class="edge" x1="720" y1="200" x2="780" y2="360"/>
+        <line class="edge gold-edge" x1="510" y1="380" x2="640" y2="340"/>
+        <line class="edge" x1="640" y1="340" x2="780" y2="360"/>
+        <line class="edge" x1="310" y1="320" x2="510" y2="380"/>
+        <line class="edge gold-edge" x1="180" y1="480" x2="310" y2="320"/>
+        <line class="edge" x1="510" y1="380" x2="620" y2="520"/>
+        <line class="edge" x1="780" y1="360" x2="920" y2="480"/>
+        <line class="edge gold-edge" x1="920" y1="480" x2="1080" y2="420"/>
+        <circle class="node" cx="120" cy="180" r="3.2"/>
+        <circle class="node gold" cx="280" cy="120" r="4.5"/>
+        <circle class="node dim" cx="420" cy="220" r="2.8"/>
+        <circle class="node" cx="560" cy="140" r="3.5"/>
+        <circle class="node gold" cx="720" cy="200" r="5"/>
+        <circle class="node dim" cx="880" cy="110" r="2.5"/>
+        <circle class="node" cx="1040" cy="190" r="3"/>
+        <circle class="node dim" cx="310" cy="320" r="3"/>
+        <circle class="node gold" cx="510" cy="380" r="4"/>
+        <circle class="node" cx="640" cy="340" r="3.2"/>
+        <circle class="node dim" cx="780" cy="360" r="2.8"/>
+        <circle class="node" cx="180" cy="480" r="2.5"/>
+        <circle class="node gold" cx="620" cy="520" r="3.5"/>
+        <circle class="node" cx="920" cy="480" r="3"/>
+        <circle class="node dim" cx="1080" cy="420" r="2.5"/>
+        <circle class="node" cx="150" cy="90" r="1.8"/>
+        <circle class="node dim" cx="980" cy="300" r="2"/>
+        <circle class="node gold" cx="450" cy="550" r="2.2"/>
+      </svg>
+    </div>
 
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Ternlight?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Most semantic search stacks depend on hosted embedding APIs — network latency on every keystroke, usage limits, and data leaving the device. For browser extensions, offline note apps, edge workers, or static sites, that trade-off is hard to justify when all you need is "find the closest matching sentence."
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>ternlight</strong> packs a distilled embedding model, BERT tokenizer, and SIMD inference engine into a single WebAssembly bundle under 7 MB. Embed text on CPU in a few milliseconds, run cosine similarity or nearest-neighbor search locally, and ship two npm tiers — <code>@ternlight/mini</code> for speed and <code>@ternlight/base</code> for quality.
-          </p>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">On-device embeddings · WASM</p>
+        <h1 class="brand-mark">
+          Ternlight
+          <span class="light" aria-hidden="true"></span>
+        </h1>
+        <p class="hero-lede">
+          Local intelligence as a soft constellation of vectors — embed text on CPU in milliseconds.
+          Model, tokenizer, and SIMD inference in one 5–7&nbsp;MB bundle. No API calls. No GPU. No data leaving the device.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/soycaporal/ternlight" target="_blank" rel="noopener">View Source</a>
+          <a class="btn btn-ghost" href="https://ternlight-demo.vercel.app/" target="_blank" rel="noopener">Live Demo</a>
         </div>
+      </div>
 
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Ternary Weights, Tiny Footprint</span>
-              <p class="text-body-sm">
-                Distilled from all-MiniLM-L6 with BitNet-style quantization-aware training. Every weight is −1, 0, or +1, so inference reduces to adds and subtracts on SIMD vector lanes. The result is a 5–7 MB gzipped WASM file that still tracks the teacher model closely on retrieval benchmarks.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">One Bundle, Zero Runtime Fetch</span>
-              <p class="text-body-sm">
-                Model, tokenizer, and engine ship together — no postinstall download, no separate model registry, no inference microservice. Import from Node, browsers, Cloudflare Workers, Vercel Edge, Deno, or Bun and the package routes to the right loader automatically.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Search-as-You-Type on Device</span>
-              <p class="text-body-sm">
-                At ~2.5–5 ms per embed on CPU, results can appear before a network round-trip would even start. The live demo searches 2,000 documents entirely in the browser — a concrete proof that privacy-sensitive, offline-first, and edge-runtime apps can run real semantic search without calling OpenAI or Hugging Face.
-              </p>
-            </li>
-          </ul>
+      <div>
+        <div class="embed-panel">
+          <div class="embed-panel-head">
+            <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <span class="file">embed.js</span>
+          </div>
+          <pre><span class="tok-kw">import</span> { <span class="tok-fn">embed</span>, <span class="tok-fn">cosineSim</span>, <span class="tok-fn">similar</span> } <span class="tok-kw">from</span> <span class="tok-str">'@ternlight/base'</span>;
+
+<span class="tok-cm">// string → 384-dim L2-normalized Float32Array</span>
+<span class="tok-fn">cosineSim</span>(
+  <span class="tok-fn">embed</span>(<span class="tok-str">'reset my password'</span>),
+  <span class="tok-fn">embed</span>(<span class="tok-str">'I forgot my password'</span>)
+); <span class="tok-cm">// → 0.88</span>
+
+<span class="tok-fn">similar</span>(<span class="tok-str">'I want my money back'</span>, corpus, { topK: <span class="tok-num">2</span> });</pre>
         </div>
+        <div class="banner-frame">
+          <img src="https://github.com/soycaporal/ternlight/raw/main/docs/assets/banner.jpeg" alt="Ternlight project banner — tern bird photograph">
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Basic Usage</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Three functions cover the common embedding workflow — embed a string, compare two vectors, or rank a corpus:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">search.js</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">import { embed, cosineSim, similar } from "@ternlight/base"</span><br><br>
-              <span class="token-cmd">cosineSim(</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;embed("reset my password"),</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;embed("I forgot my password")</span><br>
-              <span class="token-cmd">)  // → 0.88</span><br><br>
-              <span class="token-cmd">similar("I want my money back", corpus, { topK: 2 })</span>
-            </div>
+  <section class="section audit-band">
+    <div class="section-inner">
+      <p class="section-label">Showcase #17 · Audit</p>
+      <h2>Semantic search that never leaves the CPU</h2>
+      <p>
+        Hosted embedding APIs turn every keystroke into a network hop — latency, quotas, and a quiet leak of user text to someone else’s GPU. For browser extensions, offline note apps, edge workers, and static sites, that bargain is often unnecessary. You only need nearest-neighbor meaning, not a remote model farm.
+      </p>
+      <p>
+        <strong>Ternlight</strong> collapses that stack into one WebAssembly file: a BitNet-style ternary embedding model distilled from all-MiniLM-L6, a BERT tokenizer, and a hand-written Rust SIMD engine. Import <code>@ternlight/mini</code> (~5&nbsp;MB, ~2.5&nbsp;ms) or <code>@ternlight/base</code> (~7&nbsp;MB, ~5&nbsp;ms), call <code>embed</code> / <code>similar</code>, and search runs entirely on-device — Node, browsers, Workers, Deno, Bun.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="bundle">
+    <div class="section-inner">
+      <p class="section-label">Single artifact</p>
+      <h2>One WASM bundle. Zero runtime fetch.</h2>
+      <p class="lead">
+        Model weights, tokenizer vocab, and inference kernels ship together. No postinstall download, no model registry ping, no sidecar microservice — the package is the engine.
+      </p>
+      <div class="bundle-stage">
+        <div class="wasm-stack" aria-hidden="true">
+          <div class="wasm-layer">
+            <span class="val">Model</span>
+            <span class="tag">ternary · int4</span>
+          </div>
+          <div class="wasm-layer">
+            <span class="val">Tokenizer</span>
+            <span class="tag">BERT · 128 tok</span>
+          </div>
+          <div class="wasm-layer">
+            <span class="val">Engine</span>
+            <span class="tag">Rust → WASM SIMD</span>
           </div>
         </div>
-      </section>
-
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
-      </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
+        <div class="bundle-copy">
+          <h3>Wire it once, run anywhere</h3>
+          <p>
+            Ternary weights (−1 / 0 / +1) turn matmul into adds and subtracts that ride CPU vector lanes. Quality holds because the student trains as a ternary model from the start — not a clumsy post-hoc quantize.
+          </p>
+          <p>
+            Two npm tiers share the same API. Pick by size and quality budget; both emit 384-dim L2-normalized vectors ready for cosine search.
+          </p>
+          <div class="size-chips">
+            <div class="size-chip"><em>@ternlight/mini</em> 5.0 MB · ~2.5 ms</div>
+            <div class="size-chip"><em>@ternlight/base</em> 7.2 MB · ~5.1 ms</div>
+          </div>
+        </div>
       </div>
     </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
+  </section>
 
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+  <section class="section triad-band" id="stack">
+    <div class="section-inner">
+      <p class="section-label">Inside the light</p>
+      <h2>Tokenizer, model, SIMD — stacked, not scattered</h2>
+      <p class="lead">
+        Three pieces usually live in three repos and three deploy steps. Ternlight fuses them so “install the package” is the whole ops story.
+      </p>
+      <div class="triad">
+        <article class="triad-item">
+          <p class="triad-num">01 — Tokenizer</p>
+          <h3>BERT vocab in-bundle</h3>
+          <p>Text is tokenized locally up to 128 tokens (~95 words). No remote tokenizer service, no surprise vocab downloads at first embed.</p>
+        </article>
+        <article class="triad-item">
+          <p class="triad-num">02 — Model</p>
+          <h3>Ternary distilled MiniLM</h3>
+          <p>Distilled from all-MiniLM-L6 with BitNet b1.58-style QAT. Base tracks the teacher at 0.844 Spearman; Mini stays close at a smaller footprint.</p>
+        </article>
+        <article class="triad-item">
+          <p class="triad-num">03 — SIMD engine</p>
+          <h3>Rust kernels → WASM</h3>
+          <p>Hand-written inference mirrors BitLinear’s forward pass byte-for-byte, compiled to WASM SIMD so CPU vector units do the real work.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section latency-band" id="speed">
+    <div class="section-inner">
+      <div class="latency-row">
+        <div>
+          <p class="section-label">Millisecond CPU inference</p>
+          <h2>Faster than a round-trip can start</h2>
+          <p class="lead" style="margin-bottom: 0;">
+            At a few milliseconds per embed on a laptop CPU, search-as-you-type is not aspirational — it is the default. The live demo ranks ~2,000 documents entirely in the browser; results appear before a cloud API would finish DNS.
+          </p>
+        </div>
+        <div class="ms-display">
+          <div class="ms-block gold">
+            <div class="figure">2.5</div>
+            <div class="unit">ms p50 / embed</div>
+            <div class="tier">mini · ~400 emb/s</div>
+          </div>
+          <div class="ms-block">
+            <div class="figure">5.1</div>
+            <div class="unit">ms p50 / embed</div>
+            <div class="tier">base · ~195 emb/s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section privacy-band" id="privacy">
+    <div class="section-inner">
+      <p class="section-label">Stay on device</p>
+      <h2>The constellation never phones home</h2>
+      <p class="lead">
+        Queries and documents stay inside the process that loaded the WASM. That is not a privacy policy — it is an architecture.
+      </p>
+      <div class="privacy-layout">
+        <div class="device-ring" aria-hidden="true">
+          <div class="device-core">
+            <div class="glyph">Local only</div>
+            <p>Embeddings computed here. Vectors stay here.</p>
+          </div>
+        </div>
+        <ul class="privacy-points">
+          <li>
+            <strong>No data-handling agreements</strong>
+            <span>User text never crosses a network boundary for inference. Ideal for notes, mail, support tickets, and regulated corpora.</span>
+          </li>
+          <li>
+            <strong>Offline-first by default</strong>
+            <span>Extensions, Obsidian plugins, desktop shells, and static sites keep working without an embedding endpoint.</span>
+          </li>
+          <li>
+            <strong>Edge without an inference sidecar</strong>
+            <span>Cloudflare Workers, Vercel Edge, Deno Deploy — embed next to the request handler; no GPU service to operate.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section uses-band" id="uses">
+    <div class="section-inner">
+      <p class="section-label">Semantic search, shipped</p>
+      <h2>Where on-device vectors earn their keep</h2>
+      <p class="lead">
+        Same API whether you are ranking help articles as the user types or scoring docs on a Raspberry Pi gateway.
+      </p>
+      <div class="use-rail">
+        <article class="use-cell">
+          <h3>Search-as-you-type</h3>
+          <p>Nearest neighbors before the keystroke settles. Latency budget measured in milliseconds, not RTTs.</p>
+        </article>
+        <article class="use-cell">
+          <h3>Privacy-sensitive apps</h3>
+          <p>Personal knowledge bases, clinical notes, legal drafts — meaning without exfiltration.</p>
+        </article>
+        <article class="use-cell">
+          <h3>Static &amp; JAMstack sites</h3>
+          <p>Ship the model with the bundle. Hugo, Astro, Jekyll get semantic search with no backend.</p>
+        </article>
+        <article class="use-cell">
+          <h3>Edge &amp; small hardware</h3>
+          <p>Add/subtract math runs on ARM cores — Workers, kiosks, SBCs — no NPU required.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="close-band">
+    <h2>Light the vectors on your machine</h2>
+    <p>
+      Open the source, try the in-browser demo against two thousand documents, or <code>npm install @ternlight/base</code> and embed in a few lines.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/soycaporal/ternlight" target="_blank" rel="noopener">GitHub Repository</a>
+      <a class="btn btn-ghost" href="https://ternlight-demo.vercel.app/" target="_blank" rel="noopener">Try Live Demo</a>
+      <a class="btn btn-ghost" href="https://www.npmjs.com/package/@ternlight/base" target="_blank" rel="noopener">npm · base</a>
+    </div>
+
+    <div class="foot-note">
+      <span><a href="./">← Back to DuckWare showcases</a> · Showcase #17 · July 10, 2026</span>
+      <span><a href="https://github.com/mirarr-app/duckware" target="_blank" rel="noopener">DuckWare on GitHub</a></span>
+    </div>
+  </section>
+
 </body>
 </html>
