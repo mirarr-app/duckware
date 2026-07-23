@@ -4,206 +4,1028 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mouzi Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of Mouzi, the privacy-first system tray app that automatically organizes your Downloads folder with customizable rules.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare showcase of Mouzi — a privacy-first Tauri tray app that quietly sorts Downloads by customizable rules, fully offline, with undo history and Google Takeout import.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --espresso: #1a1410;
+      --charcoal: #241c16;
+      --umber: #2e241c;
+      --bark: #3d3228;
+      --cream: #f3e6d4;
+      --cream-mute: #c4b49e;
+      --amber: #e8a84a;
+      --amber-soft: #d4923a;
+      --amber-glow: rgba(232, 168, 74, 0.22);
+      --mist: rgba(243, 230, 212, 0.08);
+      --line: rgba(243, 230, 212, 0.12);
+      --font-display: "Fraunces", Georgia, serif;
+      --font-ui: "Source Sans 3", "Segoe UI", sans-serif;
+      --radius: 12px;
+      --max: 1080px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--espresso);
+      color: var(--cream);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 15% 0%, rgba(232, 168, 74, 0.07), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 20%, rgba(180, 120, 60, 0.05), transparent 50%),
+        linear-gradient(180deg, #16110e 0%, var(--espresso) 40%, #120e0b 100%);
+    }
+
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { color: var(--cream); }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 2.5rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* —— Top bar —— */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 0 0.5rem;
+      gap: 1rem;
+    }
+
+    .back {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--cream-mute);
+      letter-spacing: 0.02em;
+      transition: color 0.2s ease;
+    }
+    .back:hover { color: var(--amber); }
+
+    .meta-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cream-mute);
+      border: 1px solid var(--line);
+      background: var(--mist);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+    }
+
+    /* —— Hero —— */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3rem;
+      align-items: center;
+      padding: 3.5rem 0 4.5rem;
+      min-height: min(88vh, 820px);
+    }
+
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .brand-mark img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 0 1px var(--line), 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: clamp(2.75rem, 5.5vw, 4.25rem);
+      font-weight: 700;
+      font-optical-sizing: auto;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--cream);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.45rem, 2.6vw, 1.85rem);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--cream-mute);
+      line-height: 1.35;
+      max-width: 22ch;
+      margin-bottom: 1rem;
+    }
+
+    .hero-lead {
+      font-size: 1.05rem;
+      color: var(--cream-mute);
+      max-width: 38ch;
+      margin-bottom: 1.75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-family: var(--font-ui);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.7rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-amber {
+      background: var(--amber);
+      color: #1a1208;
+    }
+    .btn-amber:hover { background: #f0b85a; color: #1a1208; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--cream);
+      border-color: var(--line);
+    }
+    .btn-ghost:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    /* —— Desktop stage (hero visual) —— */
+    .desk-stage {
+      position: relative;
+      height: 420px;
+      border-radius: 16px;
+      background:
+        linear-gradient(165deg, var(--umber) 0%, var(--charcoal) 55%, #1c1612 100%);
+      border: 1px solid var(--line);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(243, 230, 212, 0.06);
+      overflow: hidden;
+    }
+
+    .desk-stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(243, 230, 212, 0.04) 1px, transparent 0);
+      background-size: 18px 18px;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .pile {
+      position: absolute;
+      left: 8%;
+      top: 14%;
+      width: 42%;
+      z-index: 1;
+    }
+
+    .pile-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cream-mute);
+      margin-bottom: 0.6rem;
+      opacity: 0.7;
+    }
+
+    .chaos {
+      position: relative;
+      height: 160px;
+    }
+
+    .file-chip {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.35rem 0.55rem;
+      border-radius: 6px;
+      background: var(--bark);
+      border: 1px solid var(--line);
+      color: var(--cream);
+      white-space:nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      animation: drift-in 5.5s ease-in-out infinite;
+    }
+
+    .file-chip .ext {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--amber);
+      opacity: 0.9;
+    }
+
+    .file-chip:nth-child(1) { left: 4%; top: 8%; animation-delay: 0s; }
+    .file-chip:nth-child(2) { left: 28%; top: 42%; animation-delay: 0.9s; }
+    .file-chip:nth-child(3) { left: 12%; top: 78%; animation-delay: 1.8s; }
+    .file-chip:nth-child(4) { left: 48%; top: 18%; animation-delay: 2.6s; }
+    .file-chip:nth-child(5) { left: 38%; top: 62%; animation-delay: 3.4s; }
+
+    @keyframes drift-in {
+      0%, 12% { opacity: 1; transform: translate(0, 0) scale(1); }
+      45% { opacity: 0.85; transform: translate(90px, 40px) scale(0.92); }
+      70%, 100% { opacity: 0; transform: translate(160px, 110px) scale(0.7); }
+    }
+
+    .folders {
+      position: absolute;
+      right: 6%;
+      bottom: 18%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      z-index: 2;
+    }
+
+    .folder {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 8px;
+      background: rgba(26, 20, 16, 0.75);
+      border: 1px solid var(--line);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--cream);
+      min-width: 148px;
+      animation: folder-glow 5.5s ease-in-out infinite;
+    }
+
+    .folder:nth-child(1) { animation-delay: 1.2s; }
+    .folder:nth-child(2) { animation-delay: 2.1s; }
+    .folder:nth-child(3) { animation-delay: 3.0s; }
+    .folder:nth-child(4) { animation-delay: 3.8s; }
+
+    .folder-icon {
+      width: 18px;
+      height: 14px;
+      border-radius: 2px 2px 3px 3px;
+      background: linear-gradient(180deg, var(--amber-soft), #a86e28);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .folder-icon::before {
+      content: "";
+      position: absolute;
+      top: -4px;
+      left: 0;
+      width: 8px;
+      height: 4px;
+      border-radius: 2px 2px 0 0;
+      background: #c48432;
+    }
+
+    @keyframes folder-glow {
+      0%, 35%, 100% { box-shadow: none; border-color: var(--line); }
+      50% {
+        box-shadow: 0 0 16px var(--amber-glow);
+        border-color: rgba(232, 168, 74, 0.45);
+      }
+    }
+
+    /* Tray popup mock */
+    .tray-popup {
+      position: absolute;
+      right: 10%;
+      top: 10%;
+      width: 210px;
+      border-radius: 10px;
+      background: #1e1814;
+      border: 1px solid rgba(232, 168, 74, 0.25);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        0 16px 40px rgba(0, 0, 0, 0.5),
+        0 0 28px var(--amber-glow);
+      z-index: 5;
+      overflow: hidden;
+      animation: tray-pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes tray-pulse {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 16px 40px rgba(0,0,0,0.5), 0 0 20px var(--amber-glow); }
+      50% { box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 16px 40px rgba(0,0,0,0.5), 0 0 36px rgba(232, 168, 74, 0.35); }
+    }
+
+    .tray-head {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 0.75rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(232, 168, 74, 0.06);
+    }
+
+    .tray-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 8px var(--amber);
+      animation: tray-dot 2.4s ease-in-out infinite;
+    }
+
+    @keyframes tray-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.85); }
+    }
+
+    .tray-head span {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .tray-body { padding: 0.5rem 0.65rem 0.7rem; }
+
+    .tray-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.68rem;
+      padding: 0.35rem 0.3rem;
+      color: var(--cream-mute);
+      border-radius: 4px;
+    }
+    .tray-row + .tray-row { margin-top: 0.15rem; }
+    .tray-row strong { color: var(--cream); font-weight: 600; }
+    .tray-row .ok { color: var(--amber); font-weight: 700; font-size: 0.62rem; }
+
+    .tray-stat {
+      margin-top: 0.45rem;
+      padding-top: 0.45rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--cream-mute);
+    }
+    .tray-stat em {
+      font-style: normal;
+      font-weight: 700;
+      color: var(--amber);
+    }
+
+    .taskbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 36px;
+      background: rgba(12, 10, 8, 0.92);
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 14px;
+      gap: 10px;
+      z-index: 6;
+    }
+
+    .tray-icon-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      background: var(--bark);
+      border: 1px solid rgba(232, 168, 74, 0.4);
+      display: grid;
+      place-items: center;
+      animation: tray-pulse 4s ease-in-out infinite;
+    }
+
+    .tray-icon-btn .mini-folder {
+      width: 12px;
+      height: 9px;
+      border-radius: 1px 1px 2px 2px;
+      background: linear-gradient(180deg, var(--amber), #a86e28);
+      position: relative;
+    }
+    .tray-icon-btn .mini-folder::before {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: 0;
+      width: 5px;
+      height: 3px;
+      border-radius: 1px 1px 0 0;
+      background: #c48432;
+    }
+
+    .clock-fake {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--cream-mute);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* —— Sections —— */
+    section.block {
+      padding: 4rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.75rem;
+    }
+
+    .block h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      max-width: 22ch;
+    }
+
+    .block .lede {
+      font-size: 1.05rem;
+      color: var(--cream-mute);
+      max-width: 58ch;
+      margin-bottom: 2rem;
+    }
+
+    .audit p {
+      font-size: 1.05rem;
+      color: var(--cream-mute);
+      max-width: 62ch;
+      margin-bottom: 1.1rem;
+    }
+    .audit p strong { color: var(--cream); font-weight: 600; }
+
+    /* Rules engine */
+    .rules-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+    }
+
+    .rule {
+      background: var(--charcoal);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.2rem;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .rule:hover {
+      border-color: rgba(232, 168, 74, 0.35);
+      background: var(--umber);
+    }
+
+    .rule-if {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.4rem;
+    }
+
+    .rule-match {
+      font-family: ui-monospace, "Cascadia Code", monospace;
+      font-size: 0.82rem;
+      color: var(--cream);
+      margin-bottom: 0.65rem;
+    }
+
+    .rule-arrow {
+      font-size: 0.85rem;
+      color: var(--cream-mute);
+    }
+    .rule-arrow span {
+      color: var(--cream);
+      font-weight: 600;
+    }
+
+    /* Privacy strip */
+    .privacy-strip {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .privacy-visual {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border-radius: 14px;
+      background: var(--charcoal);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+
+    .lock-ring {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 2px solid rgba(232, 168, 74, 0.35);
+      display: grid;
+      place-items: center;
+      position: relative;
+      animation: lock-breathe 5s ease-in-out infinite;
+    }
+
+    .lock-ring::before {
+      content: "";
+      position: absolute;
+      inset: -14px;
+      border-radius: 50%;
+      border: 1px dashed rgba(196, 180, 158, 0.25);
+    }
+
+    @keyframes lock-breathe {
+      0%, 100% { box-shadow: 0 0 0 0 transparent; }
+      50% { box-shadow: 0 0 28px var(--amber-glow); }
+    }
+
+    .lock-core {
+      text-align: center;
+    }
+    .lock-core .big {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--amber);
+      line-height: 1;
+    }
+    .lock-core .sub {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cream-mute);
+      margin-top: 0.25rem;
+    }
+
+    .trust-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .trust-list li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.85rem;
+      align-items: start;
+    }
+
+    .trust-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: rgba(232, 168, 74, 0.12);
+      border: 1px solid rgba(232, 168, 74, 0.28);
+      display: grid;
+      place-items: center;
+      font-size: 0.75rem;
+      color: var(--amber);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .trust-list h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+      color: var(--cream);
+    }
+    .trust-list p {
+      font-size: 0.92rem;
+      color: var(--cream-mute);
+    }
+
+    /* Undo + Takeout + RAM trio */
+    .trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .trio-card {
+      background: linear-gradient(160deg, var(--umber), var(--charcoal));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.35rem;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .trio-card .num {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--amber);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
+    .trio-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .trio-card p {
+      font-size: 0.92rem;
+      color: var(--cream-mute);
+      flex-grow: 1;
+    }
+
+    .history-mock {
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      font-family: ui-monospace, monospace;
+      color: var(--cream-mute);
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 6px;
+      padding: 0.55rem 0.65rem;
+      border: 1px solid var(--line);
+    }
+    .history-mock .undo {
+      color: var(--amber);
+      font-weight: 700;
+    }
+
+    /* Screenshots */
+    .shots {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .shot {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--charcoal);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    .shot figcaption {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--cream-mute);
+      padding: 0.65rem 0.9rem;
+      border-top: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .shot img {
+      width: 100%;
+      height: auto;
+      display: block;
+      vertical-align: middle;
+    }
+
+    /* Footer CTA */
+    .closer {
+      text-align: center;
+      padding: 4.5rem 0 3rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .closer h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      max-width: none;
+    }
+
+    .closer p {
+      color: var(--cream-mute);
+      margin-bottom: 1.5rem;
+      max-width: 40ch;
+      margin-inline: auto;
+    }
+
+    .closer .cta-row { justify-content: center; }
+
+    .foot {
+      padding: 1.5rem 0 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--cream-mute);
+      border-top: 1px solid var(--line);
+    }
+    .foot a { color: var(--cream-mute); }
+    .foot a:hover { color: var(--amber); }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .file-chip,
+      .folder,
+      .tray-popup,
+      .tray-dot,
+      .tray-icon-btn,
+      .lock-ring {
+        animation: none !important;
+      }
+      .file-chip { opacity: 0.9; }
+      .btn:hover { transform: none; }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        min-height: auto;
+        padding: 2.5rem 0 3rem;
+      }
+      .desk-stage { height: 360px; }
+      .rules-board { grid-template-columns: 1fr 1fr; }
+      .privacy-strip { grid-template-columns: 1fr; }
+      .privacy-visual { max-width: 280px; margin-inline: auto; }
+      .trio { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .wrap { width: min(100% - 1.5rem, var(--max)); }
+      .rules-board,
+      .shots { grid-template-columns: 1fr; }
+      .desk-stage { height: 340px; }
+      .tray-popup {
+        width: 170px;
+        right: 4%;
+        top: 6%;
+      }
+      .pile { width: 48%; left: 4%; }
+      .folders { right: 4%; bottom: 14%; }
+      .folder { min-width: 120px; font-size: 0.7rem; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
-      </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <span class="meta-pill">Showcase #21 · Desktop</span>
+    </header>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
-      <div style="flex-grow: 1;">
-        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-          <span>hsr88/mouzi</span>
-          <span>•</span>
-          <span>July 12, 2026</span>
-          <span>•</span>
-          <span style="color: var(--color-body-strong);">Showcase #21</span>
+    <section class="hero" aria-label="Mouzi hero">
+      <div>
+        <div class="brand-mark">
+          <img src="https://raw.githubusercontent.com/hsr88/mouzi/main/docs/mouzilogo2-square.png" alt="Mouzi logo" width="40" height="40">
+          <span class="brand-name">Mouzi</span>
         </div>
-        
-        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-          Mouzi
-        </h1>
-        
-        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-          Your downloads, tamed — a silent tray app that sorts files by rule, offline and private.
+        <h1>Your downloads, tamed — from the tray.</h1>
+        <p class="hero-lead">
+          A silent Tauri companion that watches Downloads (and any folder you choose), then sorts new files by your rules — fully offline, feather-light, undoable.
         </p>
-
-        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-          <a href="https://github.com/hsr88/mouzi" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-          <a href="https://mouzi.cc/download" class="btn-secondary-ghost" target="_blank" rel="noopener">Download</a>
+        <div class="cta-row">
+          <a class="btn btn-amber" href="https://mouzi.cc/download" target="_blank" rel="noopener">Download Mouzi</a>
+          <a class="btn btn-ghost" href="https://github.com/hsr88/mouzi" target="_blank" rel="noopener">View source</a>
         </div>
       </div>
 
-      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
-        <img src="https://github.com/hsr88/mouzi/raw/main/docs/mouzilogo2-square.png" alt="Mouzi logo" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
+      <div class="desk-stage" aria-hidden="true">
+        <div class="tray-popup">
+          <div class="tray-head">
+            <span class="tray-dot"></span>
+            <span>Mouzi</span>
+          </div>
+          <div class="tray-body">
+            <div class="tray-row"><strong>report.pdf</strong> <span class="ok">→ Docs</span></div>
+            <div class="tray-row"><strong>shot.png</strong> <span class="ok">→ Images</span></div>
+            <div class="tray-row"><strong>kit.zip</strong> <span class="ok">→ Archives</span></div>
+            <div class="tray-stat"><span>Today</span> <em>47 sorted</em></div>
+          </div>
+        </div>
+
+        <div class="pile">
+          <div class="pile-label">Downloads · chaos</div>
+          <div class="chaos">
+            <div class="file-chip"><span class="ext">PDF</span> invoice_may.pdf</div>
+            <div class="file-chip"><span class="ext">PNG</span> screenshot.png</div>
+            <div class="file-chip"><span class="ext">ZIP</span> photos_takeout.zip</div>
+            <div class="file-chip"><span class="ext">EXE</span> setup.exe</div>
+            <div class="file-chip"><span class="ext">MP3</span> mix.mp3</div>
+          </div>
+        </div>
+
+        <div class="folders">
+          <div class="folder"><span class="folder-icon"></span> Images</div>
+          <div class="folder"><span class="folder-icon"></span> Documents</div>
+          <div class="folder"><span class="folder-icon"></span> Archives</div>
+          <div class="folder"><span class="folder-icon"></span> Installers</div>
+        </div>
+
+        <div class="taskbar">
+          <div class="tray-icon-btn" title="Mouzi tray"><span class="mini-folder"></span></div>
+          <span class="clock-fake">14:22</span>
+        </div>
       </div>
-    </div>
-  </header>
+    </section>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- UI Screenshots -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">App Screenshots</h3>
-        <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: var(--space-lg);">
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">tray popup</div>
-            </div>
-            <img src="https://github.com/hsr88/mouzi/raw/main/docs/screenshots/screenshot2.png" alt="Mouzi tray popup showing recent file actions" style="width: 100%; height: auto; display: block;">
-          </div>
+    <section class="block audit">
+      <p class="eyebrow">DuckWare audit</p>
+      <h2>A tray app that earns its keep by staying out of the way.</h2>
+      <p>
+        Everyone’s Downloads folder becomes a landfill: installers next to invoices, screenshots mixed with zips, Takeout dumps waiting for a weekend that never comes. Cloud “organizers” want to read filenames or sync metadata off-machine — a trade most privacy-minded users refuse.
+      </p>
+      <p>
+        <strong>Mouzi</strong> is a free, MIT-licensed Windows and Linux utility built with Tauri, Rust, and React. It lives in the system tray, watches the folders you choose, and moves new files into tidy destinations using a first-match-wins rules engine — extensions, regex, path placeholders like <code>{year}/{month}</code>, plus <code>.mouziignore</code> when you need to leave something alone. Silent, manual, or paused modes per folder; local SQLite history with one-click undo; optional Google Takeout archive import that extracts and sorts in one pass. Roughly <strong>~5&nbsp;MB RAM</strong>, no cloud, no telemetry by default.
+      </p>
+    </section>
 
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">settings</div>
+    <section class="block">
+      <p class="eyebrow">Rules engine</p>
+      <h2>First match wins. Chaos becomes shelves.</h2>
+      <p class="lede">
+        Sensible defaults cover images, documents, archives, installers, and media. Then you extend with regex, priority order, and dynamic destination paths.
+      </p>
+      <div class="rules-board">
+        <article class="rule">
+          <div class="rule-if">If extension</div>
+          <div class="rule-match">jpg · png · webp · gif</div>
+          <div class="rule-arrow">→ <span>Downloads/Images/</span></div>
+        </article>
+        <article class="rule">
+          <div class="rule-if">If extension</div>
+          <div class="rule-match">pdf · docx · xlsx</div>
+          <div class="rule-arrow">→ <span>Documents/{year}/{month}/</span></div>
+        </article>
+        <article class="rule">
+          <div class="rule-if">If regex</div>
+          <div class="rule-match">.*invoice.*</div>
+          <div class="rule-arrow">→ <span>Finance/Invoices/</span></div>
+        </article>
+        <article class="rule">
+          <div class="rule-if">If extension</div>
+          <div class="rule-match">zip · rar · 7z · tar.gz</div>
+          <div class="rule-arrow">→ <span>Downloads/Archives/</span></div>
+        </article>
+        <article class="rule">
+          <div class="rule-if">If extension</div>
+          <div class="rule-match">exe · msi · AppImage</div>
+          <div class="rule-arrow">→ <span>Downloads/Installers/</span></div>
+        </article>
+        <article class="rule">
+          <div class="rule-if">Catch-all</div>
+          <div class="rule-match">everything else</div>
+          <div class="rule-arrow">→ <span>Downloads/Other/</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="privacy-strip">
+        <div class="privacy-visual" aria-hidden="true">
+          <div class="lock-ring">
+            <div class="lock-core">
+              <div class="big">0</div>
+              <div class="sub">cloud calls</div>
             </div>
-            <img src="https://github.com/hsr88/mouzi/raw/main/docs/screenshots/screenshot3.png" alt="Mouzi settings window with sorting rules" style="width: 100%; height: auto; display: block;">
           </div>
         </div>
-      </section>
-
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
         <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Mouzi?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            The Downloads folder is where every installer, PDF, screenshot, and zip file lands — and where most of them stay forever. Manual cleanup works until it does not, and cloud-based organizers trade convenience for sending filenames (or worse) to someone else's server.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>Mouzi</strong> is a free, privacy-first desktop app built with Tauri and Rust that lives in the system tray and quietly sorts watched folders as files arrive. Images, documents, archives, installers, and media each route to dedicated subfolders via customizable rules — with per-folder silent, manual, or paused modes, full undo history, and zero cloud dependency.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Silent Background Organization</span>
-              <p class="text-body-sm">
-                Runs 24/7 at roughly 5 MB RAM, watching folders with the Rust notify crate and applying the first matching rule within seconds of a new file landing. A subtle toast reports how many files were organized — no modal dialogs interrupting your workflow.
-              </p>
+          <p class="eyebrow">Offline &amp; private</p>
+          <h2>Your filenames never leave the machine.</h2>
+          <ul class="trust-list">
+            <li>
+              <span class="trust-mark">∅</span>
+              <div>
+                <h3>100% offline</h3>
+                <p>Zero cloud sync, zero filename uploads. Updates are optional and check-driven — not a background phone-home.</p>
+              </div>
             </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Rules Engine with Ignore Patterns</span>
-              <p class="text-body-sm">
-                Default rules cover common file types out of the box. Extend with regex patterns, dynamic path placeholders like <code>{year}/{month}</code>, and per-folder <code>.mouziignore</code> files. Google Takeout archives can be imported and sorted in one step without manual unzip-and-drag.
-              </p>
+            <li>
+              <span class="trust-mark">⊘</span>
+              <div>
+                <h3>No telemetry by default</h3>
+                <p>History and settings stay in a local SQLite database under your user profile. Portable builds leave no registry footprint.</p>
+              </div>
             </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">100% Offline, Locally Stored</span>
-              <p class="text-body-sm">
-                No telemetry by default, no filename uploads, no cloud sync. Action history lives in a local SQLite database with one-click undo. Available for Windows and Linux as installer, MSI, portable, AppImage, deb, or rpm — with a portable build that leaves no registry trace.
-              </p>
+            <li>
+              <span class="trust-mark">⌀</span>
+              <div>
+                <h3>System files ignored</h3>
+                <p>desktop.ini, Thumbs.db, .DS_Store, browser temp stubs, and zero-byte placeholders are left untouched.</p>
+              </div>
             </li>
           </ul>
         </div>
+      </div>
+    </section>
 
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Quick Start</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Install, let Mouzi start with the tray icon, and drop a file into Downloads — it routes to the right subfolder within a couple of seconds:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">workflow</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">1. Install Mouzi → tray icon appears</span><br>
-              <span class="token-cmd">2. Drop invoice.pdf into Downloads/</span><br>
-              <span class="token-success">→ Downloads/Documents/invoice.pdf</span><br><br>
-              <span class="token-cmd">Left-click tray</span> <span class="token-comment"># recent actions & stats</span><br>
-              <span class="token-cmd">Right-click tray</span> <span class="token-comment"># Clean Now, Settings, Quit</span>
-            </div>
+    <section class="block">
+      <p class="eyebrow">Quiet strengths</p>
+      <h2>Undo, Takeout, and a tiny RAM bill.</h2>
+      <p class="lede">Three details that make Mouzi feel finished rather than experimental.</p>
+      <div class="trio">
+        <article class="trio-card">
+          <div class="num">↺</div>
+          <h3>History &amp; undo</h3>
+          <p>Every move is logged locally. Mis-sort a file? One click puts it back — then clear the log whenever you like.</p>
+          <div class="history-mock">
+            report.pdf → Documents/ <span class="undo">[Undo]</span>
           </div>
-        </div>
-      </section>
-
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
+        </article>
+        <article class="trio-card">
+          <div class="num">TG</div>
+          <h3>Google Takeout</h3>
+          <p>Drop in a .zip, .tgz, or .tar.gz from Takeout. Mouzi extracts to a staging folder and runs your existing rules — no manual unzip marathon.</p>
+        </article>
+        <article class="trio-card">
+          <div class="num">~5</div>
+          <h3>MB of RAM</h3>
+          <p>Rust backend + tiny tray popup. Autostart, toast counts, and 24/7 watching without feeling like another Electron roommate.</p>
+        </article>
       </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
+    <section class="block">
+      <p class="eyebrow">Inside the app</p>
+      <h2>Tray popup and settings, as shipped.</h2>
+      <p class="lede">Hotlinked from the upstream repo — the real UI, not a marketing mock.</p>
+      <div class="shots">
+        <figure class="shot">
+          <img src="https://raw.githubusercontent.com/hsr88/mouzi/main/docs/screenshots/screenshot2.png" alt="Mouzi system tray popup showing recent file actions and stats" width="600" height="800" loading="lazy">
+          <figcaption>Tray popup — recent actions</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="https://raw.githubusercontent.com/hsr88/mouzi/main/docs/screenshots/screenshot3.png" alt="Mouzi settings window with sorting rules configuration" width="900" height="650" loading="lazy">
+          <figcaption>Settings — rules &amp; folders</figcaption>
+        </figure>
       </div>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
+    <section class="closer">
+      <h2>Install once. Let the tray do the rest.</h2>
+      <p>Windows (setup, MSI, portable) and Linux (AppImage, deb, rpm) — pick a build and watch Downloads settle themselves.</p>
+      <div class="cta-row">
+        <a class="btn btn-amber" href="https://mouzi.cc/download" target="_blank" rel="noopener">Get Mouzi</a>
+        <a class="btn btn-ghost" href="https://github.com/hsr88/mouzi" target="_blank" rel="noopener">hsr88/mouzi on GitHub</a>
+        <a class="btn btn-ghost" href="./">← Catalog</a>
       </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
+    </section>
 
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+    <footer class="foot">
+      <span>Showcase #21 · DuckWare curation · July 2026</span>
+      <span>
+        <a href="https://mouzi.cc" target="_blank" rel="noopener">mouzi.cc</a>
+        ·
+        <a href="../feed.xml">RSS</a>
+      </span>
+    </footer>
+  </div>
+
 </body>
 </html>
