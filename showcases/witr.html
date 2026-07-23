@@ -4,201 +4,971 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Witr Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of witr, the Go CLI that explains why processes, ports, containers, and services are running on your system.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare Showcase #20: Witr — a Go CLI that traces processes, ports, containers, and file locks back to their causal chain, with an interactive TUI.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f0c;
+      --bg-elev: #111814;
+      --bg-panel: #0e1410;
+      --line: #1c2a1f;
+      --line-bright: #2a3d2e;
+      --phosphor: #3dff7a;
+      --phosphor-dim: #1fa84a;
+      --phosphor-glow: rgba(61, 255, 122, 0.18);
+      --amber: #f0b429;
+      --amber-dim: #a67a1a;
+      --amber-glow: rgba(240, 180, 41, 0.15);
+      --text: #d4e0d6;
+      --text-mute: #7a8f7e;
+      --danger: #ff5c5c;
+      --font-display: "Space Grotesk", system-ui, sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      --max: 1080px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--phosphor); text-decoration: none; }
+    a:hover { color: #7affa8; }
+
+    /* Scanline overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.08) 2px,
+        rgba(0, 0, 0, 0.08) 4px
+      );
+      opacity: 0.35;
+    }
+
+    /* Ambient phosphor wash */
+    body::after {
+      content: "";
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      width: 80vw;
+      height: 60vh;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse, var(--phosphor-glow), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    /* Top bar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .topbar a.back {
+      color: var(--text-mute);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .topbar a.back:hover { color: var(--phosphor); }
+
+    .topbar .meta {
+      color: var(--text-mute);
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .topbar .meta .tag {
+      color: var(--amber);
+    }
+
+    /* Hero — full-bleed terminal */
+    .hero {
+      position: relative;
+      margin: 0 calc(50% - 50vw);
+      width: 100vw;
+      padding: 3.5rem 1.25rem 4rem;
+      background:
+        linear-gradient(180deg, #0d130f 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 70% 20%, var(--amber-glow), transparent),
+        radial-gradient(ellipse 50% 50% at 20% 80%, var(--phosphor-glow), transparent);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      max-width: var(--max);
+      margin: 0 auto;
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    @media (min-width: 900px) {
+      .hero-inner {
+        grid-template-columns: 1fr 1.15fr;
+        align-items: end;
+        gap: 3rem;
+      }
+    }
+
+    .brand-block {
+      padding-bottom: 0.5rem;
+    }
+
+    .case-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 1rem;
+    }
+    .case-file::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: var(--amber);
+      box-shadow: 0 0 10px var(--amber);
+      animation: pulse-dot 1.8s ease-in-out infinite;
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(3.2rem, 9vw, 5.5rem);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: #e8f5ea;
+      text-shadow: 0 0 40px var(--phosphor-glow);
+      margin-bottom: 0.75rem;
+    }
+
+    .brand span {
+      color: var(--phosphor);
+    }
+
+    .lede {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+      line-height: 1.35;
+      color: var(--text);
+      max-width: 28ch;
+      margin-bottom: 1.75rem;
+    }
+
+    .lede em {
+      font-style: normal;
+      color: var(--amber);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.15rem;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      border: 1px solid var(--line-bright);
+      transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--phosphor);
+      color: #061008;
+      border-color: var(--phosphor);
+    }
+    .btn-primary:hover {
+      background: #7affa8;
+      color: #061008;
+      box-shadow: 0 0 24px var(--phosphor-glow);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+    }
+    .btn-ghost:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+      box-shadow: 0 0 20px var(--amber-glow);
+    }
+
+    /* Terminal session */
+    .term {
+      background: var(--bg-panel);
+      border: 1px solid var(--line-bright);
+      box-shadow:
+        0 0 0 1px rgba(61, 255, 122, 0.06),
+        0 24px 60px rgba(0, 0, 0, 0.55);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .term-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 0.9rem;
+      background: #0a100c;
+      border-bottom: 1px solid var(--line);
+      font-size: 11px;
+      color: var(--text-mute);
+      letter-spacing: 0.04em;
+    }
+
+    .term-dots {
+      display: flex;
+      gap: 5px;
+      margin-right: 0.5rem;
+    }
+    .term-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--line-bright);
+    }
+    .term-dots span:nth-child(1) { background: #5a2a2a; }
+    .term-dots span:nth-child(2) { background: #5a4a1a; }
+    .term-dots span:nth-child(3) { background: #1a4a2a; }
+
+    .term-body {
+      padding: 1.15rem 1.1rem 1.35rem;
+      font-size: 13px;
+      line-height: 1.7;
+      min-height: 280px;
+    }
+
+    .prompt { color: var(--phosphor-dim); }
+    .cmd { color: var(--phosphor); }
+
+    .typed-line {
+      display: inline;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid var(--phosphor);
+      animation:
+        type-cmd 1.4s steps(18) 0.4s both,
+        blink-caret 0.85s step-end infinite;
+      max-width: 0;
+    }
+
+    .out-block {
+      margin-top: 0.85rem;
+      opacity: 0;
+      animation: fade-in 0.5s ease 2s forwards;
+    }
+
+    .lbl { color: var(--text-mute); }
+    .val { color: var(--text); }
+    .why-label {
+      color: var(--amber);
+      margin-top: 0.85rem;
+      display: block;
+    }
+
+    .chain {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.4rem;
+      font-size: 12.5px;
+    }
+
+    .chain-node {
+      padding: 0.2rem 0.45rem;
+      border: 1px solid var(--line);
+      background: #0a100c;
+      color: var(--text-mute);
+      opacity: 0.35;
+      animation: node-lit 0.45s ease forwards;
+    }
+    .chain-node:nth-child(1) { animation-delay: 2.3s; }
+    .chain-node:nth-child(3) { animation-delay: 2.75s; }
+    .chain-node:nth-child(5) { animation-delay: 3.2s; }
+
+    .chain-arrow {
+      color: var(--phosphor-dim);
+      opacity: 0;
+      animation: fade-in 0.3s ease forwards;
+    }
+    .chain-arrow:nth-child(2) { animation-delay: 2.55s; }
+    .chain-arrow:nth-child(4) { animation-delay: 3.0s; }
+
+    .chain-node.lit-final {
+      border-color: var(--phosphor);
+      color: var(--phosphor);
+      box-shadow: 0 0 12px var(--phosphor-glow);
+    }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 8px;
+      height: 1.05em;
+      background: var(--phosphor);
+      vertical-align: text-bottom;
+      margin-left: 2px;
+      animation: blink-block 1s step-end infinite;
+      opacity: 0;
+      animation-delay: 3.6s;
+      animation-fill-mode: forwards;
+    }
+
+    /* Evidence sections */
+    .section {
+      padding: 4.5rem 0 0;
+    }
+
+    .section-head {
+      margin-bottom: 1.75rem;
+      max-width: 40rem;
+    }
+
+    .section-kicker {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--phosphor-dim);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-head h2 {
+      font-family: var(--font-display);
+      font-weight: 650;
+      font-size: clamp(1.6rem, 3.5vw, 2.15rem);
+      letter-spacing: -0.02em;
+      color: #e8f5ea;
+      line-height: 1.15;
+      margin-bottom: 0.65rem;
+    }
+
+    .section-head p {
+      color: var(--text-mute);
+      font-size: 14px;
+    }
+
+    .prose {
+      color: var(--text);
+      max-width: 42rem;
+    }
+    .prose p + p { margin-top: 1rem; }
+    .prose strong { color: #e8f5ea; font-weight: 600; }
+    .prose code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      color: var(--phosphor);
+      background: rgba(61, 255, 122, 0.08);
+      padding: 0.1em 0.35em;
+      border: 1px solid rgba(61, 255, 122, 0.15);
+    }
+
+    /* Trace grid */
+    .trace-grid {
+      display: grid;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    @media (min-width: 720px) {
+      .trace-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .trace-panel {
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      padding: 1.35rem 1.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .trace-panel:hover {
+      border-color: var(--line-bright);
+      box-shadow: inset 0 0 40px rgba(61, 255, 122, 0.04);
+    }
+
+    .trace-panel::before {
+      content: attr(data-cmd);
+      position: absolute;
+      top: 0.75rem;
+      right: 0.9rem;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--text-mute);
+      opacity: 0.7;
+    }
+
+    .trace-icon {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-bright);
+      color: var(--phosphor);
+      font-size: 12px;
+      margin-bottom: 0.9rem;
+    }
+
+    .trace-panel h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #e8f5ea;
+      margin-bottom: 0.45rem;
+    }
+
+    .trace-panel p {
+      font-size: 13px;
+      color: var(--text-mute);
+      line-height: 1.6;
+    }
+
+    .trace-panel.accent-amber:hover {
+      border-color: var(--amber-dim);
+      box-shadow: inset 0 0 40px var(--amber-glow);
+    }
+    .trace-panel.accent-amber .trace-icon { color: var(--amber); border-color: var(--amber-dim); }
+
+    /* Strengths as forensic findings */
+    .findings {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 1.5rem;
+      border: 1px solid var(--line);
+    }
+
+    .finding {
+      display: grid;
+      gap: 0.75rem;
+      padding: 1.35rem 1.25rem;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-elev);
+    }
+    .finding:last-child { border-bottom: none; }
+
+    @media (min-width: 700px) {
+      .finding {
+        grid-template-columns: 7rem 1fr;
+        gap: 1.5rem;
+        align-items: start;
+      }
+    }
+
+    .finding-id {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      padding-top: 0.2rem;
+    }
+
+    .finding h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #e8f5ea;
+      margin-bottom: 0.4rem;
+    }
+
+    .finding p {
+      font-size: 13.5px;
+      color: var(--text-mute);
+    }
+
+    /* TUI mock */
+    .tui-frame {
+      margin-top: 2rem;
+      border: 1px solid var(--line-bright);
+      background: #080c09;
+      overflow: hidden;
+    }
+
+    .tui-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--line);
+      background: #0a100c;
+    }
+
+    .tui-tab {
+      padding: 0.65rem 1rem;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: var(--text-mute);
+      border-right: 1px solid var(--line);
+      border-bottom: 2px solid transparent;
+    }
+    .tui-tab.active {
+      color: var(--phosphor);
+      border-bottom-color: var(--phosphor);
+      background: rgba(61, 255, 122, 0.05);
+    }
+
+    .tui-body {
+      display: grid;
+      min-height: 220px;
+    }
+
+    @media (min-width: 760px) {
+      .tui-body {
+        grid-template-columns: 1.4fr 1fr;
+      }
+    }
+
+    .tui-list {
+      padding: 0.75rem;
+      border-right: 1px solid var(--line);
+      font-size: 12px;
+    }
+
+    .tui-row {
+      display: grid;
+      grid-template-columns: 4.5rem 1fr 3.5rem 4rem;
+      gap: 0.5rem;
+      padding: 0.35rem 0.45rem;
+      color: var(--text-mute);
+    }
+    .tui-row.head {
+      color: var(--amber-dim);
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.25rem;
+    }
+    .tui-row.sel {
+      background: rgba(61, 255, 122, 0.1);
+      color: var(--phosphor);
+      outline: 1px solid rgba(61, 255, 122, 0.25);
+    }
+
+    .tui-side {
+      padding: 0.9rem 1rem;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+    .tui-side .side-title {
+      color: var(--amber);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .tui-side .side-chain {
+      color: var(--phosphor);
+      margin: 0.5rem 0;
+    }
+    .tui-side .mute { color: var(--text-mute); }
+
+    .tui-status {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.45rem 0.85rem;
+      border-top: 1px solid var(--line);
+      font-size: 11px;
+      color: var(--text-mute);
+      background: #0a100c;
+    }
+    .tui-status .live {
+      color: var(--phosphor);
+    }
+    .tui-status .live::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--phosphor);
+      margin-right: 0.4rem;
+      box-shadow: 0 0 8px var(--phosphor);
+      animation: pulse-dot 1.6s ease-in-out infinite;
+    }
+
+    /* Command strip */
+    .cmd-strip {
+      margin-top: 2rem;
+      background: var(--bg-panel);
+      border: 1px solid var(--line);
+      padding: 1.1rem 1.2rem;
+      font-size: 13px;
+      overflow-x: auto;
+    }
+    .cmd-strip .line { white-space: nowrap; margin: 0.25rem 0; }
+    .cmd-strip .comment { color: var(--text-mute); }
+
+    /* Footer */
+    .page-foot {
+      margin-top: 5rem;
+      padding: 2rem 0 3rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 12px;
+      color: var(--text-mute);
+    }
+    .page-foot a { color: var(--text-mute); }
+    .page-foot a:hover { color: var(--phosphor); }
+
+    /* Keyframes */
+    @keyframes type-cmd {
+      from { max-width: 0; }
+      to { max-width: 12ch; }
+    }
+
+    @keyframes blink-caret {
+      50% { border-color: transparent; }
+    }
+
+    @keyframes blink-block {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes node-lit {
+      from { opacity: 0.35; color: var(--text-mute); border-color: var(--line); }
+      to {
+        opacity: 1;
+        color: var(--phosphor);
+        border-color: var(--phosphor-dim);
+        box-shadow: 0 0 10px var(--phosphor-glow);
+      }
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      body::before { opacity: 0.15; }
+      .typed-line {
+        animation: none;
+        max-width: none;
+        border-right: none;
+        white-space: normal;
+      }
+      .out-block,
+      .chain-node,
+      .chain-arrow,
+      .cursor-blink {
+        animation: none !important;
+        opacity: 1 !important;
+      }
+      .chain-node {
+        color: var(--phosphor);
+        border-color: var(--phosphor-dim);
+      }
+      .case-file::before,
+      .tui-status .live::before {
+        animation: none;
+      }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
-      </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
+  <div class="wrap">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <div class="meta">
         <span>pranshuparmar/witr</span>
-        <span>•</span>
+        <span>·</span>
         <span>July 12, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #20</span>
+        <span>·</span>
+        <span class="tag">Showcase #20</span>
       </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        Witr
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Why is this running? — trace processes, ports, and containers back to their cause in one command.
-      </p>
+    </header>
+  </div>
 
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://github.com/pranshuparmar/witr" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-        <a href="https://github.com/pranshuparmar/witr/releases/latest" class="btn-secondary-ghost" target="_blank" rel="noopener">Latest Release</a>
+  <section class="hero" aria-label="Witr hero">
+    <div class="hero-inner">
+      <div class="brand-block">
+        <div class="case-file">Case open — causality unknown</div>
+        <h1 class="brand">Wit<span>r</span></h1>
+        <p class="lede">Why is this running? Forensic traces from mystery PID to <em>root cause</em>.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/pranshuparmar/witr" target="_blank" rel="noopener">View Source</a>
+          <a class="btn btn-ghost" href="https://github.com/pranshuparmar/witr/releases/latest" target="_blank" rel="noopener">Latest Release</a>
+        </div>
+      </div>
+
+      <div class="term" role="img" aria-label="Terminal session showing witr tracing node back through pm2 to systemd">
+        <div class="term-chrome">
+          <div class="term-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <span>forensic://localhost — witr session</span>
+        </div>
+        <div class="term-body">
+          <div>
+            <span class="prompt">$</span>
+            <span class="typed-line cmd"> witr node</span>
+          </div>
+          <div class="out-block">
+            <div><span class="lbl">Target</span>      : <span class="val">node</span></div>
+            <div><span class="lbl">Process</span>     : <span class="val">node (pid 14233)</span></div>
+            <div><span class="lbl">User</span>        : <span class="val">pm2</span></div>
+            <div><span class="lbl">Command</span>     : <span class="val">node index.js</span></div>
+            <span class="why-label">Why It Exists :</span>
+            <div class="chain" aria-label="Causal chain">
+              <span class="chain-node">systemd (pid 1)</span>
+              <span class="chain-arrow">→</span>
+              <span class="chain-node">pm2 (pid 5034)</span>
+              <span class="chain-arrow">→</span>
+              <span class="chain-node lit-final">node (pid 14233)</span>
+            </div>
+            <div style="margin-top:0.7rem"><span class="lbl">Source</span>      : <span class="val">pm2</span></div>
+            <div><span class="lbl">Sockets</span>     : <span class="val">127.0.0.1:5001 (TCP | LISTENING)</span><span class="cursor-blink" aria-hidden="true"></span></div>
+          </div>
+        </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Example Output -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Example Output</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-          <div class="mockup-header">
-            <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-            <div class="mockup-title">witr node</div>
+  <main class="wrap">
+    <section class="section" id="brief">
+      <div class="section-head">
+        <div class="section-kicker">01 — Incident brief</div>
+        <h2>Something is running. Prove why.</h2>
+      </div>
+      <div class="prose">
+        <p>
+          A mystery process chews CPU. A port you never opened is listening. A container showed up overnight.
+          The usual response is a scavenger hunt across <code>ps</code>, <code>lsof</code>, <code>ss</code>,
+          <code>systemctl</code>, and <code>docker ps</code> — then stitching the story together in your head.
+        </p>
+        <p>
+          <strong>Witr</strong> (Why Is This Running) closes that gap. Point it at a process name, PID, port,
+          file lock, or container and it returns the causal chain: who spawned what, through which supervisor,
+          and what context keeps it alive right now. One Go binary. One readable answer — or a live TUI when
+          you need to roam the whole machine.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="traces">
+      <div class="section-head">
+        <div class="section-kicker">02 — Entry points</div>
+        <h2>Four ways into the same chain</h2>
+        <p>Everything collapses to a PID. Witr walks ancestry from there.</p>
+      </div>
+
+      <div class="trace-grid">
+        <article class="trace-panel" data-cmd="witr node">
+          <div class="trace-icon" aria-hidden="true">∋</div>
+          <h3>Process tracing</h3>
+          <p>
+            Query by name or PID. Fuzzy match by default, exact with <code>--exact</code>. Output includes
+            user, command line, start time, working directory, git repo, and the full supervisor chain —
+            systemd → pm2 → node, not just a flat process list.
+          </p>
+        </article>
+
+        <article class="trace-panel accent-amber" data-cmd="witr --port 5000">
+          <div class="trace-icon" aria-hidden="true">∷</div>
+          <h3>Port forensics</h3>
+          <p>
+            Bind a port number and learn who owns the socket — then why that process exists. Ideal for
+            “what is listening on 443?” moments without juggling <code>ss</code> and <code>ps</code> manually.
+          </p>
+        </article>
+
+        <article class="trace-panel" data-cmd="witr -c myapp">
+          <div class="trace-icon" aria-hidden="true">▣</div>
+          <h3>Container origins</h3>
+          <p>
+            Search across Docker, Podman, nerdctl, Kubernetes/crictl, Incus, LXC/LXD, and FreeBSD jails.
+            Match on name, image, command, or compose labels — then surface mounts, networks, and project metadata.
+          </p>
+        </article>
+
+        <article class="trace-panel accent-amber" data-cmd="witr -f /var/log/app.lock">
+          <div class="trace-icon" aria-hidden="true">⌀</div>
+          <h3>File lock holders</h3>
+          <p>
+            Resolve who holds a POSIX/FLOCK lock (or open fd interest) and walk that process back to its cause.
+            Useful when a deploy stalls on a locked file and “lsof + guesswork” is the old playbook.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="findings">
+      <div class="section-head">
+        <div class="section-kicker">03 — Audit findings</div>
+        <h2>Why this tool earns a slot</h2>
+      </div>
+
+      <div class="findings">
+        <article class="finding">
+          <div class="finding-id">Finding A</div>
+          <div>
+            <h3>Causality as the product</h3>
+            <p>
+              Most sysadmin CLIs dump state. Witr’s contract is narrower and sharper: explain the chain that
+              justifies a running thing’s existence. Ports, containers, and locks are just different doors into
+              the same ancestry walk — source, cwd, sockets, and supervisors included.
+            </p>
           </div>
-          <div class="mockup-body" style="font-size: 13px; line-height: 1.7;">
-            <span class="token-cmd">Target</span>      : node<br><br>
-            <span class="token-cmd">Process</span>     : node (pid 14233)<br>
-            <span class="token-cmd">User</span>        : pm2<br>
-            <span class="token-cmd">Command</span>     : node index.js<br>
-            <span class="token-cmd">Started</span>     : 2 days ago<br><br>
-            <span class="token-success">Why It Exists :</span><br>
-            <span class="token-cmd">&nbsp;&nbsp;systemd (pid 1) → pm2 (pid 5034) → node (pid 14233)</span><br><br>
-            <span class="token-cmd">Source</span>      : pm2<br>
-            <span class="token-cmd">Working Dir</span> : /opt/apps/expense-manager<br>
-            <span class="token-cmd">Sockets</span>     : 127.0.0.1:5001 (TCP | LISTENING)
+        </article>
+        <article class="finding">
+          <div class="finding-id">Finding B</div>
+          <div>
+            <h3>Interactive TUI that stays useful</h3>
+            <p>
+              Launch with no args or <code>-i</code> for four live dashboards — processes (with ancestry side panel),
+              ports, containers, and locks. Sort, filter, signal, and renice without leaving the terminal.
+              Auto-refresh backs off under load; mouse support is there when you want it.
+            </p>
           </div>
-        </div>
-      </section>
+        </article>
+        <article class="finding">
+          <div class="finding-id">Finding C</div>
+          <div>
+            <h3>One static binary, many escape hatches</h3>
+            <p>
+              Ships for Linux, macOS, Windows, and FreeBSD via brew, apt, conda, winget, npm, AUR, and a curl
+              install script. Need scripts? <code>--json</code>. Need a quick ancestry line?
+              <code>--short</code> / <code>--tree</code>. Need the kitchen sink? <code>--verbose</code> and <code>--env</code>.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
 
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Witr?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            You notice a mystery process eating CPU, a port you do not remember opening, or a container that appeared overnight. The usual workflow is a scavenger hunt — <code>ps</code> for the PID, <code>lsof</code> for the socket, <code>systemctl</code> for the unit, <code>docker ps</code> for the container — and then mentally stitching the chain together yourself.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>witr</strong> (Why Is This Running) answers the causality question directly. Query by process name, PID, port, file lock, or container and get a single human-readable report: what is running, how it started, what supervisor or shell chain spawned it, and what context it belongs to. An interactive TUI mode adds live dashboards for processes, ports, containers, and file locks.
-          </p>
-        </div>
+    <section class="section" id="tui">
+      <div class="section-head">
+        <div class="section-kicker">04 — Live dashboards</div>
+        <h2>TUI: roam the crime scene</h2>
+        <p>Four tabs. Adaptive refresh. The ancestry panel answers “why” as you scroll “what.”</p>
+      </div>
 
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Everything Maps to a Causal Chain</span>
-              <p class="text-body-sm">
-                Ports, services, containers, and commands all resolve to PIDs. Once identified, witr walks the ancestry tree back through supervisors, shells, and init systems — surfacing the source (pm2, systemd, Docker Compose, etc.), working directory, git repo, and open sockets in one pass.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Interactive TUI Dashboard</span>
-              <p class="text-body-sm">
-                Run without arguments to launch a four-tab terminal UI: live process list with ancestry side panel, open ports with owning processes, containers across Docker/Podman/K8s/Incus/LXC, and system-wide file locks. Sort, filter, send signals, and renice processes directly from the interface.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Single Static Binary, Everywhere</span>
-              <p class="text-body-sm">
-                Distributed as one Go binary for Linux, macOS, Windows, and FreeBSD. Available via Homebrew, apt, conda, winget, npm, AUR, and a curl install script. Output modes include short ancestry lines, tree views, JSON for scripting, and verbose environment dumps.
-              </p>
-            </li>
-          </ul>
+      <div class="tui-frame" role="img" aria-label="Mock of Witr interactive TUI with processes tab and ancestry panel">
+        <div class="tui-tabs">
+          <div class="tui-tab active">Processes</div>
+          <div class="tui-tab">Ports</div>
+          <div class="tui-tab">Containers</div>
+          <div class="tui-tab">Locks</div>
         </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Basic Usage</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Query by name, port, PID, or container — or launch the interactive dashboard with no arguments:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">terminal</div>
+        <div class="tui-body">
+          <div class="tui-list">
+            <div class="tui-row head">
+              <span>PID</span><span>COMMAND</span><span>USER</span><span>CPU%</span>
             </div>
-            <div class="mockup-body">
-              <span class="token-cmd">witr node</span><br>
-              <span class="token-cmd">witr --port 5000 --short</span><br>
-              <span class="token-cmd">witr --pid 143895 --tree</span><br>
-              <span class="token-cmd">witr -i</span><br>
-              <span class="token-comment"># interactive TUI dashboard</span>
-            </div>
+            <div class="tui-row"><span>1</span><span>systemd</span><span>root</span><span>0.0</span></div>
+            <div class="tui-row"><span>5034</span><span>pm2</span><span>pm2</span><span>0.2</span></div>
+            <div class="tui-row sel"><span>14233</span><span>node index.js</span><span>pm2</span><span>12.4</span></div>
+            <div class="tui-row"><span>18802</span><span>nginx</span><span>www</span><span>0.1</span></div>
+            <div class="tui-row"><span>22011</span><span>redis-server</span><span>redis</span><span>0.3</span></div>
+          </div>
+          <div class="tui-side">
+            <div class="side-title">Ancestry — pid 14233</div>
+            <div class="mute">Process : node</div>
+            <div class="mute">Started : 2 days ago</div>
+            <div class="side-chain">systemd → pm2 → node</div>
+            <div class="mute">Source  : pm2</div>
+            <div class="mute">CWD     : /opt/apps/expense-manager</div>
+            <div class="mute">Socket  : 127.0.0.1:5001 LISTEN</div>
           </div>
         </div>
-      </section>
+        <div class="tui-status">
+          <span class="live">refresh 3s</span>
+          <span>/ filter · a toggle · s signal · q quit</span>
+        </div>
+      </div>
 
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
+      <div class="cmd-strip" aria-label="Example witr commands">
+        <div class="line"><span class="prompt">$</span> <span class="cmd">witr node</span></div>
+        <div class="line"><span class="prompt">$</span> <span class="cmd">witr --port 5000 --short</span></div>
+        <div class="line"><span class="prompt">$</span> <span class="cmd">witr --pid 143895 --tree</span></div>
+        <div class="line"><span class="prompt">$</span> <span class="cmd">witr -i</span> <span class="comment"># interactive TUI</span></div>
+      </div>
+    </section>
 
-    </div>
+    <section class="section" style="padding-bottom: 1rem;">
+      <div class="section-head">
+        <div class="section-kicker">05 — Close the case</div>
+        <h2>Trace it yourself</h2>
+        <p>Static binary. Human output. Optional JSON when automation needs the same chain.</p>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/pranshuparmar/witr" target="_blank" rel="noopener">GitHub Repository</a>
+        <a class="btn btn-ghost" href="https://github.com/pranshuparmar/witr/releases/latest" target="_blank" rel="noopener">Download Release</a>
+        <a class="btn btn-ghost" href="./">← Back to catalog</a>
+      </div>
+    </section>
+
+    <footer class="page-foot">
+      <span>DuckWare Showcase #20 · Witr</span>
+      <span>
+        <a href="../">duckware</a> ·
+        <a href="../feed.xml">rss</a> ·
+        <a href="https://github.com/mirarr-app/duckware" target="_blank" rel="noopener">site source</a>
+      </span>
+    </footer>
   </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
-      </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
-
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
 </body>
 </html>
