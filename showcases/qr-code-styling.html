@@ -4,211 +4,1025 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Code Styling Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of qr-code-styling, the JavaScript library for generating branded, styled QR codes with embedded logos.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare showcase #16: QR Code Styling — a client-side JavaScript library for branded QR codes with logos, custom dots, corner styles, and gradient fills. Export canvas or SVG with no backend.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #07070c;
+      --void: #0a0a0f;
+      --panel: #101018;
+      --panel-2: #16161f;
+      --line: rgba(0, 245, 255, 0.14);
+      --line-hot: rgba(255, 0, 170, 0.35);
+      --text: #e8eef5;
+      --muted: #8a93a8;
+      --cyan: #00f5ff;
+      --magenta: #ff00aa;
+      --lime: #b8ff3c;
+      --font-display: "Syne", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-display);
+      background: var(--void);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Modular QR-like grid atmosphere */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 80% 50% at 15% -10%, rgba(0, 245, 255, 0.12), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 10%, rgba(255, 0, 170, 0.1), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 70% 90%, rgba(0, 245, 255, 0.06), transparent 55%),
+        var(--ink);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.35;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0, 245, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 255, 0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 20%, transparent 75%);
+      animation: gridDrift 40s linear infinite;
+    }
+
+    @keyframes gridDrift {
+      from { background-position: 0 0, 0 0; }
+      to { background-position: 28px 28px, 28px 28px; }
+    }
+
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { color: var(--magenta); }
+
+    .wrap {
+      width: min(1120px, calc(100% - 2.5rem));
+      margin-inline: auto;
+    }
+
+    /* Top bar */
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 0 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .top a.back {
+      color: var(--muted);
+      border: 1px solid transparent;
+      padding: 0.4rem 0.65rem;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .top a.back:hover {
+      color: var(--cyan);
+      border-color: var(--line);
+      background: rgba(0, 245, 255, 0.05);
+    }
+
+    .badge {
+      color: var(--lime);
+      border: 1px solid rgba(184, 255, 60, 0.35);
+      padding: 0.35rem 0.6rem;
+      background: rgba(184, 255, 60, 0.06);
+    }
+
+    /* Hero — brand first */
+    .hero {
+      padding: 3.5rem 0 4rem;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3rem;
+      align-items: end;
+    }
+
+    .brand-mark {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .brand-mark::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      background: var(--magenta);
+      box-shadow: 0 0 12px var(--magenta);
+      animation: inkPulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes inkPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.85); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.6rem, 6.5vw, 4.6rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      animation: fadeUp 0.7s ease 0.08s both;
+    }
+
+    .hero h1 span {
+      display: block;
+      background: linear-gradient(105deg, var(--text) 40%, var(--cyan) 70%, var(--magenta) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-lead {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 34ch;
+      margin-bottom: 1.75rem;
+      font-weight: 500;
+      animation: fadeUp 0.7s ease 0.16s both;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      animation: fadeUp 0.7s ease 0.24s both;
+    }
+
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      padding: 0.85rem 1.2rem;
+      border: 1px solid var(--line);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: #041018;
+      border-color: var(--cyan);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      color: #041018;
+      transform: translateY(-2px);
+      box-shadow: 0 0 24px rgba(0, 245, 255, 0.35);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--magenta);
+      color: var(--magenta);
+      transform: translateY(-2px);
+    }
+
+    /* Hero visual — QR sample + floating style chips */
+    .hero-visual {
+      position: relative;
+      justify-self: end;
+      animation: fadeUp 0.8s ease 0.2s both;
+    }
+
+    .qr-frame {
+      width: min(320px, 78vw);
+      aspect-ratio: 1;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 1.1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .qr-frame::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(0, 245, 255, 0.08), transparent 60%);
+      animation: sheen 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes sheen {
+      0%, 100% { transform: translateX(-40%); opacity: 0.3; }
+      50% { transform: translateX(40%); opacity: 0.8; }
+    }
+
+    .qr-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      filter: contrast(1.05);
+    }
+
+    .corner-bracket {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-color: var(--cyan);
+      border-style: solid;
+      opacity: 0.8;
+    }
+
+    .corner-bracket.tl { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
+    .corner-bracket.tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; border-color: var(--magenta); }
+    .corner-bracket.bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; border-color: var(--magenta); }
+    .corner-bracket.br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
+
+    .float-chip {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.55rem;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      white-space: nowrap;
+      animation: floatY 4s ease-in-out infinite;
+    }
+
+    .float-chip strong { color: var(--cyan); font-weight: 500; }
+    .float-chip.mag strong { color: var(--magenta); }
+
+    .chip-a { top: 8%; left: -18%; animation-delay: 0s; }
+    .chip-b { bottom: 18%; right: -14%; animation-delay: 1.2s; border-color: var(--line-hot); }
+    .chip-c { top: 48%; left: -22%; animation-delay: 0.6s; }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Section chrome */
+    section {
+      padding: 4rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .sec-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--magenta);
+      margin-bottom: 0.85rem;
+    }
+
+    .sec-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.35rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      max-width: 18ch;
+    }
+
+    .sec-copy {
+      color: var(--muted);
+      max-width: 58ch;
+      font-size: 1.02rem;
+      font-weight: 500;
+    }
+
+    /* Audit / what it is */
+    .audit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      align-items: start;
+    }
+
+    .audit-block p + p { margin-top: 1rem; }
+
+    .stat-rail {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .stat {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem 1.15rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--cyan);
+      transition: border-color 0.25s, background 0.25s;
+    }
+
+    .stat:nth-child(2) { border-left-color: var(--magenta); }
+    .stat:nth-child(3) { border-left-color: var(--lime); }
+
+    .stat:hover {
+      background: var(--panel-2);
+      border-color: rgba(0, 245, 255, 0.28);
+    }
+
+    .stat-k {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .stat-v {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* Style studio — interactive-feeling pickers */
+    .studio {
+      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .picker {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 1.25rem;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .picker:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 245, 255, 0.4);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 0, 170, 0.12);
+    }
+
+    .picker h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .picker p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.1rem;
+      font-weight: 500;
+    }
+
+    .swatch-row {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .dot-swatch {
+      width: 28px;
+      height: 28px;
+      background: var(--cyan);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .dot-swatch:hover {
+      transform: scale(1.12);
+      box-shadow: 0 0 14px rgba(0, 245, 255, 0.45);
+    }
+
+    .dot-swatch.rounded { border-radius: 6px; }
+    .dot-swatch.dots { border-radius: 50%; }
+    .dot-swatch.classy {
+      clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+      background: var(--magenta);
+    }
+    .dot-swatch.extra {
+      border-radius: 50% 50% 50% 8px;
+      background: linear-gradient(135deg, var(--cyan), var(--magenta));
+    }
+    .dot-swatch.square { border-radius: 2px; background: var(--lime); }
+
+    .corner-mock {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      width: 100%;
+      max-width: 140px;
+    }
+
+    .finder {
+      aspect-ratio: 1;
+      border: 2px solid var(--cyan);
+      position: relative;
+      background: transparent;
+    }
+
+    .finder::after {
+      content: "";
+      position: absolute;
+      inset: 22%;
+      background: var(--magenta);
+    }
+
+    .finder.soft { border-radius: 30%; }
+    .finder.soft::after { border-radius: 50%; }
+    .finder.dot-only { border: none; }
+    .finder.dot-only::after {
+      inset: 28%;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 0 4px var(--panel), 0 0 0 6px var(--cyan);
+    }
+
+    .grad-bar {
+      height: 28px;
+      width: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--lime));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .grad-bar::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      animation: sheen 3.5s ease-in-out infinite;
+    }
+
+    .grad-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.55rem;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* Code centerpiece */
+    .code-section {
+      position: relative;
+    }
+
+    .code-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+      align-items: stretch;
+    }
+
+    .code-intro .sec-title { max-width: 14ch; }
+
+    .api-list {
+      margin-top: 1.5rem;
+      list-style: none;
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .api-list li {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .api-list li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--cyan);
+    }
+
+    .api-list li em {
+      font-style: normal;
+      color: var(--text);
+    }
+
+    .code-pane {
+      background: #08080e;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 0 1px rgba(255, 0, 170, 0.08), 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    .code-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--panel);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .code-chrome .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #333;
+    }
+
+    .code-chrome .dot:nth-child(1) { background: var(--magenta); }
+    .code-chrome .dot:nth-child(2) { background: var(--lime); }
+    .code-chrome .dot:nth-child(3) { background: var(--cyan); }
+
+    .code-chrome span { margin-left: auto; color: var(--cyan); }
+
+    pre {
+      padding: 1.25rem 1.35rem 1.5rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: #c5d0e0;
+      flex: 1;
+    }
+
+    .tok-key { color: var(--magenta); }
+    .tok-str { color: var(--lime); }
+    .tok-num { color: var(--cyan); }
+    .tok-cmt { color: #5a6478; }
+    .tok-fn { color: #7dd3fc; }
+
+    /* Strengths */
+    .strengths {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-top: 2.25rem;
+    }
+
+    .strength {
+      padding: 1.5rem 1.35rem 1.6rem;
+      border-top: 2px solid var(--cyan);
+      background: linear-gradient(180deg, rgba(0, 245, 255, 0.05), transparent 55%);
+    }
+
+    .strength:nth-child(2) {
+      border-top-color: var(--magenta);
+      background: linear-gradient(180deg, rgba(255, 0, 170, 0.06), transparent 55%);
+    }
+
+    .strength:nth-child(3) {
+      border-top-color: var(--lime);
+      background: linear-gradient(180deg, rgba(184, 255, 60, 0.05), transparent 55%);
+    }
+
+    .strength-num {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .strength h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.65rem;
+    }
+
+    .strength p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* Why it matters band */
+    .matters {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2rem;
+      align-items: center;
+      padding: 2rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .matters::before {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      right: -40px;
+      bottom: -60px;
+      background:
+        repeating-conic-gradient(from 0deg, var(--cyan) 0deg 10deg, transparent 10deg 20deg);
+      opacity: 0.08;
+      border-radius: 50%;
+      animation: spinSlow 28s linear infinite;
+    }
+
+    @keyframes spinSlow {
+      to { transform: rotate(360deg); }
+    }
+
+    .matters-glyph {
+      width: 88px;
+      height: 88px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .matters-glyph i {
+      display: block;
+      background: var(--cyan);
+      opacity: 0.85;
+    }
+
+    .matters-glyph i:nth-child(2),
+    .matters-glyph i:nth-child(4),
+    .matters-glyph i:nth-child(6),
+    .matters-glyph i:nth-child(8) {
+      background: var(--magenta);
+      opacity: 0.7;
+    }
+
+    .matters-glyph i:nth-child(5) {
+      background: var(--lime);
+      border-radius: 50%;
+      animation: inkPulse 2s ease-in-out infinite;
+    }
+
+    /* Footer CTA */
+    .end {
+      padding: 3.5rem 0 4.5rem;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .end h2 {
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .end p {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    .end .cta-row { justify-content: center; }
+
+    .foot {
+      padding: 1.25rem 0 2rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .foot a { color: var(--muted); }
+    .foot a:hover { color: var(--cyan); }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        padding-top: 2.5rem;
+      }
+
+      .hero-visual { justify-self: center; }
+
+      .chip-a { left: -6%; }
+      .chip-b { right: -4%; }
+      .chip-c { display: none; }
+
+      .audit-grid,
+      .code-layout,
+      .studio,
+      .strengths {
+        grid-template-columns: 1fr;
+      }
+
+      .matters {
+        grid-template-columns: 1fr;
+        text-align: left;
+      }
+
+      .matters-glyph { margin-bottom: 0.25rem; }
+    }
+
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 1.5rem, 1120px); }
+
+      .float-chip { display: none; }
+
+      .hero h1 { font-size: 2.35rem; }
+
+      .cta-row .btn { width: 100%; justify-content: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      body::after { animation: none; }
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <header class="top">
+      <a class="back" href="./">← All showcases</a>
+      <span class="badge">Showcase #16</span>
+    </header>
 
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
+    <section class="hero" aria-label="QR Code Styling">
+      <div>
+        <p class="brand-mark">QR Code Styling</p>
+        <h1>
+          Branded QR
+          <span>without a backend</span>
+        </h1>
+        <p class="hero-lead">
+          Style finder patterns, dots, and gradients in the browser — then export canvas or SVG for campaigns that look designed, not default.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/kozakdenys/qr-code-styling" target="_blank" rel="noopener">View on GitHub</a>
+          <a class="btn btn-ghost" href="https://qr-code-styling.com" target="_blank" rel="noopener">Open live studio</a>
+        </div>
       </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-        <span>kozakdenys/qr-code-styling</span>
-        <span>•</span>
-        <span>July 10, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #16</span>
+      <div class="hero-visual">
+        <div class="float-chip chip-a">dots · <strong>rounded</strong></div>
+        <div class="float-chip chip-b mag">fill · <strong>gradient</strong></div>
+        <div class="float-chip chip-c">export · <strong>svg</strong></div>
+        <div class="qr-frame">
+          <span class="corner-bracket tl" aria-hidden="true"></span>
+          <span class="corner-bracket tr" aria-hidden="true"></span>
+          <span class="corner-bracket bl" aria-hidden="true"></span>
+          <span class="corner-bracket br" aria-hidden="true"></span>
+          <img
+            src="https://github.com/kozakdenys/qr-code-styling/raw/master/src/assets/qr_code_example.png"
+            alt="Example styled QR code generated with QR Code Styling"
+            width="300"
+            height="300"
+            loading="eager"
+          >
+        </div>
       </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        QR Code Styling
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Branded QR codes in the browser — logos, colors, and dot styles without a backend.
+    </section>
+
+    <section aria-labelledby="what-heading">
+      <p class="sec-label">Audit · what it is</p>
+      <h2 class="sec-title" id="what-heading">A styling layer for scannable marks</h2>
+      <div class="audit-grid">
+        <div class="audit-block sec-copy">
+          <p>
+            Most QR libraries stop at black squares on white. QR Code Styling treats the matrix as a design surface: you pick data, drop in a logo, reshape the modules and corner finders, then paint with solid color or linear/radial gradients — all from a single options object in the browser.
+          </p>
+          <p>
+            There is no encoding API to call and no pixel pipeline to host. Instantiate <code style="font-family:var(--font-mono);color:var(--cyan);font-size:0.9em">QRCodeStyling</code>, append to a DOM node, update when props change, and download PNG, JPEG, WebP, or SVG. Framework examples exist for React, Vue, Angular, Next, and Node when you need server-side buffers.
+          </p>
+        </div>
+        <div class="stat-rail" role="list">
+          <div class="stat" role="listitem">
+            <div>
+              <div class="stat-k">Runtime</div>
+              <div class="stat-v">Client-side only</div>
+            </div>
+          </div>
+          <div class="stat" role="listitem">
+            <div>
+              <div class="stat-k">Render targets</div>
+              <div class="stat-v">Canvas + SVG</div>
+            </div>
+          </div>
+          <div class="stat" role="listitem">
+            <div>
+              <div class="stat-k">Surface controls</div>
+              <div class="stat-v">Dots · corners · logo · gradients</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="studio-heading">
+      <p class="sec-label">Generator studio</p>
+      <h2 class="sec-title" id="studio-heading">Modular ink, not a bitmap stamp</h2>
+      <p class="sec-copy">
+        The API mirrors a style picker: separate knobs for module geometry, finder frames, and fills. That split is what makes branded codes feel intentional instead of recolored bitmaps.
       </p>
 
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://github.com/kozakdenys/qr-code-styling" class="btn-primary" target="_blank" rel="noopener">View Source</a>
-        <a href="https://www.npmjs.com/package/qr-code-styling" class="btn-secondary-ghost" target="_blank" rel="noopener">npm Package</a>
+      <div class="studio">
+        <article class="picker">
+          <h3>Dot shapes</h3>
+          <p>square · rounded · dots · classy · extra-rounded</p>
+          <div class="swatch-row" aria-hidden="true">
+            <span class="dot-swatch square" title="square"></span>
+            <span class="dot-swatch rounded" title="rounded"></span>
+            <span class="dot-swatch dots" title="dots"></span>
+            <span class="dot-swatch classy" title="classy"></span>
+            <span class="dot-swatch extra" title="extra-rounded"></span>
+          </div>
+        </article>
+
+        <article class="picker">
+          <h3>Corner finders</h3>
+          <p>Outer squares and inner dots styled independently</p>
+          <div class="corner-mock" aria-hidden="true">
+            <div class="finder"></div>
+            <div class="finder soft"></div>
+            <div class="finder dot-only"></div>
+          </div>
+        </article>
+
+        <article class="picker">
+          <h3>Gradient fills</h3>
+          <p>Linear or radial stops on dots, corners, or background</p>
+          <div class="grad-bar" aria-hidden="true"></div>
+          <div class="grad-labels"><span>cyan</span><span>magenta</span><span>lime</span></div>
+        </article>
       </div>
-    </div>
-  </header>
+    </section>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Example QR Codes Grid -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Styled Output Examples</h3>
-        <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: var(--space-lg);">
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">facebook_example.png</div>
-            </div>
-            <img src="https://github.com/kozakdenys/qr-code-styling/raw/master/src/assets/facebook_example_new.png" alt="Styled Facebook QR code example" style="width: 100%; height: auto; display: block;">
-          </div>
-
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">qr_code_example.png</div>
-            </div>
-            <img src="https://github.com/kozakdenys/qr-code-styling/raw/master/src/assets/qr_code_example.png" alt="Custom styled QR code example" style="width: 100%; height: auto; display: block;">
-          </div>
-
-          <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">telegram_example.png</div>
-            </div>
-            <img src="https://github.com/kozakdenys/qr-code-styling/raw/master/src/assets/telegram_example_new.png" alt="Styled Telegram QR code example" style="width: 100%; height: auto; display: block;">
-          </div>
-        </div>
-      </section>
-
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is QR Code Styling?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Default QR generators produce identical black-and-white squares that look identical regardless of brand. For marketing pages, event tickets, or app onboarding flows, you want codes that carry your visual identity — rounded dots, gradient fills, corner styling, and a centered logo — without sending data to a third-party API.
+    <section class="code-section" aria-labelledby="api-heading">
+      <div class="code-layout">
+        <div class="code-intro">
+          <p class="sec-label">API surface</p>
+          <h2 class="sec-title" id="api-heading">One constructor, full brand control</h2>
+          <p class="sec-copy">
+            Configure once, append to the page, then <code style="font-family:var(--font-mono);color:var(--cyan);font-size:0.9em">update()</code> or <code style="font-family:var(--font-mono);color:var(--cyan);font-size:0.9em">download()</code> as the product UI changes. Extensions can post-process the SVG when you need borders or custom ornaments.
           </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>qr-code-styling</strong> is a client-side JavaScript library that renders fully customized QR codes in the browser. Configure dot shapes, colors, background images, and embedded logos through a simple options object, then export to canvas or SVG for download or inline display.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Deep Visual Customization</span>
-              <p class="text-body-sm">
-                Control every visual layer independently: dot style (square, rounded, classy, extra-rounded), corner square and dot shapes, gradient fills, background color or image, and margin sizing. The result reads as a designed asset, not a generic barcode pasted onto your page.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Logo Embedding with Error Correction</span>
-              <p class="text-body-sm">
-                Drop a brand logo into the center of the code and the library handles the error-correction math so the QR remains scannable. Adjust logo size, margin, and cross-origin settings without manually tuning redundancy levels or worrying about unreadable output.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Framework-Agnostic, Client-Side Only</span>
-              <p class="text-body-sm">
-                Works in any JavaScript environment — vanilla JS, React, Vue, Angular, or Node.js for server-side rendering. No external API calls, no rate limits, no dependency on a hosted QR service. Generate codes entirely in your app and export as PNG, SVG, or raw canvas data.
-              </p>
-            </li>
+          <ul class="api-list">
+            <li><em>dotsOptions.type</em> — module geometry</li>
+            <li><em>cornersSquareOptions</em> / <em>cornersDotOptions</em></li>
+            <li><em>image</em> + <em>imageOptions</em> for center logos</li>
+            <li><em>gradient.colorStops</em> on any painted layer</li>
           </ul>
         </div>
 
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Basic Usage</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Instantiate with your data and style options, append to the DOM, and download or update on the fly:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">index.js</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">import QRCodeStyling from "qr-code-styling"</span><br><br>
-              <span class="token-cmd">const qr = new QRCodeStyling({</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;width: 300, height: 300,</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;data: "https://example.com",</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;image: "/logo.png",</span><br>
-              <span class="token-cmd">&nbsp;&nbsp;dotsOptions: { color: "#4267b2", type: "rounded" }</span><br>
-              <span class="token-cmd">})</span><br><br>
-              <span class="token-cmd">qr.append(document.getElementById("canvas"))</span>
-            </div>
+        <div class="code-pane" aria-label="Example QRCodeStyling usage">
+          <div class="code-chrome">
+            <span class="dot" aria-hidden="true"></span>
+            <span class="dot" aria-hidden="true"></span>
+            <span class="dot" aria-hidden="true"></span>
+            brand-qr.js
+            <span>options</span>
           </div>
+          <pre><code><span class="tok-cmt">// Client-side branded QR — no network roundtrip</span>
+<span class="tok-key">const</span> qr = <span class="tok-key">new</span> <span class="tok-fn">QRCodeStyling</span>({
+  <span class="tok-key">width</span>: <span class="tok-num">300</span>,
+  <span class="tok-key">height</span>: <span class="tok-num">300</span>,
+  <span class="tok-key">type</span>: <span class="tok-str">"svg"</span>,
+  <span class="tok-key">data</span>: <span class="tok-str">"https://example.com/join"</span>,
+  <span class="tok-key">image</span>: <span class="tok-str">"/logo.svg"</span>,
+  <span class="tok-key">dotsOptions</span>: {
+    <span class="tok-key">type</span>: <span class="tok-str">"rounded"</span>,
+    <span class="tok-key">gradient</span>: {
+      <span class="tok-key">type</span>: <span class="tok-str">"linear"</span>,
+      <span class="tok-key">colorStops</span>: [
+        { <span class="tok-key">offset</span>: <span class="tok-num">0</span>, <span class="tok-key">color</span>: <span class="tok-str">"#00f5ff"</span> },
+        { <span class="tok-key">offset</span>: <span class="tok-num">1</span>, <span class="tok-key">color</span>: <span class="tok-str">"#ff00aa"</span> }
+      ]
+    }
+  },
+  <span class="tok-key">cornersSquareOptions</span>: { <span class="tok-key">type</span>: <span class="tok-str">"extra-rounded"</span> },
+  <span class="tok-key">backgroundOptions</span>: { <span class="tok-key">color</span>: <span class="tok-str">"#0a0a0f"</span> }
+});
+
+qr.<span class="tok-fn">append</span>(document.<span class="tok-fn">getElementById</span>(<span class="tok-str">"canvas"</span>));
+qr.<span class="tok-fn">download</span>({ <span class="tok-key">name</span>: <span class="tok-str">"brand-qr"</span>, <span class="tok-key">extension</span>: <span class="tok-str">"svg"</span> });</code></pre>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
+    <section aria-labelledby="why-heading">
+      <p class="sec-label">Why it matters</p>
+      <h2 class="sec-title" id="why-heading">QR as brand furniture</h2>
+      <div class="matters">
+        <div class="matters-glyph" aria-hidden="true">
+          <i></i><i></i><i></i>
+          <i></i><i></i><i></i>
+          <i></i><i></i><i></i>
+        </div>
+        <div>
+          <p class="sec-copy">
+            Packaging, tickets, and onboarding flows increasingly put a QR front-and-center. When that mark looks generic, the whole surface feels unfinished. Shipping styled codes from the same frontend that owns the brand tokens keeps print and product UI in sync — and keeps sensitive URLs off a third-party generator.
+          </p>
+        </div>
+      </div>
+    </section>
 
+    <section aria-labelledby="strengths-heading">
+      <p class="sec-label">Strengths</p>
+      <h2 class="sec-title" id="strengths-heading">Three reasons it sticks</h2>
+      <div class="strengths">
+        <article class="strength">
+          <p class="strength-num">01 · privacy &amp; speed</p>
+          <h3>No API tax</h3>
+          <p>
+            Encoding and drawing happen locally. Campaign sites and SPAs can mint codes offline-capable and without leaking payload strings to a QR SaaS.
+          </p>
+        </article>
+        <article class="strength">
+          <p class="strength-num">02 · design depth</p>
+          <h3>Layered style model</h3>
+          <p>
+            Dots, corner squares, corner dots, background, and logo each take color or gradient — enough control to match a design system without redrawing the matrix by hand.
+          </p>
+        </article>
+        <article class="strength">
+          <p class="strength-num">03 · delivery formats</p>
+          <h3>Canvas or SVG out</h3>
+          <p>
+            Raster for quick shares; vector for print and crisp UI. <code style="font-family:var(--font-mono);font-size:0.85em;color:var(--lime)">getRawData</code> and <code style="font-family:var(--font-mono);font-size:0.85em;color:var(--lime)">download</code> cover the export path in both browser and Node setups.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <div class="end">
+      <h2>Style the scan</h2>
+      <p>Install from npm, or fork the MIT-licensed source and shape your own studio.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/kozakdenys/qr-code-styling" target="_blank" rel="noopener">GitHub repository</a>
+        <a class="btn btn-ghost" href="https://www.npmjs.com/package/qr-code-styling" target="_blank" rel="noopener">npm package</a>
+      </div>
     </div>
-  </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
-      </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
-
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+    <footer class="foot">
+      <span>DuckWare · Showcase #16 · QR Code Styling</span>
+      <a href="./">Catalog</a>
+    </footer>
+  </div>
 </body>
 </html>

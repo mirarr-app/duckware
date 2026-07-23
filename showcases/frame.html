@@ -4,181 +4,1095 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Frame Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of Frame, the native Rust desktop app for FFmpeg media conversion with a GPUI interface.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare showcase of Frame: a native Rust desktop GUI for FFmpeg with GPUI, stream-level controls, and a reusable conversion core for probing, validation, and live progress.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0c0b0a;
+      --bg-elevated: #141210;
+      --bg-panel: #1a1714;
+      --bg-panel-2: #221e1a;
+      --chrome: #2a2520;
+      --chrome-edge: #3a342c;
+      --hairline: rgba(255, 196, 120, 0.12);
+      --text: #f0e6d8;
+      --text-muted: #9a8f82;
+      --text-dim: #6b635a;
+      --amber: #f0a04b;
+      --amber-hot: #ffb35c;
+      --amber-deep: #c4722a;
+      --amber-glow: rgba(240, 160, 75, 0.35);
+      --orange: #e87a2e;
+      --green: #6bbf7a;
+      --blue: #6a9fc9;
+      --violet: #a78bca;
+      --danger: #d96b5c;
+      --font: "IBM Plex Sans", system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
+      --radius: 10px;
+      --max: 1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 15% -10%, rgba(240, 160, 75, 0.14), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 90% 20%, rgba(232, 122, 46, 0.08), transparent 50%),
+        linear-gradient(180deg, #0e0c0a 0%, #0c0b0a 40%, #100e0c 100%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { color: var(--amber-hot); }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 2.5rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* —— Top bar —— */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.15rem 0 0.5rem;
+      animation: rise 0.7s ease both;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      border: 1px solid var(--hairline);
+      background: rgba(26, 23, 20, 0.7);
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .back:hover {
+      color: var(--text);
+      border-color: rgba(240, 160, 75, 0.35);
+      background: var(--bg-panel);
+    }
+
+    .meta-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid var(--hairline);
+      padding: 0.3rem 0.55rem;
+      border-radius: 4px;
+    }
+
+    .pill.accent {
+      color: var(--amber);
+      border-color: rgba(240, 160, 75, 0.35);
+      background: rgba(240, 160, 75, 0.08);
+    }
+
+    /* —— Hero —— */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 2.75rem;
+      align-items: center;
+      padding: 2.5rem 0 3.25rem;
+    }
+
+    .hero-copy {
+      animation: rise 0.8s 0.08s ease both;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .brand-mark img {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px rgba(240, 160, 75, 0.25), 0 8px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    .brand-name {
+      font-size: clamp(2.6rem, 5vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    .brand-name span {
+      color: var(--amber);
+    }
+
+    .hero h1 {
+      font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+      font-weight: 500;
+      color: var(--text-muted);
+      line-height: 1.45;
+      max-width: 28ch;
+      margin-bottom: 1.1rem;
+    }
+
+    .hero-lede {
+      font-size: 0.98rem;
+      color: var(--text-dim);
+      max-width: 38ch;
+      margin-bottom: 1.75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0.7rem 1.1rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--amber) 0%, var(--orange) 100%);
+      color: #1a1208;
+      box-shadow: 0 4px 20px var(--amber-glow);
+    }
+
+    .btn-primary:hover {
+      color: #1a1208;
+      box-shadow: 0 6px 28px rgba(240, 160, 75, 0.5);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border-color: var(--chrome-edge);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: rgba(240, 160, 75, 0.4);
+    }
+
+    /* —— Desktop window mockup —— */
+    .workbench {
+      animation: rise 0.9s 0.15s ease both;
+      perspective: 1400px;
+    }
+
+    .window {
+      background: var(--bg-elevated);
+      border: 1px solid var(--chrome-edge);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.4),
+        0 24px 60px rgba(0, 0, 0, 0.55),
+        0 0 80px rgba(240, 160, 75, 0.06);
+      transform: rotateX(2deg) rotateY(-3deg);
+      transition: transform 0.4s ease;
+    }
+
+    .window:hover { transform: rotateX(0) rotateY(0); }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      background: linear-gradient(180deg, var(--chrome) 0%, #231f1b 100%);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .traffic {
+      display: flex;
+      gap: 6px;
+    }
+
+    .traffic i {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .traffic .r { background: #e06b5c; }
+    .traffic .y { background: #d4a24c; }
+    .traffic .g { background: #6bbf7a; }
+
+    .titlebar-label {
+      flex: 1;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    .titlebar-badge {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--amber);
+      background: rgba(240, 160, 75, 0.1);
+      border: 1px solid rgba(240, 160, 75, 0.25);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      min-height: 280px;
+    }
+
+    .preview-pane {
+      position: relative;
+      background: #0a0908;
+      border-right: 1px solid var(--hairline);
+      overflow: hidden;
+    }
+
+    .preview-pane img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0.88;
+      filter: saturate(0.85) contrast(1.05);
+    }
+
+    .preview-overlay {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 0.75rem;
+      background: linear-gradient(transparent, rgba(8, 7, 6, 0.92));
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .filmstrip {
+      display: flex;
+      gap: 3px;
+      height: 28px;
+    }
+
+    .filmstrip span {
+      flex: 1;
+      background: var(--bg-panel-2);
+      border: 1px solid var(--chrome-edge);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .filmstrip span::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(240, 160, 75, 0.45), transparent);
+      transform: translateX(-100%);
+      animation: scrub 3.2s ease-in-out infinite;
+    }
+
+    .filmstrip span:nth-child(2)::after { animation-delay: 0.15s; }
+    .filmstrip span:nth-child(3)::after { animation-delay: 0.3s; }
+    .filmstrip span:nth-child(4)::after { animation-delay: 0.45s; }
+    .filmstrip span:nth-child(5)::after { animation-delay: 0.6s; }
+    .filmstrip span:nth-child(6)::after { animation-delay: 0.75s; }
+    .filmstrip span:nth-child(7)::after { animation-delay: 0.9s; }
+    .filmstrip span:nth-child(8)::after { animation-delay: 1.05s; }
+
+    .progress-block {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    .progress-meta .pct {
+      color: var(--amber);
+      font-weight: 600;
+    }
+
+    .track {
+      height: 6px;
+      background: #2a2520;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .track-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--amber-deep), var(--amber-hot));
+      box-shadow: 0 0 12px var(--amber-glow);
+      animation: encode 4.5s ease-in-out infinite;
+    }
+
+    .track-glow {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      background: linear-gradient(90deg, transparent, rgba(255, 220, 160, 0.5), transparent);
+      animation: scan 4.5s ease-in-out infinite;
+    }
+
+    .stream-pane {
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      background: var(--bg-panel);
+    }
+
+    .stream {
+      border: 1px solid var(--hairline);
+      border-radius: 8px;
+      background: var(--bg-elevated);
+      padding: 0.55rem 0.65rem;
+      animation: streamIn 0.6s ease both;
+    }
+
+    .stream:nth-child(1) { animation-delay: 0.35s; }
+    .stream:nth-child(2) { animation-delay: 0.5s; }
+    .stream:nth-child(3) { animation-delay: 0.65s; }
+    .stream:nth-child(4) { animation-delay: 0.8s; }
+
+    .stream-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.35rem;
+    }
+
+    .stream-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      box-shadow: 0 0 6px currentColor;
+    }
+
+    .stream.video .stream-tag { color: var(--amber); }
+    .stream.audio .stream-tag { color: var(--blue); }
+    .stream.subs .stream-tag { color: var(--violet); }
+    .stream.meta .stream-tag { color: var(--green); }
+
+    .stream-status {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+    }
+
+    .stream-status.live {
+      color: var(--amber);
+    }
+
+    .stream-status.live::before {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--amber);
+      margin-right: 0.35rem;
+      animation: pulse 1.4s ease-in-out infinite;
+      vertical-align: middle;
+    }
+
+    .codec-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    .codec {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      background: var(--bg-panel-2);
+      border: 1px solid var(--chrome-edge);
+      padding: 0.18rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .codec.hot {
+      color: var(--amber-hot);
+      border-color: rgba(240, 160, 75, 0.35);
+      background: rgba(240, 160, 75, 0.1);
+    }
+
+    /* —— Sections —— */
+    section.block {
+      padding: 3.5rem 0;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.85rem;
+    }
+
+    .block h2 {
+      font-size: clamp(1.55rem, 3vw, 2rem);
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      max-width: 22ch;
+    }
+
+    .block p {
+      color: var(--text-muted);
+      max-width: 62ch;
+      margin-bottom: 1rem;
+      font-size: 1.02rem;
+    }
+
+    .block p:last-child { margin-bottom: 0; }
+
+    /* Strengths */
+    .strengths {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .strength {
+      padding: 1.25rem 1.2rem;
+      background: linear-gradient(160deg, var(--bg-panel) 0%, var(--bg-elevated) 100%);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .strength::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+      opacity: 0.55;
+    }
+
+    .strength:hover {
+      border-color: rgba(240, 160, 75, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .strength-num {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--amber-deep);
+      margin-bottom: 0.65rem;
+      letter-spacing: 0.08em;
+    }
+
+    .strength h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .strength p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin: 0;
+      max-width: none;
+      line-height: 1.55;
+    }
+
+    /* Codec rail */
+    .codec-rail {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.75rem;
+    }
+
+    .codec-chip {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--bg-panel);
+      border: 1px solid var(--chrome-edge);
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .codec-chip:hover {
+      color: var(--amber);
+      border-color: rgba(240, 160, 75, 0.4);
+      background: rgba(240, 160, 75, 0.08);
+    }
+
+    /* Timeline motif */
+    .timeline {
+      margin-top: 2.25rem;
+      padding: 1.25rem;
+      background: var(--bg-panel);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+    }
+
+    .timeline-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.85rem;
+    }
+
+    .timeline-head strong {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .timeline-head span {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .tl-track {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.4rem;
+    }
+
+    .tl-step {
+      padding: 0.75rem 0.65rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--chrome-edge);
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .tl-step::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -0.35rem;
+      width: 0.3rem;
+      height: 2px;
+      background: var(--chrome-edge);
+      z-index: 1;
+    }
+
+    .tl-step:last-child::after { display: none; }
+
+    .tl-step .n {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--amber);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .tl-step .t {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Install strip */
+    .install {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .install-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .install-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .install-card p {
+      font-size: 0.92rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .cmd {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--amber-hot);
+      background: #0a0908;
+      border: 1px solid var(--chrome-edge);
+      border-radius: 6px;
+      padding: 0.75rem 0.9rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .cmd .prompt { color: var(--text-dim); user-select: none; }
+
+    .distro-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .distro-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.65rem 0.75rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--hairline);
+      border-radius: 6px;
+      font-size: 0.88rem;
+    }
+
+    .distro-list span {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    /* Footer */
+    .page-foot {
+      border-top: 1px solid var(--hairline);
+      padding: 2rem 0 2.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .page-foot p {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    .page-foot a {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Animations */
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrub {
+      0%, 100% { transform: translateX(-100%); opacity: 0; }
+      30% { opacity: 1; }
+      70% { transform: translateX(100%); opacity: 0.6; }
+    }
+
+    @keyframes encode {
+      0% { width: 8%; }
+      45% { width: 72%; }
+      70% { width: 88%; }
+      85% { width: 96%; }
+      100% { width: 8%; }
+    }
+
+    @keyframes scan {
+      0% { left: 0%; opacity: 0; }
+      15% { opacity: 1; }
+      70% { left: 55%; opacity: 0.8; }
+      100% { left: 90%; opacity: 0; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+
+    @keyframes streamIn {
+      from { opacity: 0; transform: translateX(10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .window { transform: none; }
+      .track-fill { width: 68%; }
+    }
+
+    @media (max-width: 920px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding-top: 1.75rem;
+      }
+
+      .window { transform: none; }
+
+      .strengths { grid-template-columns: 1fr; }
+
+      .install { grid-template-columns: 1fr; }
+
+      .tl-track { grid-template-columns: 1fr 1fr; }
+
+      .tl-step::after { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 1.5rem, var(--max)); }
+
+      .workspace { grid-template-columns: 1fr; }
+
+      .preview-pane {
+        border-right: none;
+        border-bottom: 1px solid var(--hairline);
+        min-height: 160px;
+      }
+
+      .preview-pane img { max-height: 180px; }
+
+      .meta-pills { display: none; }
+
+      .tl-track { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <div class="meta-pills">
+        <span class="pill accent">Showcase #15</span>
+        <span class="pill">66HEX/frame</span>
+        <span class="pill">FFmpeg · Rust · Desktop</span>
       </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+    </header>
 
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px; display: flex; align-items: flex-start; gap: var(--space-xl);">
-      <div style="flex-grow: 1;">
-        <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-          <span>66HEX/frame</span>
-          <span>•</span>
-          <span>July 9, 2026</span>
-          <span>•</span>
-          <span style="color: var(--color-body-strong);">Showcase #15</span>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="brand-mark">
+          <img src="https://github.com/66HEX/frame/raw/master/icon.png" alt="Frame app icon" width="52" height="52">
+          <div class="brand-name">Frame<span>.</span></div>
         </div>
-        
-        <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-          Frame
-        </h1>
-        
-        <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-          FFmpeg's full power behind a native desktop UI — no Electron, no guesswork.
+        <h1>Native FFmpeg GUI — stream panels, live encode telemetry, zero Electron.</h1>
+        <p class="hero-lede">
+          A Rust desktop workbench that turns FFmpeg’s flag surface into inspectable
+          video, audio, subtitle, and metadata controls — backed by a reusable conversion core.
         </p>
-
-        <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-          <a href="https://github.com/66HEX/frame" class="btn-primary" target="_blank" rel="noopener">View Source</a>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/66HEX/frame" target="_blank" rel="noopener">View source</a>
+          <a class="btn btn-ghost" href="https://github.com/66HEX/frame/releases" target="_blank" rel="noopener">Releases</a>
+          <a class="btn btn-ghost" href="https://www.framegui.app/" target="_blank" rel="noopener">framegui.app</a>
         </div>
       </div>
-      
-      <!-- Brand Icon Badge -->
-      <div class="card-mockup" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background-color: var(--color-canvas-soft); padding: var(--space-sm); box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-color: var(--color-hairline); flex-shrink: 0; border-radius: var(--radius-lg);">
-        <img src="https://github.com/66HEX/frame/raw/master/icon.png" alt="Frame icon" style="width: 100%; height: auto; border-radius: var(--radius-sm);">
-      </div>
-    </div>
-  </header>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Application Preview -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Desktop Interface</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-          <div class="mockup-header">
-            <div class="mockup-controls">
-              <span class="mockup-dot red"></span>
-              <span class="mockup-dot yellow"></span>
-              <span class="mockup-dot green"></span>
-            </div>
-            <div class="mockup-title">preview.png</div>
-            <div style="width: 36px;"></div>
+      <div class="workbench" aria-hidden="true">
+        <div class="window">
+          <div class="titlebar">
+            <div class="traffic"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+            <div class="titlebar-label">frame — export workbench</div>
+            <div class="titlebar-badge">ENCODING</div>
           </div>
-          <img src="https://github.com/66HEX/frame/raw/master/preview.png" alt="Frame application preview showing FFmpeg conversion interface" style="width: 100%; height: auto; display: block;">
+          <div class="workspace">
+            <div class="preview-pane">
+              <img src="https://github.com/66HEX/frame/raw/master/preview.png" alt="Frame desktop application preview">
+              <div class="preview-overlay">
+                <div class="filmstrip">
+                  <span></span><span></span><span></span><span></span>
+                  <span></span><span></span><span></span><span></span>
+                </div>
+                <div class="progress-block">
+                  <div class="progress-meta">
+                    <span>libx265 · CRF 22 · 1920×1080</span>
+                    <span class="pct">encoding…</span>
+                  </div>
+                  <div class="track">
+                    <div class="track-fill"></div>
+                    <div class="track-glow"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="stream-pane">
+              <div class="stream video">
+                <div class="stream-head">
+                  <span class="stream-tag"><i class="dot" style="background:var(--amber);color:var(--amber)"></i> Video</span>
+                  <span class="stream-status live">active</span>
+                </div>
+                <div class="codec-row">
+                  <span class="codec hot">libx265</span>
+                  <span class="codec">CRF 22</span>
+                  <span class="codec">yuv420p</span>
+                  <span class="codec">30 fps</span>
+                </div>
+              </div>
+              <div class="stream audio">
+                <div class="stream-head">
+                  <span class="stream-tag"><i class="dot" style="background:var(--blue);color:var(--blue)"></i> Audio</span>
+                  <span class="stream-status">track 0</span>
+                </div>
+                <div class="codec-row">
+                  <span class="codec hot">aac</span>
+                  <span class="codec">192k</span>
+                  <span class="codec">stereo</span>
+                </div>
+              </div>
+              <div class="stream subs">
+                <div class="stream-head">
+                  <span class="stream-tag"><i class="dot" style="background:var(--violet);color:var(--violet)"></i> Subtitles</span>
+                  <span class="stream-status">burn-in</span>
+                </div>
+                <div class="codec-row">
+                  <span class="codec">.ass</span>
+                  <span class="codec">font · outline</span>
+                </div>
+              </div>
+              <div class="stream meta">
+                <div class="stream-head">
+                  <span class="stream-tag"><i class="dot" style="background:var(--green);color:var(--green)"></i> Metadata</span>
+                  <span class="stream-status">clean</span>
+                </div>
+                <div class="codec-row">
+                  <span class="codec">title</span>
+                  <span class="codec">strip extras</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is Frame?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            FFmpeg is the undisputed engine for media conversion, but its CLI surface area is enormous — hundreds of flags across video codecs, audio streams, image sequences, subtitle tracks, and metadata containers. Most GUI wrappers either hide that complexity behind useless presets or ship as sluggish Electron shells that wrap a subprocess call.
+    <section class="block">
+      <p class="section-label">Audit · What it is</p>
+      <h2>FFmpeg’s power, without memorizing the flag encyclopedia.</h2>
+      <p>
+        FFmpeg remains the default engine for serious media conversion, but its CLI
+        surface is vast — codecs, filters, stream maps, pixel formats, subtitle burn-in,
+        metadata surgery. Most wrappers either bury that depth under a few presets or
+        ship as Electron shells that merely decorate a subprocess call.
+      </p>
+      <p>
+        Frame takes the opposite bet: a native Rust desktop app with a GPUI-CE front end,
+        and a dedicated conversion library (<code style="font-family:var(--mono);color:var(--amber);font-size:0.9em">frame-core</code>)
+        that owns probing, argument generation, compatibility checks, queue control, and
+        live progress parsing. You dial video, audio, image, subtitle, and metadata
+        streams independently — then watch the encode update while it runs.
+      </p>
+    </section>
+
+    <section class="block">
+      <p class="section-label">Why it stands out</p>
+      <h2>A conversion core first, a UI second.</h2>
+      <div class="strengths">
+        <article class="strength">
+          <span class="strength-num">01 — CORE</span>
+          <h3>Reusable Rust pipeline</h3>
+          <p>
+            Source inspection via ffprobe, a JSON compatibility matrix, programmatic
+            FFmpeg argument building, and real-time stderr progress parsing live in
+            <code style="font-family:var(--mono);font-size:0.85em;color:var(--amber)">frame-core</code> —
+            separate from the GPUI shell, ready to extend without rewriting the UI.
           </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            <strong>Frame</strong> takes a different approach: a native desktop app written in Rust with a GPUI-CE front end, backed by a reusable conversion core that handles source probing, argument generation, compatibility validation, task control, and progress parsing. You get granular control over every FFmpeg parameter without memorizing flag syntax.
+        </article>
+        <article class="strength">
+          <span class="strength-num">02 — STREAMS</span>
+          <h3>Per-stream control</h3>
+          <p>
+            Video encoders from libx264/x265 and SVT-AV1 to ProRes and platform
+            hardware paths; audio codecs and filters; subtitle selection or burn-in;
+            metadata preserve/clean/replace — validated before the job starts.
           </p>
+        </article>
+        <article class="strength">
+          <span class="strength-num">03 — NATIVE</span>
+          <h3>GPUI, not a web view</h3>
+          <p>
+            No Chromium tax. Frame renders as a true desktop application with a custom
+            titlebar, workspace and logs views, concurrent encode queueing, and bundled
+            FFmpeg/FFprobe binaries that advertise encoder capability at startup.
+          </p>
+        </article>
+      </div>
+
+      <div class="codec-rail" aria-label="Supported encoders">
+        <span class="codec-chip">libx264</span>
+        <span class="codec-chip">libx265</span>
+        <span class="codec-chip">libsvtav1</span>
+        <span class="codec-chip">vp9</span>
+        <span class="codec-chip">prores</span>
+        <span class="codec-chip">VideoToolbox</span>
+        <span class="codec-chip">NVENC</span>
+        <span class="codec-chip">aac · opus · flac</span>
+        <span class="codec-chip">srt / ass / vtt</span>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-head">
+          <strong>Encode path</strong>
+          <span>probe → validate → queue → ffmpeg → parse progress</span>
         </div>
+        <div class="tl-track">
+          <div class="tl-step">
+            <span class="n">01</span>
+            <span class="t">Probe source streams with ffprobe</span>
+          </div>
+          <div class="tl-step">
+            <span class="n">02</span>
+            <span class="t">Validate against codec matrix</span>
+          </div>
+          <div class="tl-step">
+            <span class="n">03</span>
+            <span class="t">Build FFmpeg args in frame-core</span>
+          </div>
+          <div class="tl-step">
+            <span class="n">04</span>
+            <span class="t">Queue concurrent encode tasks</span>
+          </div>
+          <div class="tl-step">
+            <span class="n">05</span>
+            <span class="t">Stream live progress into the UI</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Reusable Rust Conversion Core</span>
-              <p class="text-body-sm">
-                The FFmpeg logic lives in a dedicated Rust library separate from the UI layer. Source files are probed for stream compatibility before conversion starts, arguments are generated programmatically, and progress is parsed from FFmpeg's output in real time. The core can be reused or extended without touching the interface code.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Granular Stream Control</span>
-              <p class="text-body-sm">
-                Frame exposes settings for video, audio, image, subtitle, and metadata streams individually — not just container format and bitrate sliders. Transcode a video while remapping audio channels, burn in subtitles, strip metadata, or convert an image sequence, all from the same interface with validation before the job runs.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Native GPUI Performance</span>
-              <p class="text-body-sm">
-                Built on GPUI-CE rather than a web view, Frame renders as a true native desktop application. That means lower memory footprint, responsive UI during long encodes, and no Chromium dependency bundled into your media toolchain.
-              </p>
-            </li>
+    <section class="block">
+      <p class="section-label">Get it</p>
+      <h2>Signed-manifest updates, installers on every major platform.</h2>
+      <div class="install">
+        <div class="install-card">
+          <h3>Quick install paths</h3>
+          <p>
+            Prebuilt binaries ship for macOS, Windows, and Linux. Release builds include
+            a signed-manifest updater that verifies Ed25519 signatures and SHA-256 hashes
+            before installing through a bundled helper.
+          </p>
+          <p class="cmd"><span class="prompt">$ </span>winget install --id 66HEX.Frame -e</p>
+          <p class="cmd" style="margin-top:0.5rem"><span class="prompt">$ </span>brew tap 66HEX/frame &amp;&amp; brew install --cask frame</p>
+          <p class="cmd" style="margin-top:0.5rem"><span class="prompt">$ </span>flatpak install flathub io.github._66HEX.Frame</p>
+        </div>
+        <div class="install-card">
+          <h3>Distribution</h3>
+          <ul class="distro-list">
+            <li>GitHub Releases <span>DMG · MSI · tarball</span></li>
+            <li>WinGet <span>66HEX.Frame</span></li>
+            <li>Homebrew cask <span>66HEX/frame</span></li>
+            <li>Flathub <span>io.github._66HEX.Frame</span></li>
+            <li>License <span>GPLv3</span></li>
           </ul>
+          <div class="cta-row" style="margin-top:1.25rem">
+            <a class="btn btn-primary" href="https://github.com/66HEX/frame/releases" target="_blank" rel="noopener">Download release</a>
+            <a class="btn btn-ghost" href="https://github.com/sponsors/66HEX" target="_blank" rel="noopener">Sponsor</a>
+          </div>
         </div>
-      </section>
-
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
       </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
+    </section>
 
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
-    </div>
-  </footer>
-
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
+    <footer class="page-foot">
+      <p>Showcase #15 · Frame · DuckWare curation</p>
+      <a href="./">← Back to catalog</a>
+    </footer>
+  </div>
 </body>
 </html>

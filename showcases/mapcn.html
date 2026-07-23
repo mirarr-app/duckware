@@ -4,194 +4,858 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>mapcn Showcase — DuckWare</title>
-  <meta name="description" content="A detailed curation showcase of mapcn, the open-source React map component library built on MapLibre GL with shadcn/ui compatibility.">
-  
-  <!-- Preconnect to Google Fonts -->
+  <meta name="description" content="DuckWare showcase of mapcn: free open-source React map components on MapLibre GL — shadcn/ui-compatible, theme-aware, installable with one CLI command.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter and Instrument Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Main Stylesheet (relative link) -->
-  <link rel="stylesheet" href="../index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070a0f;
+      --bg-elev: #0d1219;
+      --bg-panel: rgba(15, 20, 28, 0.88);
+      --slate: #141b24;
+      --line: rgba(90, 140, 180, 0.18);
+      --line-strong: rgba(74, 158, 255, 0.35);
+      --map-blue: #4a9eff;
+      --map-blue-dim: #2b6cb0;
+      --teal: #5eead4;
+      --teal-soft: rgba(94, 234, 212, 0.14);
+      --text: #e8eef6;
+      --muted: #8a9aab;
+      --faint: #5a6a7a;
+      --pin: #ff5a5f;
+      --radius: 10px;
+      --font: "Geist", system-ui, sans-serif;
+      --mono: "Geist Mono", ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    code, .mono { font-family: var(--mono); }
+
+    /* —— Top bar —— */
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1.25rem;
+      background: linear-gradient(180deg, rgba(7, 10, 15, 0.92), rgba(7, 10, 15, 0.55) 70%, transparent);
+      backdrop-filter: blur(8px);
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.8125rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      transition: color 0.2s ease;
+    }
+    .back:hover { color: var(--teal); }
+    .back svg { width: 14px; height: 14px; opacity: 0.8; }
+
+    .top-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.75rem;
+      color: var(--faint);
+      font-family: var(--mono);
+    }
+    .pill {
+      border: 1px solid var(--line);
+      background: var(--bg-panel);
+      color: var(--muted);
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .pill--live {
+      color: var(--teal);
+      border-color: rgba(94, 234, 212, 0.35);
+      background: var(--teal-soft);
+    }
+
+    /* —— Hero map canvas —— */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      place-items: end stretch;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .map-canvas {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 55% 40%, rgba(43, 108, 176, 0.22), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 20% 70%, rgba(94, 234, 212, 0.08), transparent 50%),
+        linear-gradient(165deg, #0a1018 0%, #0c1520 40%, #081018 100%);
+    }
+
+    /* Fake dark basemap tiles */
+    .tile-grid {
+      position: absolute;
+      inset: -5%;
+      background-image:
+        linear-gradient(rgba(90, 140, 180, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(90, 140, 180, 0.07) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse 70% 65% at 50% 45%, #000 30%, transparent 75%);
+      opacity: 0.85;
+    }
+
+    .roads {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .roads svg {
+      width: 100%;
+      height: 100%;
+    }
+    .road-path {
+      fill: none;
+      stroke: rgba(74, 158, 255, 0.18);
+      stroke-width: 1.5;
+    }
+    .route-path {
+      fill: none;
+      stroke: var(--map-blue);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      filter: drop-shadow(0 0 6px rgba(74, 158, 255, 0.55));
+      animation: draw-route 2.4s ease-out 0.4s forwards;
+    }
+    .route-glow {
+      fill: none;
+      stroke: var(--teal);
+      stroke-width: 8;
+      stroke-opacity: 0.12;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      animation: draw-route 2.4s ease-out 0.4s forwards;
+    }
+
+    @keyframes draw-route {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* Markers */
+    .marker {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -100%);
+      z-index: 5;
+      animation: marker-drop 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+    }
+    .marker:nth-child(1) { animation-delay: 0.9s; }
+    .marker:nth-child(2) { animation-delay: 1.25s; }
+    .marker:nth-child(3) { animation-delay: 1.55s; }
+
+    .marker__pin {
+      width: 18px;
+      height: 18px;
+      border-radius: 50% 50% 50% 0;
+      background: var(--pin);
+      transform: rotate(-45deg);
+      box-shadow: 0 4px 14px rgba(255, 90, 95, 0.45);
+      position: relative;
+    }
+    .marker__pin::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .marker--teal .marker__pin {
+      background: var(--teal);
+      box-shadow: 0 4px 14px rgba(94, 234, 212, 0.4);
+    }
+    .marker--blue .marker__pin {
+      background: var(--map-blue);
+      box-shadow: 0 4px 14px rgba(74, 158, 255, 0.45);
+    }
+    .marker__pulse {
+      position: absolute;
+      left: 50%;
+      bottom: -4px;
+      width: 10px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.35);
+      transform: translateX(-50%);
+    }
+    .marker__bounce {
+      animation: marker-bounce 2.2s ease-in-out 2.2s infinite;
+    }
+
+    @keyframes marker-drop {
+      from { opacity: 0; transform: translate(-50%, -160%); }
+      to { opacity: 1; transform: translate(-50%, -100%); }
+    }
+    @keyframes marker-bounce {
+      0%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+      60% { transform: translateY(-2px); }
+    }
+
+    .marker-label {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 0.65rem;
+      font-family: var(--mono);
+      color: var(--text);
+      background: var(--bg-panel);
+      border: 1px solid var(--line);
+      padding: 0.25rem 0.45rem;
+      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      animation: fade-up 0.5s ease 1.8s forwards;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Floating map controls (shadcn-like) */
+    .map-chrome {
+      position: absolute;
+      top: 5.5rem;
+      right: clamp(1rem, 4vw, 2.5rem);
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      animation: fade-in 0.6s ease 0.3s both;
+    }
+
+    .ctrl-stack {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+    .ctrl-btn {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--line);
+      font-size: 1rem;
+      cursor: default;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .ctrl-btn:last-child { border-bottom: none; }
+    .ctrl-btn:hover { background: rgba(74, 158, 255, 0.12); color: var(--map-blue); }
+    .ctrl-solo {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      color: var(--muted);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+    .ctrl-solo:hover { color: var(--teal); border-color: rgba(94, 234, 212, 0.4); }
+
+    .attrib {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      z-index: 6;
+      font-size: 0.62rem;
+      font-family: var(--mono);
+      color: var(--faint);
+      background: rgba(7, 10, 15, 0.65);
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+    }
+
+    /* Hero copy overlay */
+    .hero-copy {
+      position: relative;
+      z-index: 10;
+      width: min(640px, 100%);
+      padding: 0 1.25rem 4.5rem;
+      margin-left: clamp(0rem, 6vw, 4rem);
+      animation: fade-in 0.7s ease 0.15s both;
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand {
+      font-size: clamp(3rem, 10vw, 5.25rem);
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 0.95;
+      color: var(--text);
+      text-shadow: 0 2px 40px rgba(7, 10, 15, 0.8);
+    }
+    .brand span {
+      background: linear-gradient(120deg, var(--map-blue), var(--teal));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .headline {
+      margin-top: 1rem;
+      font-size: clamp(1.15rem, 2.6vw, 1.45rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      max-width: 28ch;
+    }
+
+    .lede {
+      margin-top: 0.65rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 42ch;
+    }
+
+    .cta-row {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.05rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: var(--map-blue);
+      color: #061018;
+      border: 1px solid transparent;
+    }
+    .btn-primary:hover { background: #6bb0ff; }
+    .btn-ghost {
+      background: var(--bg-panel);
+      border: 1px solid var(--line);
+      color: var(--text);
+      backdrop-filter: blur(10px);
+    }
+    .btn-ghost:hover { border-color: var(--line-strong); color: var(--teal); }
+
+    .install {
+      margin-top: 1.25rem;
+      display: flex;
+      align-items: stretch;
+      max-width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(8, 14, 22, 0.9);
+      box-shadow: 0 0 0 1px rgba(74, 158, 255, 0.08), 0 16px 48px rgba(0, 0, 0, 0.35);
+    }
+    .install__prompt {
+      display: flex;
+      align-items: center;
+      padding: 0 0.75rem;
+      color: var(--teal);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      background: rgba(94, 234, 212, 0.06);
+      border-right: 1px solid var(--line);
+      user-select: none;
+    }
+    .install code {
+      flex: 1;
+      padding: 0.8rem 0.9rem;
+      font-size: clamp(0.68rem, 2.2vw, 0.8rem);
+      color: #c8daf0;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .install code .cmd { color: var(--map-blue); }
+    .install code .pkg { color: var(--teal); }
+
+    /* —— Content —— */
+    main {
+      position: relative;
+      z-index: 2;
+      background: var(--bg);
+    }
+
+    .section {
+      padding: clamp(3.5rem, 8vw, 5.5rem) clamp(1.25rem, 5vw, 3.5rem);
+      max-width: 1100px;
+      margin: 0 auto;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--map-blue);
+      margin-bottom: 0.75rem;
+    }
+
+    .section h2 {
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      max-width: 22ch;
+      margin-bottom: 1rem;
+    }
+
+    .section p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 62ch;
+    }
+    .section p + p { margin-top: 1rem; }
+
+    .prose-accent {
+      color: var(--text);
+    }
+
+    /* Strengths */
+    .strengths {
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    @media (min-width: 720px) {
+      .strengths { grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
+    }
+
+    .strength {
+      padding-top: 1rem;
+      border-top: 2px solid var(--line);
+      transition: border-color 0.25s ease;
+    }
+    .strength:hover { border-color: var(--map-blue); }
+    .strength h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .strength p {
+      font-size: 0.9rem;
+      max-width: none;
+    }
+    .strength .num {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--teal);
+      margin-bottom: 0.4rem;
+    }
+
+    /* Component strip */
+    .comp-strip {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+    @media (min-width: 640px) {
+      .comp-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 900px) {
+      .comp-strip { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .comp {
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.1rem 1rem;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .comp:hover {
+      border-color: var(--line-strong);
+      transform: translateY(-2px);
+    }
+    .comp__icon {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 0.75rem;
+      color: var(--map-blue);
+    }
+    .comp h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+    .comp p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      max-width: none;
+    }
+
+    /* Code panel */
+    .code-panel {
+      margin-top: 1.75rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0a0f16;
+    }
+    .code-panel__bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-elev);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--faint);
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--faint);
+    }
+    .dot:nth-child(1) { background: #ff5a5f; }
+    .dot:nth-child(2) { background: #f5c542; }
+    .dot:nth-child(3) { background: #3dd68c; }
+    .code-panel pre {
+      padding: 1.15rem 1.25rem;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: #b8c8da;
+    }
+    .tok-kw { color: var(--map-blue); }
+    .tok-str { color: var(--teal); }
+    .tok-cm { color: var(--faint); }
+    .tok-fn { color: #c4b5fd; }
+
+    /* Banner / evidence */
+    .evidence {
+      margin-top: 2rem;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--slate);
+    }
+    .evidence img {
+      width: 100%;
+      height: auto;
+      opacity: 0.95;
+    }
+    .evidence figcaption {
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      color: var(--faint);
+      border-top: 1px solid var(--line);
+    }
+
+    /* Tags + footer CTAs */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 1.5rem;
+    }
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: var(--bg-elev);
+    }
+
+    .footer {
+      padding: 2.5rem clamp(1.25rem, 5vw, 3.5rem) 3rem;
+      border-top: 1px solid var(--line);
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer p {
+      font-size: 0.8rem;
+      color: var(--faint);
+      max-width: 36ch;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .route-path,
+      .route-glow {
+        animation: none;
+        stroke-dashoffset: 0;
+      }
+      .marker,
+      .marker__bounce,
+      .marker-label,
+      .map-chrome,
+      .hero-copy {
+        animation: none;
+        opacity: 1;
+        transform: translate(-50%, -100%);
+      }
+      .hero-copy, .map-chrome {
+        transform: none;
+      }
+      .btn:hover, .comp:hover { transform: none; }
+    }
+
+    @media (max-width: 640px) {
+      .map-chrome { top: 4.75rem; right: 0.75rem; }
+      .hero-copy { padding-bottom: 3.5rem; margin-left: 0; }
+      .attrib { left: 0.75rem; bottom: 0.75rem; }
+      .marker-label { display: none; }
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Navigation -->
-  <nav class="nav-bar" id="navbar">
-    <div class="nav-container">
-      <a href="../" class="nav-logo" id="nav-logo">
-        <img src="../favicon.ico" alt="duckware logo" style="width: 16px; height: 16px; border-radius: var(--radius-xs);">
-        <span>duckware</span>
-      </a>
-      
-      <div class="nav-links">
-        <a href="./" class="nav-link">Showcases</a>
-        <a href="../#submit" class="nav-link">Submit Software</a>
-      </div>
-      
-      <div class="nav-right">
-        <a href="https://github.com/mirarr-app/duckware" class="btn-secondary-ghost" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: var(--space-sm);">
-          <span>GitHub Repository</span>
-        </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Showcase Header -->
-  <header class="hero-band" style="padding-bottom: var(--space-3xl);">
-    <div class="container" style="max-width: 900px;">
-      <div class="showcase-meta text-code" style="color: var(--color-mute); margin-bottom: var(--space-md); display: flex; gap: var(--space-lg);">
-        <span>AnmolSaini16/mapcn</span>
-        <span>•</span>
-        <span>July 4, 2026</span>
-        <span>•</span>
-        <span style="color: var(--color-body-strong);">Showcase #12</span>
-      </div>
-      
-      <h1 class="text-display-lg" style="margin-bottom: var(--space-sm); font-size: 56px;">
-        mapcn
-      </h1>
-      
-      <p class="text-display-serif" style="margin-top: var(--space-md); margin-bottom: var(--space-xl); color: var(--color-body-strong); font-size: 38px; line-height: 44px;">
-        Drop-in map components for React — theme-aware, shadcn-native, powered by MapLibre GL.
-      </p>
-
-      <div class="hero-cta-group" style="margin-top: var(--space-lg);">
-        <a href="https://mapcn.dev/docs" class="btn-primary" target="_blank" rel="noopener">Get Started</a>
-        <a href="https://github.com/AnmolSaini16/mapcn" class="btn-secondary-ghost" target="_blank" rel="noopener">View Source</a>
-      </div>
+  <header class="topbar">
+    <a class="back" href="./">
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      All showcases
+    </a>
+    <div class="top-meta">
+      <span class="pill">Showcase #12</span>
+      <span class="pill pill--live">mapcn</span>
     </div>
   </header>
 
-  <!-- Main Showcase Content -->
-  <main class="content-band" style="padding-top: 0;">
-    <div class="container" style="max-width: 900px;">
-      
-      <!-- Banner Visual -->
-      <section style="margin-bottom: var(--space-4xl);">
-        <h3 class="text-body-sm-strong" style="color: var(--color-mute); margin-bottom: var(--space-lg); text-transform: uppercase; letter-spacing: 0.8px;">Component Preview</h3>
-        <div class="card-mockup" style="box-shadow: 0 8px 30px rgba(0,0,0,0.4);">
-          <div class="mockup-header">
-            <div class="mockup-controls">
-              <span class="mockup-dot red"></span>
-              <span class="mockup-dot yellow"></span>
-              <span class="mockup-dot green"></span>
-            </div>
-            <div class="mockup-title">banner.png</div>
-            <div style="width: 36px;"></div>
-          </div>
-          <img src="https://github.com/AnmolSaini16/mapcn/raw/main/public/banner.png" alt="mapcn map components banner showing interactive map UI" style="width: 100%; height: auto; display: block;">
+  <section class="hero" aria-label="mapcn cartographic hero">
+    <div class="map-canvas" aria-hidden="true">
+      <div class="tile-grid"></div>
+      <div class="roads">
+        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+          <path class="road-path" d="M80 620 C220 560, 280 480, 360 420 S520 300, 640 280 S820 260, 980 200"/>
+          <path class="road-path" d="M40 280 H420 C500 280, 540 340, 620 380 S780 460, 1160 420"/>
+          <path class="road-path" d="M200 80 V520 C200 580, 260 620, 340 640 H900"/>
+          <path class="route-glow" d="M220 560 C340 500, 400 420, 480 360 S640 260, 760 240 S920 220, 1020 180"/>
+          <path class="route-path" d="M220 560 C340 500, 400 420, 480 360 S640 260, 760 240 S920 220, 1020 180"/>
+        </svg>
+      </div>
+
+      <div class="marker marker--blue" style="left: 18%; top: 68%;">
+        <div class="marker__bounce">
+          <span class="marker-label">origin</span>
+          <div class="marker__pin"></div>
         </div>
-      </section>
-
-      <!-- Audit & Curation Notes -->
-      <section style="display: flex; flex-direction: column; gap: var(--space-3xl); margin-bottom: var(--space-4xl);">
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">What is mapcn?</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-md);">
-            Adding maps to a React app usually means wrestling with MapLibre or Mapbox boilerplate, custom CSS that fights your design system, and a pile of glue code for markers, popups, and controls. <strong>mapcn</strong> packages all of that into copy-paste components that follow the same conventions as shadcn/ui.
-          </p>
-          <p class="text-body-md" style="line-height: 1.7;">
-            Built on MapLibre GL and styled with Tailwind, the library ships ready-to-use pieces for basemaps, markers, popups, route drawing, and navigation controls. Install with a single CLI command, drop a component into your page, and you get a polished map that respects light and dark mode without extra configuration.
-          </p>
+        <div class="marker__pulse"></div>
+      </div>
+      <div class="marker marker--teal" style="left: 52%; top: 38%;">
+        <div class="marker__bounce" style="animation-delay: 2.5s;">
+          <span class="marker-label">waypoint</span>
+          <div class="marker__pin"></div>
         </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Architectural Highlights & Strengths</h2>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-sm);">
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">shadcn/ui-Native Patterns</span>
-              <p class="text-body-sm">
-                Components are designed to slot into existing shadcn projects — same Tailwind tokens, same compositional style, same copy-via-CLI workflow. You are not adopting a separate design language; the map UI inherits your app's visual system and theme switching automatically.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Composable Map Primitives</span>
-              <p class="text-body-sm">
-                Rather than one monolithic map widget, mapcn exposes building blocks — basemap containers, marker layers, popups, tooltips, route overlays, and zoom or locate controls. Compose them declaratively in JSX to build dashboards, store locators, or logistics views without touching low-level MapLibre APIs directly.
-              </p>
-            </li>
-            <li class="card-content" style="padding: var(--space-lg);">
-              <span class="text-body-md-strong" style="display: block; margin-bottom: var(--space-xs);">Zero-Config Defaults, Full MapLibre Escape Hatch</span>
-              <p class="text-body-sm">
-                Sensible basemap and control defaults get you rendering immediately via CARTO tiles, with the option to swap in OpenStreetMap, MapTiler, Stadia, or any other MapLibre-compatible provider. When you need raw engine access, the full MapLibre GL API remains available underneath.
-              </p>
-            </li>
-          </ul>
+        <div class="marker__pulse"></div>
+      </div>
+      <div class="marker" style="left: 82%; top: 24%;">
+        <div class="marker__bounce" style="animation-delay: 2.8s;">
+          <span class="marker-label">destination</span>
+          <div class="marker__pin"></div>
         </div>
-
-        <div>
-          <h2 class="text-display-sm" style="margin-bottom: var(--space-md);">Quick Setup</h2>
-          <p class="text-body-md" style="line-height: 1.7; margin-bottom: var(--space-lg);">
-            Add components to an existing shadcn project through the mapcn CLI — no manual wiring of stylesheets or provider tokens required:
-          </p>
-          <div class="card-mockup" style="margin-bottom: var(--space-lg);">
-            <div class="mockup-header">
-              <div class="mockup-controls"><span class="mockup-dot red"></span><span class="mockup-dot yellow"></span><span class="mockup-dot green"></span></div>
-              <div class="mockup-title">terminal</div>
-            </div>
-            <div class="mockup-body">
-              <span class="token-cmd">pnpm dlx shadcn@latest add @mapcn/map</span><br>
-              <span class="token-success">✓ maplibre-gl installed · map component added</span><br><br>
-              <span class="token-comment"># Then import and render in your React app</span><br>
-              <span class="token-cmd">import { Map, MapControls } from "@/components/ui/map"</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Back to Catalog -->
-      <section style="border-top: 1px solid var(--color-hairline); padding-top: var(--space-2xl); text-align: center;">
-        <a href="./" class="btn-secondary-ghost">
-          ← Back to Catalog
-        </a>
-      </section>
-
+        <div class="marker__pulse"></div>
+      </div>
     </div>
+
+    <div class="map-chrome" aria-hidden="true">
+      <div class="ctrl-stack">
+        <button type="button" class="ctrl-btn" tabindex="-1" aria-hidden="true">+</button>
+        <button type="button" class="ctrl-btn" tabindex="-1" aria-hidden="true">−</button>
+      </div>
+      <div class="ctrl-solo" title="Compass">◎</div>
+      <div class="ctrl-solo" title="Locate">⌖</div>
+    </div>
+
+    <span class="attrib">MapLibre · dark basemap aesthetic</span>
+
+    <div class="hero-copy">
+      <h1 class="brand">map<span>cn</span></h1>
+      <p class="headline">Map UI you own — MapLibre power, shadcn ergonomics.</p>
+      <p class="lede">Drop theme-aware map primitives into a React app with one CLI command: markers, routes, and controls that feel native to your design system.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/AnmolSaini16/mapcn" target="_blank" rel="noopener">View on GitHub</a>
+        <a class="btn btn-ghost" href="https://www.mapcn.dev/docs" target="_blank" rel="noopener">Read the docs</a>
+      </div>
+      <div class="install" role="group" aria-label="Install command">
+        <span class="install__prompt">$</span>
+        <code><span class="cmd">npx</span> shadcn@latest add <span class="pkg">@mapcn/map</span></code>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="section">
+      <p class="section-kicker">Audit · Showcase #12</p>
+      <h2>Maps that compose like UI, not like SDKs</h2>
+      <p>
+        React teams keep rediscovering the same tax: MapLibre (or Mapbox) is capable, but wiring styles, markers, popups, and chrome into a polished product UI is a project of its own. <span class="prose-accent">mapcn</span> treats that surface as a component problem — the same copy-into-your-repo model popularized by shadcn/ui, powered by MapLibre GL and Tailwind.
+      </p>
+      <p>
+        You do not import a sealed black-box package. The CLI drops source into your tree so you can restyle pins, swap tile providers, and compose routes the way you already compose buttons and dialogs. Theme awareness is built in: basemaps and chrome can follow light and dark without a second integration path.
+      </p>
+      <div class="tags" aria-label="Tags">
+        <span class="tag">React</span>
+        <span class="tag">MapLibre</span>
+        <span class="tag">shadcn/ui</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-kicker">Why it lands</p>
+      <h2>Three strengths that matter in practice</h2>
+      <div class="strengths">
+        <article class="strength">
+          <p class="num">01</p>
+          <h3>Own the source</h3>
+          <p>Installation via the shadcn CLI copies map primitives into your project. Debugging a marker quirk or restyling a popup is a local edit — not a fight with opaque props buried in <code class="mono">node_modules</code>.</p>
+        </article>
+        <article class="strength">
+          <p class="num">02</p>
+          <h3>Declarative map UI</h3>
+          <p>Markers, popups, tooltips, routes, and controls compose as React children. You get MapLibre’s rendering depth without abandoning the mental model of a modern component library.</p>
+        </article>
+        <article class="strength">
+          <p class="num">03</p>
+          <h3>Theme-native defaults</h3>
+          <p>CARTO basemap tiles flip with light/dark themes out of the box. Pair that with Tailwind tokens already in a shadcn stack and the map stops looking like a foreign iframe.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-kicker">Kit</p>
+      <h2>What you actually ship</h2>
+      <p>Beyond a bare canvas, mapcn ships the pieces product maps usually need on day one — and docs cover clusters, arcs, GeoJSON layers, and custom styles when you outgrow the basics.</p>
+      <div class="comp-strip">
+        <article class="comp">
+          <svg class="comp__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-5.2 7-11a7 7 0 1 0-14 0c0 5.8 7 11 7 11z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.2" fill="currentColor"/></svg>
+          <h3>Markers &amp; popups</h3>
+          <p>Rich pins with labels, tooltips, and popups — including draggable markers when interaction is the point.</p>
+        </article>
+        <article class="comp">
+          <svg class="comp__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17c3-6 5-8 8-8s5 2 8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="4" cy="17" r="1.5" fill="currentColor"/><circle cx="20" cy="17" r="1.5" fill="currentColor"/></svg>
+          <h3>Routes &amp; paths</h3>
+          <p>Draw polylines and route overlays for directions, deliveries, or any path narrative on the map.</p>
+        </article>
+        <article class="comp">
+          <svg class="comp__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="4" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M14 16.5h5M16.5 14v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <h3>Map controls</h3>
+          <p>Zoom, compass, locate, and fullscreen chrome that matches shadcn-adjacent UI density.</p>
+        </article>
+        <article class="comp">
+          <svg class="comp__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.4"/></svg>
+          <h3>MapLibre depth</h3>
+          <p>Full engine access when you need custom layers, clustering, arcs, or alternate tile providers.</p>
+        </article>
+      </div>
+
+      <div class="code-panel">
+        <div class="code-panel__bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span>components/ui/map · usage</span>
+        </div>
+        <pre><code><span class="tok-kw">import</span> { Map, MapControls } <span class="tok-kw">from</span> <span class="tok-str">"@/components/ui/map"</span>;
+
+<span class="tok-kw">export</span> <span class="tok-kw">function</span> <span class="tok-fn">MyMap</span>() {
+  <span class="tok-kw">return</span> (
+    &lt;Map center={[-74.006, 40.7128]} zoom={11}&gt;
+      &lt;MapControls /&gt;
+    &lt;/Map&gt;
+  );
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-kicker">Upstream</p>
+      <h2>From the project banner</h2>
+      <p>Official project art from the repository — the same “beautiful map components, one command setup” promise the docs open with.</p>
+      <figure class="evidence">
+        <img src="https://github.com/AnmolSaini16/mapcn/raw/main/public/banner.png" alt="mapcn project banner showing React map components" loading="lazy" width="1200" height="630">
+        <figcaption>github.com/AnmolSaini16/mapcn · public/banner.png · MIT licensed</figcaption>
+      </figure>
+      <p style="margin-top: 1.25rem;">
+        Note for production use: default CARTO basemaps have separate commercial terms; mapcn itself is MIT and works with other MapLibre-compatible tile providers when you need to switch.
+      </p>
+    </section>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
-    <div class="container footer-layout">
-      <div class="footer-brand">
-        <a href="../" class="footer-logo">duckware</a>
-        <p class="footer-description">
-          A catalog of cool software        </p>
-      </div>
-      
-      <div class="footer-column">
-        <span class="footer-title">Navigation</span>
-        <ul class="footer-links">
-          <li><a href="./" class="footer-link">Showcases</a></li>
-          <li><a href="../#submit" class="footer-link">Submit Software</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Community</span>
-        <ul class="footer-links">
-          <li><a href="https://github.com/mirarr-app/duckware" class="footer-link" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="../feed.xml" class="footer-link">RSS Feed</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <span class="footer-title">Platform</span>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">GitHub Pages</a></li>
-          <li><a href="../privacy.html" class="footer-link">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    
-    <div class="container footer-bottom">
-      <span>© 2026 DuckWare Curator. All rights reserved.</span>
-      <span class="font-serif" style="font-style: italic;">Mirarr</span>
+    <p>DuckWare curation of <strong style="color: var(--text); font-weight: 500;">mapcn</strong> — free React map components for teams already fluent in shadcn/ui.</p>
+    <div class="footer-links">
+      <a class="btn btn-primary" href="https://github.com/AnmolSaini16/mapcn" target="_blank" rel="noopener">Repository</a>
+      <a class="btn btn-ghost" href="https://www.mapcn.dev/docs/installation" target="_blank" rel="noopener">Installation</a>
+      <a class="btn btn-ghost" href="./">Catalog</a>
     </div>
   </footer>
-
-  <!-- Client JavaScript -->
-  <script src="../app.js"></script>
 </body>
 </html>
