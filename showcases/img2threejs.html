@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>img2threejs Showcase — DuckWare</title>
+  <meta name="description" content="Rebuild a reference image as a code-only, quality-gated, animation-ready Three.js model — procedural reconstruction that spends tokens on judgment, not bookkeeping.">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono:ital@0;1&family=Outfit:wght@400;500;600;700&family=Sora:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #05060a;
+      --ink: #0a0c12;
+      --panel: #10141c;
+      --panel-2: #161b26;
+      --line: rgba(61, 232, 197, 0.16);
+      --line-soft: rgba(232, 238, 245, 0.08);
+      --text: #e8eef5;
+      --mute: #8a93a3;
+      --cyan: #3de8c5;
+      --cyan-dim: #1a9f86;
+      --amber: #f0b429;
+      --coral: #ff6b5a;
+      --max: 1120px;
+      --font-display: "Outfit", sans-serif;
+      --font-body: "Sora", sans-serif;
+      --font-mono: "Fragment Mono", ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--void);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .grid-floor {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(61, 232, 197, 0.12), transparent 55%),
+        radial-gradient(ellipse 40% 30% at 85% 70%, rgba(240, 180, 41, 0.06), transparent 50%),
+        linear-gradient(180deg, var(--void) 0%, #070910 40%, #05060a 100%);
+    }
+
+    .grid-floor::after {
+      content: "";
+      position: absolute;
+      inset: 35% 0 0;
+      background-image:
+        linear-gradient(rgba(61, 232, 197, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(61, 232, 197, 0.06) 1px, transparent 1px);
+      background-size: 56px 56px;
+      transform: perspective(600px) rotateX(58deg) scale(1.4);
+      transform-origin: center top;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), transparent 75%);
+      animation: grid-drift 28s linear infinite;
+    }
+
+    @keyframes grid-drift {
+      from { background-position: 0 0, 0 0; }
+      to { background-position: 0 56px, 56px 0; }
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .back {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--mute);
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .back:hover { color: var(--cyan); border-color: var(--cyan); }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--cyan);
+      border: 1px solid var(--line);
+      padding: 0.35rem 0.65rem;
+      background: rgba(61, 232, 197, 0.06);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* —— Hero: one composition —— */
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 3.5rem;
+      display: grid;
+      gap: 2rem;
+      align-items: end;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
+        min-height: calc(100vh - 5rem);
+        padding-bottom: 4rem;
+      }
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(2.75rem, 7vw, 4.6rem);
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.15rem;
+    }
+
+    .brand span {
+      color: var(--cyan);
+      display: inline-block;
+    }
+
+    .brand .arrow {
+      color: var(--amber);
+      font-weight: 500;
+      margin: 0 0.08em;
+    }
+
+    .headline {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      max-width: 22ch;
+      margin-bottom: 0.85rem;
+      color: var(--text);
+    }
+
+    .lede {
+      color: var(--mute);
+      font-size: 0.95rem;
+      max-width: 36ch;
+      margin-bottom: 1.75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 0.75rem 1.1rem;
+      border: 1px solid transparent;
+      transition: transform 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--cyan);
+      color: #041410;
+      font-weight: 600;
+    }
+    .btn-primary:hover { background: #62f0d3; }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--line-soft);
+      color: var(--text);
+    }
+    .btn-ghost:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .viewport {
+      position: relative;
+      border: 1px solid var(--line);
+      background: linear-gradient(165deg, #121722 0%, #0a0d14 100%);
+      overflow: hidden;
+      min-height: 280px;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.4),
+        0 24px 80px rgba(0,0,0,0.55),
+        inset 0 1px 0 rgba(61, 232, 197, 0.08);
+      animation: viewport-in 0.9s ease-out both;
+    }
+
+    @keyframes viewport-in {
+      from { opacity: 0; transform: translateY(18px) scale(0.985); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .viewport-chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.55rem 0.8rem;
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(10, 12, 18, 0.85);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--mute);
+    }
+
+    .chrome-dots { display: flex; gap: 5px; }
+    .chrome-dots i {
+      width: 7px; height: 7px; border-radius: 50%; display: block;
+      background: #2a3140;
+    }
+    .chrome-dots i:nth-child(1) { background: #ff6b5a; }
+    .chrome-dots i:nth-child(2) { background: #f0b429; }
+    .chrome-dots i:nth-child(3) { background: #3de8c5; }
+
+    .chrome-status {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--cyan);
+    }
+    .chrome-status::before {
+      content: "";
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+      animation: pulse-dot 2.2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.75); }
+    }
+
+    .viewport-stage {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(61, 232, 197, 0.08), transparent 55%),
+        #080a10;
+    }
+
+    .viewport-stage img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.96;
+    }
+
+    .viewport-labels {
+      position: absolute;
+      inset: auto 0 0;
+      display: flex;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      background: linear-gradient(transparent, rgba(5, 6, 10, 0.85));
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mute);
+      pointer-events: none;
+    }
+    .viewport-labels strong { color: var(--cyan); font-weight: 500; }
+
+    /* —— Sections —— */
+    section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem;
+    }
+
+    .section-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cyan-dim);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(1.6rem, 3.5vw, 2.15rem);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 0.85rem;
+      max-width: 22ch;
+    }
+
+    .section-copy {
+      color: var(--mute);
+      max-width: 52ch;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    /* Contrast strip */
+    .not-that {
+      border-top: 1px solid var(--line-soft);
+      border-bottom: 1px solid var(--line-soft);
+      background: rgba(16, 20, 28, 0.55);
+      backdrop-filter: blur(8px);
+    }
+
+    .not-that .inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 2.75rem 1.5rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 800px) {
+      .not-that .inner {
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 2rem;
+      }
+    }
+
+    .reject, .accept {
+      padding: 1.25rem 1.35rem;
+      border: 1px solid var(--line-soft);
+      background: var(--ink);
+    }
+
+    .reject { opacity: 0.72; }
+    .reject h3, .accept h3 {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.65rem;
+    }
+    .reject h3 { color: var(--coral); }
+    .accept h3 { color: var(--cyan); }
+
+    .reject p, .accept p {
+      font-size: 0.9rem;
+      color: var(--mute);
+      line-height: 1.55;
+    }
+
+    .vs {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--amber);
+      text-align: center;
+      letter-spacing: 0.12em;
+    }
+
+    /* Pipeline rail */
+    .pass-rail {
+      display: grid;
+      gap: 0.55rem;
+      counter-reset: pass;
+    }
+
+    @media (min-width: 760px) {
+      .pass-rail {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .pass {
+      counter-increment: pass;
+      position: relative;
+      padding: 1rem 1rem 1rem 1.1rem;
+      background: var(--panel);
+      border: 1px solid var(--line-soft);
+      border-left: 2px solid transparent;
+      overflow: hidden;
+      transition: border-color 0.25s, background 0.25s;
+    }
+
+    .pass::before {
+      content: counter(pass, decimal-leading-zero);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--mute);
+      display: block;
+      margin-bottom: 0.45rem;
+      letter-spacing: 0.06em;
+    }
+
+    .pass strong {
+      display: block;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.92rem;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.01em;
+    }
+
+    .pass span {
+      font-size: 0.78rem;
+      color: var(--mute);
+      line-height: 1.45;
+    }
+
+    .pass.active {
+      border-left-color: var(--cyan);
+      background: linear-gradient(90deg, rgba(61, 232, 197, 0.08), transparent 70%);
+    }
+
+    .pass.active::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      animation: scan 2.8s ease-in-out infinite;
+    }
+
+    @keyframes scan {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    /* Efficiency split */
+    .split {
+      display: grid;
+      gap: 1.25rem;
+    }
+    @media (min-width: 800px) {
+      .split { grid-template-columns: 1.1fr 0.9fr; gap: 1.75rem; }
+    }
+
+    .judge-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .judge-panel h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .judge-panel p {
+      color: var(--mute);
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .meter {
+      display: grid;
+      gap: 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    .meter-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.5rem;
+      align-items: center;
+      color: var(--mute);
+    }
+
+    .meter-bar {
+      grid-column: 1 / -1;
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+
+    .meter-bar i {
+      display: block;
+      height: 100%;
+      background: var(--cyan);
+      transform-origin: left;
+      animation: fill-bar 1.8s ease-out both;
+    }
+
+    .meter-row:nth-child(1) i { width: 8%; animation-delay: 0.1s; background: var(--mute); }
+    .meter-row:nth-child(2) i { width: 22%; animation-delay: 0.25s; }
+    .meter-row:nth-child(3) i { width: 35%; animation-delay: 0.4s; background: var(--amber); }
+    .meter-row:nth-child(4) i { width: 55%; animation-delay: 0.55s; }
+
+    @keyframes fill-bar {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    .code-slab {
+      background: #080a10;
+      border: 1px solid var(--line-soft);
+      padding: 1.25rem 1.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      line-height: 1.7;
+      color: #9aa7b8;
+      overflow-x: auto;
+    }
+
+    .code-slab .kw { color: var(--cyan); }
+    .code-slab .fn { color: var(--amber); }
+    .code-slab .cm { color: #5a6474; }
+    .code-slab .st { color: #9ad4c4; }
+
+    /* Gallery */
+    .gallery {
+      display: grid;
+      gap: 1rem;
+    }
+    @media (min-width: 700px) {
+      .gallery { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .demo-tile {
+      display: block;
+      background: var(--panel);
+      border: 1px solid var(--line-soft);
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .demo-tile:hover {
+      border-color: var(--cyan);
+      transform: translateY(-3px);
+    }
+
+    .demo-tile .thumb {
+      aspect-ratio: 16 / 11;
+      background: #080a10;
+      overflow: hidden;
+    }
+    .demo-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.45s ease;
+    }
+    .demo-tile:hover img { transform: scale(1.04); }
+
+    .demo-meta {
+      padding: 0.85rem 1rem 1rem;
+      border-top: 1px solid var(--line-soft);
+    }
+    .demo-meta h3 {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.2rem;
+    }
+    .demo-meta p {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--mute);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Deliverables */
+    .loot {
+      display: grid;
+      gap: 0.85rem;
+    }
+    @media (min-width: 700px) {
+      .loot { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .loot-item {
+      padding: 1.35rem 1.25rem;
+      background: linear-gradient(160deg, var(--panel-2), var(--panel));
+      border: 1px solid var(--line-soft);
+      border-top: 2px solid var(--cyan-dim);
+    }
+
+    .loot-item h3 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.45rem;
+      letter-spacing: -0.015em;
+    }
+    .loot-item p {
+      font-size: 0.85rem;
+      color: var(--mute);
+      line-height: 1.55;
+    }
+
+    /* Honesty */
+    .honesty {
+      border: 1px dashed rgba(240, 180, 41, 0.35);
+      background: rgba(240, 180, 41, 0.04);
+      padding: 1.5rem 1.4rem;
+      max-width: 62ch;
+    }
+    .honesty h3 {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.6rem;
+    }
+    .honesty p {
+      font-size: 0.92rem;
+      color: var(--mute);
+    }
+
+    /* Footer CTA */
+    .finale {
+      text-align: center;
+      padding-bottom: 5rem;
+      border-top: 1px solid var(--line-soft);
+    }
+    .finale .section-title {
+      max-width: none;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .finale .section-copy {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .finale .cta-row {
+      justify-content: center;
+    }
+
+    .foot {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 1.5rem 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--mute);
+      letter-spacing: 0.04em;
+    }
+    .foot a:hover { color: var(--cyan); }
+
+    /* Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .grid-floor::after { animation: none; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-floor" aria-hidden="true"></div>
+
+  <div class="shell">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <span class="badge">Showcase #34</span>
+    </header>
+
+    <header class="hero">
+      <div>
+        <h1 class="brand">img<span class="arrow">→</span><span>threejs</span></h1>
+        <p class="headline">One reference image. A procedural Three.js factory — not a mesh dump.</p>
+        <p class="lede">Quality-gated reconstruction-by-code for agent hosts: primitives, shaders, and an animation-ready hierarchy, built pass by pass.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/hoainho/img2threejs" target="_blank" rel="noopener">View source</a>
+          <a class="btn btn-ghost" href="https://hoainho.github.io/img2threejs-showcase/" target="_blank" rel="noopener">Live demo gallery</a>
+        </div>
+      </div>
+
+      <div class="viewport" aria-label="Live reconstruction demo">
+        <div class="viewport-chrome">
+          <div class="chrome-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span>sculptRuntime · orbit view</span>
+          <span class="chrome-status">gate: pass</span>
+        </div>
+        <div class="viewport-stage">
+          <img
+            src="https://raw.githubusercontent.com/hoainho/img2threejs/main/assets/demo.gif"
+            alt="Reference loot chest reconstructed as a procedural Three.js model with gold trim and emissive emblem"
+            width="960"
+            height="600"
+            loading="eager">
+          <div class="viewport-labels">
+            <span>reference → <strong>code</strong></span>
+            <span>no .glb · no downloads</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="not-that">
+      <div class="inner reveal">
+        <div class="reject">
+          <h3>Not this</h3>
+          <p>Photogrammetry, mesh extraction, or downloaded art packs. Opaque binaries you can’t diff, animate, or trust in an agent loop.</p>
+        </div>
+        <div class="vs" aria-hidden="true">VS</div>
+        <div class="accept">
+          <h3>This instead</h3>
+          <p>A TypeScript <code style="color:var(--cyan);font-family:var(--font-mono);font-size:0.85em;">THREE.Group</code> factory — reviewable, versioned, and wired with pivots, sockets, and colliders for motion.</p>
+        </div>
+      </div>
+    </div>
+
+    <section class="reveal" id="pipeline">
+      <p class="section-kicker">Staged sculpt</p>
+      <h2 class="section-title">Eight locked passes. Vision is the only approver.</h2>
+      <p class="section-copy">Scripts gate each stage. The agent looks at one reference-vs-render sheet and chooses continue, refine-spec, refine-code, request-input, or stop — nothing else.</p>
+
+      <div class="pass-rail" id="pass-rail">
+        <div class="pass" data-pass="0"><strong>Blockout</strong><span>Massing and proportions first.</span></div>
+        <div class="pass" data-pass="1"><strong>Structural</strong><span>Component tree and joints.</span></div>
+        <div class="pass" data-pass="2"><strong>Form</strong><span>Bevels, contours, silhouette.</span></div>
+        <div class="pass" data-pass="3"><strong>Material</strong><span>Independent PBR channels.</span></div>
+        <div class="pass" data-pass="4"><strong>Surface</strong><span>Wear, gloss, linework details.</span></div>
+        <div class="pass" data-pass="5"><strong>Lighting</strong><span>Real lights, camera match.</span></div>
+        <div class="pass" data-pass="6"><strong>Interaction</strong><span>Sockets, pivots, colliders.</span></div>
+        <div class="pass" data-pass="7"><strong>Optimize</strong><span>Scoped cleanup, ship ready.</span></div>
+      </div>
+    </section>
+
+    <section class="reveal" id="tokens">
+      <p class="section-kicker">Token discipline</p>
+      <h2 class="section-title">Scripts enforce. The model only judges.</h2>
+      <p class="section-copy">Mechanical work — validation, gating, sheet packaging, pass state — stays in pure Python 3.10+ stdlib. Model context is reserved for visual judgment and code.</p>
+
+      <div class="split">
+        <div class="judge-panel">
+          <h3>Where the tokens go</h3>
+          <p>Order-of-magnitude for one hard-surface rebuild (~80k–180k total). The review loop dominates; a shallow spec never reaches codegen.</p>
+          <div class="meter">
+            <div class="meter-row">
+              <span>Deterministic scripts</span><span>~2–5k</span>
+              <div class="meter-bar"><i></i></div>
+            </div>
+            <div class="meter-row">
+              <span>Assessment + sculpt spec</span><span>~15–25k</span>
+              <div class="meter-bar"><i></i></div>
+            </div>
+            <div class="meter-row">
+              <span>Factory write / edits</span><span>~20–45k</span>
+              <div class="meter-bar"><i></i></div>
+            </div>
+            <div class="meter-row">
+              <span>Render–review cycles</span><span>~30–70k</span>
+              <div class="meter-bar"><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <pre class="code-slab" aria-label="Example factory signature"><code><span class="cm">// Diffable output — not a binary mesh</span>
+<span class="kw">export function</span> <span class="fn">createCrownChestModel</span>(
+  spec: ObjectSculptSpec,
+  options?: BuildOptions
+): THREE.Group {
+  <span class="kw">const</span> root = <span class="kw">new</span> THREE.Group();
+  root.userData.sculptRuntime = {
+    nodes, sockets, colliders
+  };
+  <span class="cm">// pass-gated: emit only unlocked stage</span>
+  <span class="kw">return</span> root;
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="reveal" id="gallery">
+      <p class="section-kicker">Live reconstructions</p>
+      <h2 class="section-title">Hard-surface subjects, running in-browser.</h2>
+      <p class="section-copy">Every clip is generated code — orbit it in the gallery and read the TypeScript that built it. No mesh files shipped.</p>
+
+      <div class="gallery">
+        <a class="demo-tile" href="https://hoainho.github.io/img2threejs-showcase/#/demo/sony-wf1000xm3" target="_blank" rel="noopener">
+          <div class="thumb">
+            <img src="https://raw.githubusercontent.com/hoainho/img2threejs/main/assets/sony-wf1000xm3.gif" alt="Sony WF-1000XM3 earbuds and case procedural reconstruction" loading="lazy" width="480" height="330">
+          </div>
+          <div class="demo-meta">
+            <h3>Sony WF-1000XM3</h3>
+            <p>Earbuds + case</p>
+          </div>
+        </a>
+        <a class="demo-tile" href="https://hoainho.github.io/img2threejs-showcase/#/demo/issaca-shotgun" target="_blank" rel="noopener">
+          <div class="thumb">
+            <img src="https://raw.githubusercontent.com/hoainho/img2threejs/main/assets/issaca-shotgun.gif" alt="ISSACA 12 Gauge Shotgun procedural reconstruction" loading="lazy" width="480" height="330">
+          </div>
+          <div class="demo-meta">
+            <h3>ISSACA Shotgun</h3>
+            <p>Hard-surface rifle</p>
+          </div>
+        </a>
+        <a class="demo-tile" href="https://hoainho.github.io/img2threejs-showcase/#/demo/gerber-knife" target="_blank" rel="noopener">
+          <div class="thumb">
+            <img src="https://raw.githubusercontent.com/hoainho/img2threejs/main/assets/gerber-knife.gif" alt="Gerber Paracord Knife procedural reconstruction" loading="lazy" width="480" height="330">
+          </div>
+          <div class="demo-meta">
+            <h3>Gerber Knife</h3>
+            <p>Paracord handle</p>
+          </div>
+        </a>
+        <a class="demo-tile" href="https://hoainho.github.io/img2threejs-showcase/#/demo/doraemon-house" target="_blank" rel="noopener">
+          <div class="thumb">
+            <img src="https://raw.githubusercontent.com/hoainho/img2threejs/main/assets/doraemon-house.gif" alt="Doraemon House isometric diorama reconstruction" loading="lazy" width="480" height="330">
+          </div>
+          <div class="demo-meta">
+            <h3>Doraemon House</h3>
+            <p>Isometric diorama</p>
+          </div>
+        </a>
+        <a class="demo-tile" href="https://hoainho.github.io/img2threejs-showcase/#/demo/warhauler" target="_blank" rel="noopener">
+          <div class="thumb">
+            <img src="https://raw.githubusercontent.com/hoainho/img2threejs/main/assets/warhauler.gif" alt="War-Hauler SECTOR 07 vehicle reconstruction" loading="lazy" width="480" height="330">
+          </div>
+          <div class="demo-meta">
+            <h3>War-Hauler</h3>
+            <p>SECTOR 07</p>
+          </div>
+        </a>
+        <a class="demo-tile" href="https://hoainho.github.io/img2threejs-showcase/#/demo/crown-chest" target="_blank" rel="noopener">
+          <div class="thumb">
+            <img src="https://raw.githubusercontent.com/hoainho/img2threejs/main/assets/crown-chest.gif" alt="Crowned loot chest with emissive emblem" loading="lazy" width="480" height="330">
+          </div>
+          <div class="demo-meta">
+            <h3>Crowned Chest</h3>
+            <p>Emissive emblem</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="reveal" id="output">
+      <p class="section-kicker">What you ship</p>
+      <h2 class="section-title">Spec, factory, and evidence — not a blob.</h2>
+      <p class="section-copy">Install as a Claude Code / Codex / OpenCode skill, point at an object image, and walk the gated forge until the side-by-side sheet clears threshold.</p>
+
+      <div class="loot">
+        <div class="loot-item">
+          <h3>ObjectSculptSpec</h3>
+          <p>Full component tree, materials, repetition systems, sockets, and a recorded review history for every pass.</p>
+        </div>
+        <div class="loot-item">
+          <h3>TypeScript factory</h3>
+          <p><code style="font-family:var(--font-mono);font-size:0.85em;color:var(--cyan);">createObjectModel()</code> returns a Group with <code style="font-family:var(--font-mono);font-size:0.85em;color:var(--cyan);">sculptRuntime</code> for nodes, sockets, colliders, and destruction groups.</p>
+        </div>
+        <div class="loot-item">
+          <h3>Comparison sheets</h3>
+          <p>One packaged reference-beside-render image per pass — the only vision input the agent needs to score and decide.</p>
+        </div>
+      </div>
+
+      <div class="honesty" style="margin-top: 2rem;">
+        <h3>Honesty about limits</h3>
+        <p>A single image cannot reveal hidden sides or guarantee exact geometry. The skill says when output is approximate or stylized, mirrors unseen faces instead of faking confidence, and treats “cannot reach requested fidelity” as a valid result. Strong on hard-surface objects; characters stay stylized reconstructions.</p>
+      </div>
+    </section>
+
+    <section class="finale reveal">
+      <p class="section-kicker">Get the skill</p>
+      <h2 class="section-title">Clone into your skills directory and invoke.</h2>
+      <p class="section-copy">Pure Python stdlib under the hood — nothing to pip-install. Agent-agnostic vision wherever the host provides it.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/hoainho/img2threejs" target="_blank" rel="noopener">GitHub · hoainho/img2threejs</a>
+        <a class="btn btn-ghost" href="https://hoainho.github.io/img2threejs-showcase/" target="_blank" rel="noopener">Open live gallery</a>
+        <a class="btn btn-ghost" href="https://github.com/hoainho/img2threejs/blob/main/docs/TOKEN_COST.md" target="_blank" rel="noopener">Token cost notes</a>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>DuckWare showcase · Apache-2.0 upstream</span>
+      <a href="./">← Back to catalog</a>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // Scroll reveals
+      var reveals = document.querySelectorAll(".reveal");
+      if (prefersReduced || !("IntersectionObserver" in window)) {
+        reveals.forEach(function (el) { el.classList.add("in"); });
+      } else {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+        reveals.forEach(function (el) { io.observe(el); });
+      }
+
+      // Sequential pass highlighting — echoes the gated sculpt loop
+      var passes = Array.prototype.slice.call(document.querySelectorAll(".pass"));
+      if (!passes.length) return;
+
+      var idx = 0;
+      function lightPass() {
+        passes.forEach(function (p, i) {
+          p.classList.toggle("active", i === idx);
+        });
+        idx = (idx + 1) % passes.length;
+      }
+      lightPass();
+      if (!prefersReduced) {
+        setInterval(lightPass, 1600);
+      }
+    })();
+  </script>
+</body>
+</html>
