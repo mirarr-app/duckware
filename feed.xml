@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Jul 2026 17:15:00 GMT</lastBuildDate>
-    <pubDate>Thu, 23 Jul 2026 17:15:00 GMT</pubDate>
+    <lastBuildDate>Thu, 23 Jul 2026 17:25:00 GMT</lastBuildDate>
+    <pubDate>Thu, 23 Jul 2026 17:25:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -271,6 +271,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/ytsage.html</guid>
       <pubDate>Thu, 23 Jul 2026 17:15:00 GMT</pubDate>
       <description>A clean PySide6 desktop downloader for YouTube and yt-dlp sites — pick formats, extract audio, pull subtitles, strip SponsorBlock, and queue playlists without touching the CLI.</description>
+    </item>
+
+    <item>
+      <title>img2threejs: Image to Procedural Three.js</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/img2threejs.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/img2threejs.html</guid>
+      <pubDate>Thu, 23 Jul 2026 17:25:00 GMT</pubDate>
+      <description>Rebuild a reference image as a code-only, quality-gated, animation-ready Three.js model — procedural reconstruction that spends tokens on judgment, not bookkeeping.</description>
     </item>
   </channel>
 </rss>
