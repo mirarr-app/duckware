@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Jul 2026 17:05:00 GMT</lastBuildDate>
-    <pubDate>Tue, 21 Jul 2026 17:05:00 GMT</pubDate>
+    <lastBuildDate>Thu, 23 Jul 2026 17:15:00 GMT</lastBuildDate>
+    <pubDate>Thu, 23 Jul 2026 17:15:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -263,6 +263,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/jam-nvim.html</guid>
       <pubDate>Tue, 21 Jul 2026 17:05:00 GMT</pubDate>
       <description>Search Spotify and control playback from a Telescope picker without leaving Neovim — live search, album-art previews, and PKCE auth.</description>
+    </item>
+
+    <item>
+      <title>YTSage: Desktop YouTube Downloader</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/ytsage.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/ytsage.html</guid>
+      <pubDate>Thu, 23 Jul 2026 17:15:00 GMT</pubDate>
+      <description>A clean PySide6 desktop downloader for YouTube and yt-dlp sites — pick formats, extract audio, pull subtitles, strip SponsorBlock, and queue playlists without touching the CLI.</description>
     </item>
   </channel>
 </rss>
