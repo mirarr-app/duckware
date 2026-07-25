@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenCut Showcase — DuckWare</title>
+  <meta name="description" content="OpenCut is a free, open-source CapCut alternative — a privacy-first video editor for web, desktop, and mobile, with a Rust rewrite bringing plugins, MCP, and headless rendering.">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #060708;
+      --panel: #0d0f12;
+      --rail: #12151a;
+      --lift: #1a1e26;
+      --hair: rgba(255, 255, 255, 0.08);
+      --hair-strong: rgba(255, 255, 255, 0.14);
+      --ink: #f4f5f7;
+      --mute: #8b93a1;
+      --cut: #ff3b2f;
+      --cut-soft: rgba(255, 59, 47, 0.18);
+      --mark: #ffd166;
+      --in: #4fd1c5;
+      --out: #7aa2ff;
+      --font-display: "Syne", system-ui, sans-serif;
+      --font-body: "DM Sans", system-ui, sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+      --max: 1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--void);
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* Film sprocket edge */
+    .sprocket {
+      height: 14px;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 18px,
+          var(--void) 18px 22px,
+          transparent 22px 40px
+        ),
+        linear-gradient(180deg, #1c2129, #12151a);
+      border-bottom: 1px solid var(--hair);
+    }
+
+    .shell {
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* Top bar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.1rem 0 0.85rem;
+      border-bottom: 1px solid var(--hair);
+      margin-bottom: 1.75rem;
+    }
+
+    .back {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mute);
+      transition: color 0.2s ease;
+    }
+    .back:hover { color: var(--ink); }
+
+    .topbar-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--mute);
+    }
+
+    .rec-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cut);
+      box-shadow: 0 0 0 0 rgba(255, 59, 47, 0.55);
+      animation: rec-pulse 1.8s ease-out infinite;
+    }
+
+    @keyframes rec-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 59, 47, 0.5); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 59, 47, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 59, 47, 0); }
+    }
+
+    /* Hero as editor stage */
+    .stage {
+      position: relative;
+      margin-bottom: 3.5rem;
+    }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0.5rem 0 1rem;
+      min-height: 420px;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .brand-mark img {
+      width: 52px;
+      height: 52px;
+      filter: drop-shadow(0 0 18px rgba(255, 59, 47, 0.25));
+    }
+
+    .brand-word {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+
+    .brand-word span {
+      color: var(--cut);
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mark);
+      margin-bottom: 0.85rem;
+    }
+
+    .lede {
+      font-size: clamp(1.05rem, 2.1vw, 1.25rem);
+      color: var(--mute);
+      max-width: 34ch;
+      margin-bottom: 1.75rem;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 0.72rem 1.15rem;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-cut {
+      background: var(--cut);
+      color: #140604;
+    }
+    .btn-cut:hover { background: #ff5248; }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--hair-strong);
+      color: var(--ink);
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.03); }
+
+    /* Preview monitor */
+    .monitor {
+      background: var(--panel);
+      border: 1px solid var(--hair-strong);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+      animation: stage-in 0.9s ease both;
+    }
+
+    @keyframes stage-in {
+      from { opacity: 0; transform: translateY(18px) scale(0.985); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .monitor-chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.55rem 0.75rem;
+      background: var(--rail);
+      border-bottom: 1px solid var(--hair);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--mute);
+    }
+
+    .monitor-chrome .tc { color: var(--in); }
+
+    .monitor-view {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      background:
+        radial-gradient(ellipse at 50% 40%, rgba(255, 59, 47, 0.12), transparent 55%),
+        linear-gradient(160deg, #14181f 0%, #090b0e 100%);
+      overflow: hidden;
+    }
+
+    .monitor-view img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.72;
+      mix-blend-mode: luminosity;
+    }
+
+    .monitor-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0.85rem;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(6,7,8,0.35), transparent 30%, transparent 70%, rgba(6,7,8,0.55));
+    }
+
+    .safe-frame {
+      flex: 1;
+      border: 1px dashed rgba(255, 209, 102, 0.28);
+      border-radius: 2px;
+      margin: 0.4rem 0.2rem;
+      display: grid;
+      place-items: center;
+    }
+
+    .play-ring {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.55);
+      display: grid;
+      place-items: center;
+      background: rgba(6,7,8,0.45);
+      backdrop-filter: blur(4px);
+      animation: play-breathe 2.8s ease-in-out infinite;
+    }
+
+    .play-ring::after {
+      content: "";
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 8px 0 8px 14px;
+      border-color: transparent transparent transparent #fff;
+      margin-left: 3px;
+    }
+
+    @keyframes play-breathe {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+
+    .tc-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Timeline under hero */
+    .nle {
+      margin-top: 1rem;
+      background: var(--rail);
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      padding: 0.65rem 0.75rem 0.85rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ruler {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--mute);
+      margin-bottom: 0.55rem;
+      padding: 0 0.15rem;
+    }
+
+    .tracks { display: flex; flex-direction: column; gap: 0.4rem; position: relative; }
+
+    .track {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 0.5rem;
+      align-items: center;
+      min-height: 28px;
+    }
+
+    .track-label {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mute);
+    }
+
+    .track-lane {
+      position: relative;
+      height: 26px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .clip {
+      position: absolute;
+      top: 3px;
+      bottom: 3px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      display: flex;
+      align-items: center;
+      padding: 0 0.45rem;
+      white-space: nowrap;
+      overflow: hidden;
+      color: #0a0b0d;
+      font-weight: 500;
+    }
+
+    .clip-v { background: linear-gradient(90deg, #ff6b5e, #ff3b2f); left: 4%; width: 38%; }
+    .clip-a { background: linear-gradient(90deg, #63e0d4, #4fd1c5); left: 12%; width: 48%; }
+    .clip-fx { background: linear-gradient(90deg, #9bb6ff, #7aa2ff); left: 28%; width: 42%; }
+
+    .playhead {
+      position: absolute;
+      top: 1.55rem;
+      bottom: 0.55rem;
+      width: 2px;
+      background: var(--mark);
+      left: 18%;
+      z-index: 3;
+      animation: scrub 7s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .playhead::before {
+      content: "";
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 7px solid var(--mark);
+    }
+
+    @keyframes scrub {
+      0% { left: 8%; }
+      50% { left: 72%; }
+      100% { left: 8%; }
+    }
+
+    /* Sections */
+    section {
+      padding: 3.25rem 0;
+      border-top: 1px solid var(--hair);
+    }
+
+    .sec-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cut);
+      margin-bottom: 0.65rem;
+    }
+
+    .sec-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(1.7rem, 3.5vw, 2.35rem);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+      max-width: 18ch;
+    }
+
+    .sec-copy {
+      color: var(--mute);
+      max-width: 58ch;
+      margin-bottom: 1.75rem;
+      font-size: 1.02rem;
+    }
+
+    /* Why / strengths */
+    .cut-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .cut-card {
+      background: var(--panel);
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      padding: 1.25rem 1.2rem 1.35rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+    .cut-card:hover {
+      border-color: rgba(255, 59, 47, 0.35);
+      transform: translateY(-3px);
+    }
+
+    .cut-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--cut);
+      opacity: 0.85;
+    }
+
+    .cut-card:nth-child(2)::before { background: var(--in); }
+    .cut-card:nth-child(3)::before { background: var(--out); }
+
+    .cut-in {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--mute);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.55rem;
+    }
+
+    .cut-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.55rem;
+    }
+
+    .cut-card p {
+      color: var(--mute);
+      font-size: 0.92rem;
+    }
+
+    /* Dual reels */
+    .reels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .reel {
+      background: linear-gradient(165deg, #12161d, #0a0c10);
+      border: 1px solid var(--hair);
+      border-radius: 10px;
+      padding: 1.4rem 1.35rem 1.5rem;
+      position: relative;
+    }
+
+    .reel.live {
+      border-color: rgba(79, 209, 197, 0.35);
+      box-shadow: inset 0 0 0 1px rgba(79, 209, 197, 0.08);
+    }
+
+    .reel.wip {
+      border-color: rgba(255, 209, 102, 0.28);
+    }
+
+    .reel-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.55rem;
+      border-radius: 3px;
+      margin-bottom: 0.9rem;
+    }
+
+    .reel.live .reel-badge {
+      background: rgba(79, 209, 197, 0.12);
+      color: var(--in);
+    }
+    .reel.wip .reel-badge {
+      background: rgba(255, 209, 102, 0.12);
+      color: var(--mark);
+    }
+
+    .reel h3 {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.55rem;
+    }
+
+    .reel p {
+      color: var(--mute);
+      font-size: 0.95rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .reel ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .reel li {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      gap: 0.55rem;
+      font-size: 0.9rem;
+      color: var(--ink);
+      align-items: start;
+    }
+
+    .reel li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      margin-top: 0.35rem;
+      border-radius: 1px;
+      background: var(--cut);
+    }
+
+    .reel.live li::before { background: var(--in); }
+    .reel.wip li::before { background: var(--mark); }
+
+    .reel .btn { font-size: 0.85rem; padding: 0.6rem 0.95rem; }
+
+    /* Coming attractions strip */
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.55rem;
+      margin-top: 0.5rem;
+    }
+
+    .pipe-chip {
+      background: var(--lift);
+      border: 1px solid var(--hair);
+      border-radius: 6px;
+      padding: 0.85rem 0.7rem;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ink);
+      transition: border-color 0.2s ease, background 0.2s ease;
+      animation: chip-in 0.6s ease both;
+    }
+    .pipe-chip:nth-child(1) { animation-delay: 0.05s; }
+    .pipe-chip:nth-child(2) { animation-delay: 0.1s; }
+    .pipe-chip:nth-child(3) { animation-delay: 0.15s; }
+    .pipe-chip:nth-child(4) { animation-delay: 0.2s; }
+    .pipe-chip:nth-child(5) { animation-delay: 0.25s; }
+    .pipe-chip:nth-child(6) { animation-delay: 0.3s; }
+
+    @keyframes chip-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .pipe-chip:hover {
+      border-color: rgba(255, 209, 102, 0.4);
+      background: #222733;
+    }
+
+    .pipe-chip small {
+      display: block;
+      margin-top: 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mute);
+    }
+
+    /* Verdict / CTA band */
+    .verdict {
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255, 59, 47, 0.16), transparent 50%),
+        radial-gradient(ellipse at 90% 100%, rgba(79, 209, 197, 0.1), transparent 45%),
+        var(--panel);
+      border: 1px solid var(--hair-strong);
+      border-radius: 12px;
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .verdict h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      letter-spacing: -0.03em;
+      margin-bottom: 0.65rem;
+    }
+
+    .verdict p { color: var(--mute); max-width: 48ch; }
+
+    .verdict-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      align-items: stretch;
+    }
+
+    .verdict-actions .btn { justify-content: center; }
+
+    /* Footer */
+    .page-foot {
+      padding: 2rem 0 2.75rem;
+      border-top: 1px solid var(--hair);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--mute);
+    }
+
+    .page-foot a:hover { color: var(--ink); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .stage-grid { grid-template-columns: 1fr; }
+      .brand-block { min-height: 0; padding-bottom: 0.25rem; }
+      .cut-list { grid-template-columns: 1fr; }
+      .reels { grid-template-columns: 1fr; }
+      .pipeline { grid-template-columns: repeat(3, 1fr); }
+      .verdict { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .pipeline { grid-template-columns: repeat(2, 1fr); }
+      .brand-word { font-size: 2.4rem; }
+      .cta-row { flex-direction: column; }
+      .btn { justify-content: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sprocket" aria-hidden="true"></div>
+
+  <div class="shell">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <div class="topbar-meta">
+        <span class="rec-dot" aria-hidden="true"></span>
+        <span>Showcase #35 · OpenCut-app/OpenCut</span>
+      </div>
+    </header>
+
+    <div class="stage">
+      <div class="stage-grid">
+        <div class="brand-block">
+          <p class="eyebrow">DuckWare audit · nonlinear edit</p>
+          <div class="brand-mark">
+            <img src="https://opencut.app/logos/opencut/svg/logo.svg" alt="OpenCut symbol" width="52" height="52">
+            <h1 class="brand-word">Open<span>Cut</span></h1>
+          </div>
+          <p class="lede">
+            A free CapCut alternative that keeps your timeline local — browser today, Rust core tomorrow, no subscription tax on basic cuts.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-cut" href="https://opencut.app/" target="_blank" rel="noopener">Try classic editor</a>
+            <a class="btn btn-ghost" href="https://github.com/OpenCut-app/OpenCut" target="_blank" rel="noopener">View rewrite on GitHub</a>
+          </div>
+        </div>
+
+        <aside class="monitor" aria-label="Editor preview mockup">
+          <div class="monitor-chrome">
+            <span>preview · sequence A</span>
+            <span class="tc">00:00:12:08</span>
+          </div>
+          <div class="monitor-view">
+            <img src="https://opencut.app/landing-page-dark.png" alt="OpenCut dark landing and editor atmosphere" loading="eager">
+            <div class="monitor-overlay">
+              <div class="tc-row">
+                <span>IN 00:00:04:00</span>
+                <span>OUT 00:00:18:12</span>
+              </div>
+              <div class="safe-frame">
+                <div class="play-ring" aria-hidden="true"></div>
+              </div>
+              <div class="tc-row">
+                <span>16:9 · local media</span>
+                <span>REC standby</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="nle" aria-hidden="true">
+        <div class="ruler">
+          <span>00:00</span><span>00:05</span><span>00:10</span><span>00:15</span><span>00:20</span><span>00:25</span>
+        </div>
+        <div class="playhead"></div>
+        <div class="tracks">
+          <div class="track">
+            <span class="track-label">V1</span>
+            <div class="track-lane"><span class="clip clip-v">privacy cut</span></div>
+          </div>
+          <div class="track">
+            <span class="track-label">A1</span>
+            <div class="track-lane"><span class="clip clip-a">local render</span></div>
+          </div>
+          <div class="track">
+            <span class="track-label">FX</span>
+            <div class="track-lane"><span class="clip clip-fx">plugin lane</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <p class="sec-kicker">01 · Why it matters</p>
+      <h2 class="sec-title">Edit without renting the scissors</h2>
+      <p class="sec-copy">
+        CapCut made short-form editing feel approachable — then locked more of that simplicity behind accounts and paywalls. OpenCut answers with an MIT-licensed editor that runs where creators already work: the browser first, with desktop and mobile on the same roadmap. Media stays on your machine; the product is the timeline, not the telemetry.
+      </p>
+      <div class="cut-list">
+        <article class="cut-card">
+          <p class="cut-in">MARK IN · privacy</p>
+          <h3>Local by default</h3>
+          <p>Projects and media live in the browser/device path. You’re assembling cuts, not uploading a rough cut to someone else’s cloud to unlock “basic.”</p>
+        </article>
+        <article class="cut-card">
+          <p class="cut-in">MARK IN · craft</p>
+          <h3>Real NLE muscle</h3>
+          <p>Classic OpenCut already covers the CapCut-shaped loop: multi-track timeline, captions, masks, speed/volume, stickers, and browser export — without treating those as premium SKUs.</p>
+        </article>
+        <article class="cut-card">
+          <p class="cut-in">MARK IN · future</p>
+          <h3>Rewrite with teeth</h3>
+          <p>The ground-up rebuild targets one Rust core across web, desktop, and mobile, plus plugins, an Editor API, MCP for agents, and headless batch renders.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <p class="sec-kicker">02 · Two reels</p>
+      <h2 class="sec-title">Classic cuts today. Architecture tomorrow.</h2>
+      <p class="sec-copy">
+        The public repo is mid-rewrite. Reach for classic if you need an editor this week; follow the Rust rebuild if you care about plugins, automation, and a single codebase for every surface.
+      </p>
+      <div class="reels">
+        <article class="reel live">
+          <span class="reel-badge"><span class="rec-dot" style="width:6px;height:6px;animation:none;box-shadow:none;background:var(--in);"></span> Live · opencut.app</span>
+          <h3>OpenCut Classic</h3>
+          <p>The archived-but-usable codebase that still powers the production site. Privacy-forward browser editing with the feature set people actually open CapCut for.</p>
+          <ul>
+            <li>Multi-track timeline, preview, and export in the browser</li>
+            <li>Captions, masks, speed/pitch, blend modes, stickers</li>
+            <li>Works today while the rewrite is still cooking</li>
+          </ul>
+          <div class="cta-row">
+            <a class="btn btn-ghost" href="https://opencut.app/" target="_blank" rel="noopener">Open editor</a>
+            <a class="btn btn-ghost" href="https://github.com/opencut-app/opencut-classic" target="_blank" rel="noopener">Classic repo</a>
+          </div>
+        </article>
+        <article class="reel wip">
+          <span class="reel-badge">In progress · new.opencut.app</span>
+          <h3>OpenCut Rewrite</h3>
+          <p>Plugin-first architecture around a Rust core — designed so third parties, scripts, and AI agents can drive the same editor humans use.</p>
+          <ul>
+            <li>Editor API + first-class third-party plugins</li>
+            <li>Desktop, mobile, and browser from one codebase</li>
+            <li>MCP server, headless mode, in-editor scripting tab</li>
+          </ul>
+          <div class="cta-row">
+            <a class="btn btn-ghost" href="https://github.com/OpenCut-app/OpenCut" target="_blank" rel="noopener">Follow main repo</a>
+            <a class="btn btn-ghost" href="https://new.opencut.app/" target="_blank" rel="noopener">Preview rewrite</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <p class="sec-kicker">03 · On the slate</p>
+      <h2 class="sec-title">What the rewrite is cutting toward</h2>
+      <p class="sec-copy">
+        Outside contributions are paused while the architecture settles — but the destination is clear: an editor that creators, plugins, and agents can all share.
+      </p>
+      <div class="pipeline">
+        <div class="pipe-chip">Editor API<small>extensibility</small></div>
+        <div class="pipe-chip">Plugins<small>first-class</small></div>
+        <div class="pipe-chip">Rust core<small>one codebase</small></div>
+        <div class="pipe-chip">MCP server<small>AI agents</small></div>
+        <div class="pipe-chip">Headless<small>batch render</small></div>
+        <div class="pipe-chip">Scripting<small>in-editor</small></div>
+      </div>
+    </section>
+
+    <section style="border-bottom: none; padding-bottom: 2.5rem;">
+      <div class="verdict">
+        <div>
+          <h2>Worth a star if you care who owns the cut.</h2>
+          <p>
+            OpenCut is the rare CapCut-shaped project that treats privacy and open source as product features, not marketing footnotes — and the rewrite is aiming higher than “clone the UI.” MIT licensed. Sponsored by people who ship creator tools.
+          </p>
+        </div>
+        <div class="verdict-actions">
+          <a class="btn btn-cut" href="https://github.com/OpenCut-app/OpenCut" target="_blank" rel="noopener">Star on GitHub</a>
+          <a class="btn btn-ghost" href="https://discord.gg/zmR9N35cjK" target="_blank" rel="noopener">Join Discord</a>
+          <a class="btn btn-ghost" href="https://opencut.app/" target="_blank" rel="noopener">opencut.app</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="page-foot">
+      <span>DuckWare showcase · OpenCut · dark cutting room</span>
+      <span>
+        <a href="./">Catalog</a>
+        ·
+        <a href="https://github.com/OpenCut-app/OpenCut" target="_blank" rel="noopener">Source</a>
+        ·
+        <a href="https://github.com/OpenCut-app/OpenCut/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>
+      </span>
+    </footer>
+  </div>
+</body>
+</html>
