@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screenpipe Showcase — DuckWare</title>
+  <meta name="description" content="YC (S26) | Record your screen 24/7 and plug into your agents. Local, private, secure. Connect to OpenClaw, Hermes agent and 100+ apps — screenpipe/screenpipe">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050607;
+      --bg-elev: #0c0e12;
+      --bg-panel: #10141a;
+      --ink: #e9eef2;
+      --mute: #8b949e;
+      --line: rgba(255, 255, 255, 0.08);
+      --rec: #ff3355;
+      --signal: #5dffb0;
+      --signal-dim: rgba(93, 255, 176, 0.18);
+      --amber: #f0b429;
+      --steel: #6b8cff;
+      --max: 1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Chakra Petch", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(93, 255, 176, 0.07), transparent 55%),
+        radial-gradient(ellipse 40% 30% at 90% 20%, rgba(255, 51, 85, 0.06), transparent 50%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 3px,
+          rgba(255, 255, 255, 0.012) 3px,
+          rgba(255, 255, 255, 0.012) 4px
+        );
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* —— top bar —— */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.1rem 0 0.4rem;
+    }
+
+    .back {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.78rem;
+      color: var(--mute);
+      letter-spacing: 0.04em;
+      transition: color 0.2s ease;
+    }
+    .back:hover { color: var(--signal); }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      border: 1px solid rgba(255, 51, 85, 0.35);
+      background: rgba(255, 51, 85, 0.08);
+      padding: 0.4rem 0.75rem;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--rec);
+      box-shadow: 0 0 0 0 rgba(255, 51, 85, 0.55);
+      animation: rec-pulse 1.6s ease-out infinite;
+    }
+
+    @keyframes rec-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 51, 85, 0.55); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 51, 85, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 51, 85, 0); }
+    }
+
+    /* —— hero —— */
+    .hero {
+      padding: 2.4rem 0 0;
+      min-height: min(92vh, 820px);
+      display: grid;
+      align-content: start;
+      gap: 2rem;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--bg-elev);
+    }
+
+    .brand {
+      font-size: clamp(2.6rem, 7vw, 4.6rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      color: var(--ink);
+    }
+
+    .brand span {
+      color: var(--signal);
+    }
+
+    .yc-tag {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--amber);
+      border: 1px solid rgba(240, 180, 41, 0.35);
+      padding: 0.28rem 0.55rem;
+      align-self: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.35rem, 3.2vw, 2rem);
+      font-weight: 500;
+      max-width: 28ch;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
+
+    .hero-lead {
+      font-size: 1.05rem;
+      color: var(--mute);
+      max-width: 42ch;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.35rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.85rem 1.15rem;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--signal);
+      color: #04140c;
+    }
+    .btn-primary:hover { background: #7dffbf; }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--ink);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(93, 255, 176, 0.45);
+      color: var(--signal);
+    }
+
+    /* full-bleed timeline plane */
+    .timeline-plane {
+      margin-top: 0.5rem;
+      margin-inline: calc(50% - 50vw);
+      width: 100vw;
+      border-block: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(12, 14, 18, 0.2), rgba(5, 6, 7, 0.95)),
+        var(--bg-elev);
+      position: relative;
+      overflow: hidden;
+      min-height: 280px;
+    }
+
+    .timeline-plane::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, var(--bg) 0%, transparent 12%, transparent 88%, var(--bg) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .timeline-meta {
+      position: absolute;
+      top: 0.85rem;
+      left: max(1rem, calc(50vw - var(--max) / 2));
+      right: max(1rem, calc(50vw - var(--max) / 2));
+      z-index: 3;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mute);
+    }
+
+    .timeline-meta strong { color: var(--signal); font-weight: 500; }
+
+    .frame-track {
+      display: flex;
+      gap: 0.65rem;
+      padding: 3.2rem 0 1.4rem;
+      width: max-content;
+      animation: scroll-frames 38s linear infinite;
+    }
+
+    @keyframes scroll-frames {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .frame {
+      flex: 0 0 auto;
+      width: min(42vw, 280px);
+      aspect-ratio: 16 / 10;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(145deg, rgba(93, 255, 176, 0.05), transparent 45%),
+        var(--bg-panel);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .frame img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.78;
+      filter: saturate(0.85) contrast(1.05);
+    }
+
+    .frame-fallback {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      padding: 0.85rem;
+      display: grid;
+      align-content: space-between;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.65rem;
+      color: var(--mute);
+      background:
+        radial-gradient(circle at 30% 40%, rgba(107, 140, 255, 0.18), transparent 40%),
+        radial-gradient(circle at 70% 60%, rgba(93, 255, 176, 0.12), transparent 35%),
+        linear-gradient(160deg, #12161d, #0a0c10);
+    }
+
+    .frame-fallback .chrome {
+      display: flex;
+      gap: 0.35rem;
+    }
+    .frame-fallback .chrome i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3a4149;
+      display: block;
+    }
+    .frame-fallback .chrome i:nth-child(1) { background: #ff6b5a; }
+    .frame-fallback .chrome i:nth-child(2) { background: #f0b429; }
+    .frame-fallback .chrome i:nth-child(3) { background: #5dffb0; }
+
+    .frame-stamp {
+      position: absolute;
+      left: 0.55rem;
+      bottom: 0.5rem;
+      z-index: 2;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.62rem;
+      color: #c9d1d9;
+      background: rgba(5, 6, 7, 0.72);
+      padding: 0.2rem 0.4rem;
+      border: 1px solid var(--line);
+    }
+
+    .scrubber {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 28px;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 max(1rem, calc(50vw - var(--max) / 2));
+      background: rgba(5, 6, 7, 0.85);
+      border-top: 1px solid var(--line);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.65rem;
+      color: var(--mute);
+    }
+
+    .scrubber-bar {
+      flex: 1;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scrubber-bar::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 38%;
+      background: linear-gradient(90deg, var(--rec), var(--signal));
+      animation: scrub 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes scrub {
+      from { width: 18%; }
+      to { width: 72%; }
+    }
+
+    /* —— sections —— */
+    section {
+      padding: 4.5rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--signal);
+      margin-bottom: 0.85rem;
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 3.5vw, 2.25rem);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 20ch;
+      margin-bottom: 0.85rem;
+    }
+
+    .section-copy {
+      color: var(--mute);
+      max-width: 52ch;
+      font-size: 1.02rem;
+      margin-bottom: 2rem;
+    }
+
+    /* capture channels */
+    .channels {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    .channel {
+      border: 1px solid var(--line);
+      background: var(--bg-panel);
+      padding: 1.15rem 1rem 1.25rem;
+      min-height: 150px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+    .channel:hover {
+      border-color: rgba(93, 255, 176, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .channel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--signal), transparent);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .channel:hover::before { opacity: 1; }
+
+    .channel-code {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      color: var(--mute);
+      letter-spacing: 0.06em;
+      margin-bottom: 1.4rem;
+    }
+
+    .channel h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.45rem;
+    }
+
+    .channel p {
+      font-size: 0.9rem;
+      color: var(--mute);
+      line-height: 1.45;
+    }
+
+    /* pipeline */
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 0.75rem;
+      align-items: stretch;
+      margin-top: 0.5rem;
+    }
+
+    .pipe-node {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #12161c, #0c0f14);
+      padding: 1.25rem 1.1rem;
+      position: relative;
+    }
+
+    .pipe-node .label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-bottom: 0.65rem;
+    }
+
+    .pipe-node strong {
+      display: block;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .pipe-node p {
+      font-size: 0.88rem;
+      color: var(--mute);
+    }
+
+    .pipe-node.local {
+      border-color: rgba(93, 255, 176, 0.35);
+      box-shadow: inset 0 0 40px rgba(93, 255, 176, 0.05);
+    }
+
+    .pipe-join {
+      width: 28px;
+      align-self: center;
+      height: 2px;
+      background: var(--signal-dim);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pipe-join::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      background: var(--signal);
+      animation: packet 1.8s linear infinite;
+    }
+
+    @keyframes packet {
+      from { left: -40%; }
+      to { left: 100%; }
+    }
+
+    /* agent plugs */
+    .plugs {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .plug-visual {
+      border: 1px solid var(--line);
+      background: var(--bg-panel);
+      padding: 1.25rem;
+      display: grid;
+      gap: 0.85rem;
+      min-height: 280px;
+    }
+
+    .socket-row {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      border: 1px solid var(--line);
+      background: rgba(5, 6, 7, 0.55);
+      padding: 0.75rem 0.9rem;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .socket-row:hover {
+      border-color: rgba(93, 255, 176, 0.4);
+      background: rgba(93, 255, 176, 0.05);
+    }
+
+    .socket-icon {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: #0a0c10;
+      border: 1px solid var(--line);
+      padding: 4px;
+    }
+
+    .socket-icon.fallback {
+      display: grid;
+      place-items: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.65rem;
+      color: var(--signal);
+      padding: 0;
+    }
+
+    .socket-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .socket-meta strong {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .socket-meta span {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.68rem;
+      color: var(--mute);
+    }
+
+    .socket-status {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--signal);
+    }
+
+    .plug-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1rem;
+      border-left: 2px solid rgba(93, 255, 176, 0.35);
+      padding-left: 1.35rem;
+    }
+
+    .plug-copy h2 { max-width: 14ch; }
+
+    .query-block {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.8rem;
+      line-height: 1.65;
+      border: 1px solid var(--line);
+      background: #080a0e;
+      padding: 1rem 1.1rem;
+      color: #b7c0c9;
+    }
+
+    .query-block .prompt { color: var(--signal); }
+    .query-block .cursor {
+      display: inline-block;
+      width: 0.55ch;
+      height: 1em;
+      background: var(--signal);
+      vertical-align: text-bottom;
+      margin-left: 2px;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* vault / privacy */
+    .vault {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .vault-art {
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 50% 30%, rgba(93, 255, 176, 0.1), transparent 45%),
+        linear-gradient(165deg, #12161d, #090b0f);
+      min-height: 280px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vault-ring {
+      width: min(220px, 70%);
+      aspect-ratio: 1;
+      margin: 1rem auto 0;
+      border-radius: 50%;
+      border: 1px dashed rgba(93, 255, 176, 0.35);
+      display: grid;
+      place-items: center;
+      position: relative;
+      animation: spin-slow 28s linear infinite;
+    }
+
+    .vault-core {
+      width: 58%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1px solid rgba(93, 255, 176, 0.5);
+      background: rgba(5, 6, 7, 0.85);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      animation: spin-slow 28s linear infinite reverse;
+      padding: 0.75rem;
+    }
+
+    .vault-core strong {
+      font-size: 0.95rem;
+      letter-spacing: -0.02em;
+    }
+    .vault-core span {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.62rem;
+      color: var(--mute);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @keyframes spin-slow {
+      to { transform: rotate(360deg); }
+    }
+
+    .vault-points {
+      list-style: none;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .vault-points li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.85rem;
+      align-items: start;
+    }
+
+    .vault-points .tick {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.7rem;
+      color: var(--signal);
+      margin-top: 0.2rem;
+    }
+
+    .vault-points strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .vault-points p {
+      color: var(--mute);
+      font-size: 0.92rem;
+    }
+
+    /* specs */
+    .specs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    .spec {
+      border-top: 2px solid rgba(93, 255, 176, 0.45);
+      background: var(--bg-panel);
+      padding: 1.1rem 1rem 1.25rem;
+    }
+
+    .spec .num {
+      font-size: 1.55rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+    }
+
+    .spec .num em {
+      font-style: normal;
+      color: var(--signal);
+      font-size: 0.85em;
+    }
+
+    .spec p {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      color: var(--mute);
+      letter-spacing: 0.04em;
+    }
+
+    /* closing */
+    .close {
+      text-align: left;
+      padding-bottom: 3.5rem;
+    }
+
+    .close h2 { max-width: 18ch; }
+
+    .footer-note {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      color: var(--mute);
+    }
+
+    .footer-note a:hover { color: var(--signal); }
+
+    /* entrance */
+    .rise {
+      opacity: 0;
+      transform: translateY(14px);
+      animation: rise 0.7s ease forwards;
+    }
+    .rise.d1 { animation-delay: 0.08s; }
+    .rise.d2 { animation-delay: 0.18s; }
+    .rise.d3 { animation-delay: 0.28s; }
+    .rise.d4 { animation-delay: 0.4s; }
+
+    @keyframes rise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .channels { grid-template-columns: 1fr 1fr; }
+      .pipeline {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+      .pipe-join {
+        width: 2px;
+        height: 24px;
+        margin-inline: auto;
+      }
+      .pipe-join::after {
+        width: 100%;
+        height: 40%;
+        animation-name: packet-v;
+      }
+      @keyframes packet-v {
+        from { top: -40%; left: 0; }
+        to { top: 100%; left: 0; }
+      }
+      .plugs, .vault { grid-template-columns: 1fr; }
+      .plug-copy {
+        border-left: none;
+        border-top: 2px solid rgba(93, 255, 176, 0.35);
+        padding-left: 0;
+        padding-top: 1.25rem;
+      }
+      .specs { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .channels, .specs { grid-template-columns: 1fr; }
+      .hero { min-height: auto; padding-top: 1.6rem; }
+      .timeline-plane { min-height: 220px; }
+      .frame { width: 72vw; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .rise { opacity: 1; transform: none; }
+      .frame-track { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="back" href="./">← All showcases</a>
+      <div class="live-pill" aria-hidden="true">
+        <span class="live-dot"></span>
+        REC · local
+      </div>
+    </header>
+
+    <section class="hero" aria-label="Screenpipe hero">
+      <div class="brand-row rise">
+        <img
+          class="brand-mark"
+          src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/src-tauri/icons/128x128.png"
+          alt=""
+          width="44"
+          height="44"
+        >
+        <div class="brand">screen<span>pipe</span></div>
+        <span class="yc-tag">YC S26</span>
+      </div>
+
+      <h1 class="rise d1">Record your screen 24/7 and plug it into your agents.</h1>
+      <p class="hero-lead rise d2">Local capture of what you see, say, and do — searchable memory that stays on your machine, then streams into OpenClaw, Hermes, MCP clients, and 100+ apps.</p>
+
+      <div class="cta-row rise d3">
+        <a class="btn btn-primary" href="https://github.com/screenpipe/screenpipe" target="_blank" rel="noopener">View source</a>
+        <a class="btn btn-ghost" href="https://screenpipe.com/" target="_blank" rel="noopener">Get the desktop app</a>
+        <a class="btn btn-ghost" href="https://github.com/screenpipe/screenpipe/releases" target="_blank" rel="noopener">Releases</a>
+      </div>
+
+      <div class="timeline-plane rise d4" aria-hidden="true">
+        <div class="timeline-meta">
+          <span>timeline · <strong>always on</strong></span>
+          <span>event-driven frames · a11y · whisper</span>
+        </div>
+        <div class="frame-track">
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/docs/ask-sources-timeline.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>ask · sources</div></div>
+            <span class="frame-stamp">09:14:02</span>
+          </div>
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/docs/media/onboarding-first-dashboard.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>dashboard</div></div>
+            <span class="frame-stamp">09:14:18</span>
+          </div>
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/docs/media/pi-extensions-browser.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>pipes · browser</div></div>
+            <span class="frame-stamp">09:14:41</span>
+          </div>
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/.github/pr-media/obsidian-memory-sync.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>memory sync</div></div>
+            <span class="frame-stamp">09:15:03</span>
+          </div>
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/docs/media/privacy-installed-apps.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>privacy filters</div></div>
+            <span class="frame-stamp">09:15:27</span>
+          </div>
+          <!-- duplicate set for seamless loop -->
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/docs/ask-sources-timeline.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>ask · sources</div></div>
+            <span class="frame-stamp">09:14:02</span>
+          </div>
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/docs/media/onboarding-first-dashboard.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>dashboard</div></div>
+            <span class="frame-stamp">09:14:18</span>
+          </div>
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/docs/media/pi-extensions-browser.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>pipes · browser</div></div>
+            <span class="frame-stamp">09:14:41</span>
+          </div>
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/.github/pr-media/obsidian-memory-sync.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>memory sync</div></div>
+            <span class="frame-stamp">09:15:03</span>
+          </div>
+          <div class="frame">
+            <img src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/docs/media/privacy-installed-apps.png" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="frame-fallback"><div class="chrome"><i></i><i></i><i></i></div><div>privacy filters</div></div>
+            <span class="frame-stamp">09:15:27</span>
+          </div>
+        </div>
+        <div class="scrubber">
+          <span>00:00</span>
+          <div class="scrubber-bar"></div>
+          <span>now</span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="capture-title">
+      <p class="eyebrow">01 · capture</p>
+      <h2 id="capture-title">Your day, indexed as it happens</h2>
+      <p class="section-copy">Screenpipe listens for meaningful events — app switches, typing pauses, clicks, scrolls — then pairs a frame with structured OS accessibility text. Audio runs through local Whisper. Idle machines stay quiet; busy ones stay remembered.</p>
+      <div class="channels">
+        <article class="channel">
+          <div class="channel-code">CH·01</div>
+          <h3>Screen + a11y</h3>
+          <p>Accessibility tree first; OCR only when the OS can’t speak the UI.</p>
+        </article>
+        <article class="channel">
+          <div class="channel-code">CH·02</div>
+          <h3>Audio + speakers</h3>
+          <p>Mic and system audio transcribed locally, with speaker diarization.</p>
+        </article>
+        <article class="channel">
+          <div class="channel-code">CH·03</div>
+          <h3>Inputs &amp; apps</h3>
+          <p>Keyboard context, window titles, and app switches land on the same timeline.</p>
+        </article>
+        <article class="channel">
+          <div class="channel-code">CH·04</div>
+          <h3>Filters</h3>
+          <p>Drop passwords, windows, and PII before anything hits storage.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="pipe-title">
+      <p class="eyebrow">02 · local pipeline</p>
+      <h2 id="pipe-title">Record → vault → agent socket</h2>
+      <p class="section-copy">Everything stays on-device by default: JPEG frames on disk, SQLite FTS5 for search, a localhost API, and markdown “pipes” that schedule agents against your real work.</p>
+      <div class="pipeline">
+        <div class="pipe-node">
+          <div class="label">ingest</div>
+          <strong>Event capture</strong>
+          <p>Frames only when something changes — ~5–10% CPU on modern hardware.</p>
+        </div>
+        <div class="pipe-join" aria-hidden="true"></div>
+        <div class="pipe-node local">
+          <div class="label">store</div>
+          <strong>Local vault</strong>
+          <p>SQLite + optional encryption. Export, delete, or back up whenever you want.</p>
+        </div>
+        <div class="pipe-join" aria-hidden="true"></div>
+        <div class="pipe-node">
+          <div class="label">serve</div>
+          <strong>API · MCP · pipes</strong>
+          <p>localhost:3030, MCP for coding agents, and scheduled pipe.md workflows.</p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="agents-title">
+      <p class="eyebrow">03 · agent plugs</p>
+      <div class="plugs">
+        <div class="plug-visual" aria-label="Connected agents">
+          <div class="socket-row">
+            <img class="socket-icon" src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/public/images/openclaw.png" alt="" width="36" height="36">
+            <div class="socket-meta">
+              <strong>OpenClaw</strong>
+              <span>agent runtime</span>
+            </div>
+            <span class="socket-status">live</span>
+          </div>
+          <div class="socket-row">
+            <img class="socket-icon" src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/public/images/hermes.png" alt="" width="36" height="36">
+            <div class="socket-meta">
+              <strong>Hermes</strong>
+              <span>agent connector</span>
+            </div>
+            <span class="socket-status">live</span>
+          </div>
+          <div class="socket-row">
+            <img class="socket-icon" src="https://raw.githubusercontent.com/screenpipe/screenpipe/main/apps/screenpipe-app-tauri/public/images/claude-ai.svg" alt="" width="36" height="36">
+            <div class="socket-meta">
+              <strong>Claude · Cursor · Cline</strong>
+              <span>mcp · npx screenpipe-mcp</span>
+            </div>
+            <span class="socket-status">mcp</span>
+          </div>
+          <div class="socket-row">
+            <div class="socket-icon fallback" aria-hidden="true">100+</div>
+            <div class="socket-meta">
+              <strong>Obsidian, Notion, Linear…</strong>
+              <span>pipes write back into your stack</span>
+            </div>
+            <span class="socket-status">apps</span>
+          </div>
+        </div>
+        <div class="plug-copy">
+          <h2 id="agents-title">Give agents the day you actually lived</h2>
+          <p class="section-copy" style="margin-bottom:0;">Ask what you saw five minutes ago, auto-draft a standup, or ship a pipe that updates Linear when you touch a project. Context comes from your machine — not a cloud memory black box.</p>
+          <div class="query-block" aria-hidden="true">
+            <div><span class="prompt">›</span> what did i see in the last 5 mins?</div>
+            <div><span class="prompt">›</span> summarize today’s conversations</div>
+            <div><span class="prompt">›</span> pipe: patch linear when I work on X<span class="cursor"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="privacy-title">
+      <p class="eyebrow">04 · private by construction</p>
+      <div class="vault">
+        <div class="vault-art" aria-hidden="true">
+          <div class="vault-ring">
+            <div class="vault-core">
+              <div>
+                <strong>on-device</strong><br>
+                <span>default path</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2 id="privacy-title">Local, private, auditable</h2>
+          <p class="section-copy">Screenpipe positions itself as a source-available alternative to Rewind / Limitless and Microsoft Recall — with the important difference that you can inspect the capture path and keep the index offline.</p>
+          <ul class="vault-points">
+            <li>
+              <span class="tick">01</span>
+              <div>
+                <strong>Nothing leaves unless you opt in</strong>
+                <p>Core capture, search, and timeline stay local. Cloud AI and sync are explicit choices.</p>
+              </div>
+            </li>
+            <li>
+              <span class="tick">02</span>
+              <div>
+                <strong>Deterministic pipe permissions</strong>
+                <p>YAML allow/deny rules gate apps, windows, content types, and endpoints — enforced outside the prompt.</p>
+              </div>
+            </li>
+            <li>
+              <span class="tick">03</span>
+              <div>
+                <strong>You own the vault</strong>
+                <p>Export, wipe, or encrypt at rest. No account required for the core loop.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="specs-title">
+      <p class="eyebrow">05 · footprint</p>
+      <h2 id="specs-title">Built to stay in the background</h2>
+      <p class="section-copy">Event-driven capture keeps storage and CPU honest so the recorder can run all day without turning your laptop into a studio.</p>
+      <div class="specs">
+        <div class="spec">
+          <div class="num">5–10<em>%</em></div>
+          <p>typical CPU</p>
+        </div>
+        <div class="spec">
+          <div class="num">0.5–3<em>GB</em></div>
+          <p>RAM budget</p>
+        </div>
+        <div class="spec">
+          <div class="num">~5–10<em>GB</em></div>
+          <p>disk / month</p>
+        </div>
+        <div class="spec">
+          <div class="num">macOS · win · linux</div>
+          <p>desktop targets</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="close" aria-labelledby="close-title">
+      <p class="eyebrow">06 · next</p>
+      <h2 id="close-title">Start the recorder. Plug in an agent.</h2>
+      <p class="section-copy">Install the desktop app, or boot the CLI with <code style="font-family:'IBM Plex Mono',monospace;color:var(--signal);">npx screenpipe record</code> and wire MCP into Claude or Cursor in one command.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/screenpipe/screenpipe" target="_blank" rel="noopener">GitHub · screenpipe/screenpipe</a>
+        <a class="btn btn-ghost" href="https://screenpipe.com/" target="_blank" rel="noopener">screenpipe.com</a>
+      </div>
+      <div class="footer-note">
+        <span>Showcase · DuckWare audit · dark mode</span>
+        <a href="./">← Back to catalog</a>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
