@@ -1,0 +1,61 @@
+name: Deploy DuckWare to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Inject PostHog Analytics into all HTML pages
+        run: |
+          python3 -c "
+          import os
+          for root, dirs, files in os.walk('.'):
+              if any(ignored in root for ignored in ['.git', '.github', '.gemini', '.cursor']):
+                  continue
+              for file in files:
+                  if file.endswith('.html'):
+                      fpath = os.path.normpath(os.path.join(root, file))
+                      with open(fpath, 'r', encoding='utf-8') as f:
+                          content = f.read()
+                      if 'posthog-init.js' not in content and '</head>' in content:
+                          parts = fpath.split(os.sep)
+                          depth = len(parts) - 1
+                          rel_prefix = '../' * depth if depth > 0 else ''
+                          script_tag = f'  <!-- PostHog Analytics -->\n  <script src=\"{rel_prefix}posthog-init.js\"></script>\n</head>'
+                          new_content = content.replace('</head>', script_tag, 1)
+                          with open(fpath, 'w', encoding='utf-8') as f:
+                              f.write(new_content)
+                          print(f'Auto-injected PostHog into {fpath}')
+          "
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
