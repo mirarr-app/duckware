@@ -5,8 +5,8 @@
     <link>https://mirarr-app.github.io/duckware/</link>
     <description>A curation engine showcasing exceptional developer tools, open-source utilities, and beautiful software.</description>
     <language>en-us</language>
-    <lastBuildDate>Tue, 28 Jul 2026 12:00:00 GMT</lastBuildDate>
-    <pubDate>Tue, 28 Jul 2026 12:00:00 GMT</pubDate>
+    <lastBuildDate>Thu, 30 Jul 2026 19:00:00 GMT</lastBuildDate>
+    <pubDate>Thu, 30 Jul 2026 19:00:00 GMT</pubDate>
     <atom:link href="https://mirarr-app.github.io/duckware/feed.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -295,6 +295,14 @@
       <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/screenpipe.html</guid>
       <pubDate>Tue, 28 Jul 2026 12:00:00 GMT</pubDate>
       <description>Record your screen 24/7 into a local vault, then plug searchable work memory into OpenClaw, Hermes, MCP clients, and 100+ apps — private by default.</description>
+    </item>
+
+    <item>
+      <title>Linkwarden: Self-Hosted Bookmark Archive</title>
+      <link>https://mirarr-app.github.io/duckware/showcases/linkwarden.html</link>
+      <guid isPermaLink="true">https://mirarr-app.github.io/duckware/showcases/linkwarden.html</guid>
+      <pubDate>Thu, 30 Jul 2026 19:00:00 GMT</pubDate>
+      <description>Collaborative bookmark vault that collects, reads, annotates, and fully preserves pages as screenshot, PDF, and HTML — so link rot never erases what you meant to keep.</description>
     </item>
   </channel>
 </rss>

@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linkwarden Showcase — DuckWare</title>
+  <meta name="description" content="Self-hosted collaborative bookmark manager that collects, reads, annotates, and fully preserves webpages — screenshot, PDF, and HTML — against link rot.">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #06080e;
+      --ink-2: #0c1018;
+      --ink-3: #131925;
+      --slate: #8b97ab;
+      --mist: #c5cedd;
+      --paper: #e8eef8;
+      --seal: #3ecfbf;
+      --seal-dim: rgba(62, 207, 191, 0.14);
+      --amber: #e2a84a;
+      --amber-dim: rgba(226, 168, 74, 0.16);
+      --line: rgba(232, 238, 248, 0.08);
+      --line-strong: rgba(232, 238, 248, 0.16);
+      --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+      --font-body: "Manrope", system-ui, sans-serif;
+      --max: 1120px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--ink);
+      color: var(--mist);
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .grain {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      opacity: 0.045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* —— top bar —— */
+    .topbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem clamp(1.25rem, 4vw, 2.5rem);
+      color: rgba(232, 238, 248, 0.72);
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .topbar a:hover { color: var(--paper); }
+    .topbar-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .topbar-mark img {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+    }
+
+    /* —— hero —— */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      align-items: end;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .hero-visual {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: saturate(0.85) brightness(0.55);
+      transform: scale(1.02);
+      animation: hero-drift 28s ease-in-out infinite alternate;
+    }
+    .hero-veil {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(6, 8, 14, 0.55) 0%, rgba(6, 8, 14, 0.35) 38%, rgba(6, 8, 14, 0.82) 72%, var(--ink) 100%),
+        radial-gradient(ellipse 70% 55% at 70% 35%, rgba(62, 207, 191, 0.12), transparent 60%),
+        radial-gradient(ellipse 50% 40% at 15% 70%, rgba(226, 168, 74, 0.08), transparent 55%);
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      width: min(100% - 2.5rem, var(--max));
+      margin: 0 auto;
+      padding: 7rem 0 4.5rem;
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-size: clamp(3.4rem, 9.5vw, 6.4rem);
+      font-weight: 700;
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      color: var(--paper);
+      margin-bottom: 1.1rem;
+      text-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      animation: rise 0.9s ease both;
+    }
+
+    .lede {
+      font-family: var(--font-display);
+      font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--paper);
+      max-width: 22ch;
+      line-height: 1.25;
+      margin-bottom: 0.85rem;
+      animation: rise 0.9s ease 0.08s both;
+    }
+
+    .sub {
+      max-width: 38rem;
+      color: var(--slate);
+      font-size: 1.02rem;
+      margin-bottom: 1.75rem;
+      animation: rise 0.9s ease 0.16s both;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      animation: rise 0.9s ease 0.24s both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.78rem 1.2rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: var(--seal);
+      color: #041412;
+    }
+    .btn-primary:hover { background: #55e0d0; }
+    .btn-ghost {
+      border: 1px solid var(--line-strong);
+      background: rgba(12, 16, 24, 0.45);
+      color: var(--paper);
+      backdrop-filter: blur(8px);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(62, 207, 191, 0.45);
+      color: var(--seal);
+    }
+
+    /* —— section scaffolding —— */
+    section {
+      position: relative;
+      z-index: 2;
+      padding: clamp(4rem, 9vw, 7rem) 0;
+    }
+    .wrap {
+      width: min(100% - 2.5rem, var(--max));
+      margin: 0 auto;
+    }
+    .kicker {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--seal);
+      margin-bottom: 0.85rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4.5vw, 3rem);
+      font-weight: 600;
+      color: var(--paper);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      max-width: 16ch;
+      margin-bottom: 0.85rem;
+    }
+    .section-lead {
+      max-width: 38rem;
+      color: var(--slate);
+      font-size: 1.05rem;
+    }
+
+    /* —— rot —— */
+    .rot {
+      border-top: 1px solid var(--line);
+      background:
+        radial-gradient(ellipse 60% 80% at 100% 0%, rgba(226, 168, 74, 0.07), transparent 55%),
+        var(--ink);
+    }
+    .rot-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: clamp(2rem, 5vw, 4rem);
+      align-items: center;
+      margin-top: 2.5rem;
+    }
+    .rot-copy p + p { margin-top: 1rem; }
+
+    .rot-stage {
+      position: relative;
+      min-height: 280px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(160deg, rgba(19, 25, 37, 0.9), rgba(6, 8, 14, 0.95)),
+        repeating-linear-gradient(
+          -12deg,
+          transparent,
+          transparent 11px,
+          rgba(232, 238, 248, 0.015) 11px,
+          rgba(232, 238, 248, 0.015) 12px
+        );
+      padding: 1.75rem;
+      overflow: hidden;
+    }
+    .url-chip {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 0.78rem;
+      color: var(--amber);
+      border: 1px dashed rgba(226, 168, 74, 0.35);
+      background: var(--amber-dim);
+      padding: 0.55rem 0.8rem;
+      display: inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      animation: url-fade 4.5s ease-in-out infinite;
+    }
+    .rot-meta {
+      margin-top: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .rot-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--slate);
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0.55rem;
+    }
+    .rot-row strong {
+      color: #f07178;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .rot-stamp {
+      position: absolute;
+      right: 1.2rem;
+      bottom: 1.2rem;
+      width: 92px;
+      height: 92px;
+      border: 2px solid rgba(240, 113, 120, 0.55);
+      border-radius: 50%;
+      color: rgba(240, 113, 120, 0.85);
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      line-height: 1.2;
+      transform: rotate(-18deg);
+      opacity: 0.85;
+      animation: stamp-pulse 3.2s ease-in-out infinite;
+    }
+
+    /* —— triple seal —— */
+    .seal-band {
+      background: var(--ink-2);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .seal-intro { margin-bottom: 2.75rem; }
+    .formats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+    .format {
+      background: var(--ink-3);
+      padding: clamp(1.4rem, 3vw, 2rem);
+      min-height: 220px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s ease;
+    }
+    .format:hover { background: #182032; }
+    .format-index {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      color: rgba(62, 207, 191, 0.28);
+      line-height: 1;
+      margin-bottom: 1.4rem;
+    }
+    .format h3 {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      color: var(--paper);
+      font-weight: 600;
+      margin-bottom: 0.55rem;
+    }
+    .format p {
+      color: var(--slate);
+      font-size: 0.95rem;
+      max-width: 28ch;
+    }
+    .format-glyph {
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      width: 64px;
+      height: 64px;
+      opacity: 0.35;
+    }
+    .format:nth-child(1) .format-glyph { animation: seal-glow 3s ease-in-out infinite; }
+    .format:nth-child(2) .format-glyph { animation: seal-glow 3s ease-in-out 0.4s infinite; }
+    .format:nth-child(3) .format-glyph { animation: seal-glow 3s ease-in-out 0.8s infinite; }
+
+    /* —— reader —— */
+    .reader {
+      background:
+        radial-gradient(ellipse 50% 60% at 0% 40%, var(--amber-dim), transparent 55%),
+        var(--ink);
+    }
+    .reader-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      gap: clamp(2rem, 5vw, 4rem);
+      align-items: center;
+    }
+    .reader-panel {
+      border: 1px solid var(--line-strong);
+      background: linear-gradient(180deg, #151b28, #0d121c);
+      padding: clamp(1.5rem, 3vw, 2.25rem);
+      position: relative;
+    }
+    .reader-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 27px,
+        rgba(232, 238, 248, 0.025) 27px,
+        rgba(232, 238, 248, 0.025) 28px
+      );
+      pointer-events: none;
+    }
+    .reader-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--seal);
+      margin-bottom: 1.1rem;
+      position: relative;
+    }
+    .reader-panel h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+      color: var(--paper);
+      line-height: 1.25;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .reader-panel p {
+      color: var(--slate);
+      font-size: 1rem;
+      line-height: 1.7;
+      position: relative;
+    }
+    .hl {
+      background: linear-gradient(transparent 58%, rgba(226, 168, 74, 0.38) 58%);
+      color: var(--paper);
+      animation: highlight-sweep 2.8s ease-in-out infinite;
+      background-size: 200% 100%;
+    }
+    .note-pin {
+      margin-top: 1.4rem;
+      border-left: 2px solid var(--amber);
+      padding: 0.55rem 0 0.55rem 0.9rem;
+      color: #d6b06a;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 0.98rem;
+      position: relative;
+    }
+
+    /* —— collections —— */
+    .collab {
+      border-top: 1px solid var(--line);
+      background: var(--ink-2);
+    }
+    .tree {
+      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1rem;
+    }
+    .branch {
+      border: 1px solid var(--line);
+      background: rgba(19, 25, 37, 0.75);
+      padding: 1.25rem 1.35rem;
+      min-height: 140px;
+    }
+    .branch-a { grid-column: span 5; }
+    .branch-b { grid-column: span 4; }
+    .branch-c { grid-column: span 3; }
+    .branch-d { grid-column: span 7; }
+    .branch-e { grid-column: span 5; }
+    .branch h3 {
+      font-family: var(--font-display);
+      color: var(--paper);
+      font-size: 1.25rem;
+      margin-bottom: 0.45rem;
+    }
+    .branch p { color: var(--slate); font-size: 0.92rem; }
+    .branch-tag {
+      display: inline-block;
+      margin-bottom: 0.7rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--seal);
+    }
+    .avatars {
+      display: flex;
+      margin-top: 1rem;
+      gap: 0;
+    }
+    .avatars span {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--ink-2);
+      margin-left: -6px;
+      background: linear-gradient(135deg, var(--seal), #2a7f9e);
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #041412;
+      display: grid;
+      place-items: center;
+    }
+    .avatars span:first-child { margin-left: 0; }
+    .avatars span:nth-child(2) { background: linear-gradient(135deg, var(--amber), #b86b2e); }
+    .avatars span:nth-child(3) { background: linear-gradient(135deg, #7aa2ff, #465d9c); color: #eef2ff; }
+
+    /* —— deploy —— */
+    .deploy {
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 0%, var(--seal-dim), transparent 60%),
+        var(--ink);
+      border-top: 1px solid var(--line);
+      text-align: center;
+    }
+    .deploy .section-title {
+      max-width: none;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .deploy .section-lead {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .deploy .cta-row {
+      justify-content: center;
+      margin-top: 1.75rem;
+    }
+    .stack-note {
+      margin-top: 1.5rem;
+      color: var(--slate);
+      font-size: 0.88rem;
+    }
+    .stack-note code {
+      font-family: ui-monospace, Menlo, monospace;
+      color: var(--seal);
+      font-size: 0.84rem;
+    }
+
+    /* —— footer —— */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 1.75rem clamp(1.25rem, 4vw, 2.5rem) 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+      justify-content: space-between;
+      color: var(--slate);
+      font-size: 0.82rem;
+    }
+    footer a:hover { color: var(--seal); }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes hero-drift {
+      from { transform: scale(1.02) translateY(0); }
+      to { transform: scale(1.06) translateY(-1.5%); }
+    }
+    @keyframes url-fade {
+      0%, 100% { opacity: 1; filter: none; }
+      45% { opacity: 0.35; filter: blur(0.4px); }
+      55% { opacity: 0.2; color: #f07178; border-color: rgba(240, 113, 120, 0.4); }
+      70% { opacity: 0.55; }
+    }
+    @keyframes stamp-pulse {
+      0%, 100% { opacity: 0.55; transform: rotate(-18deg) scale(1); }
+      50% { opacity: 0.95; transform: rotate(-18deg) scale(1.04); }
+    }
+    @keyframes seal-glow {
+      0%, 100% { opacity: 0.28; filter: drop-shadow(0 0 0 transparent); }
+      50% { opacity: 0.55; filter: drop-shadow(0 0 10px rgba(62, 207, 191, 0.35)); }
+    }
+    @keyframes highlight-sweep {
+      0%, 100% { background-position: 100% 0; }
+      50% { background-position: 0% 0; }
+    }
+
+    @media (max-width: 900px) {
+      .rot-grid,
+      .reader-layout { grid-template-columns: 1fr; }
+      .formats { grid-template-columns: 1fr; }
+      .branch-a, .branch-b, .branch-c, .branch-d, .branch-e { grid-column: span 12; }
+      .hero-copy { padding-bottom: 3.25rem; }
+      .lede { max-width: 28ch; }
+    }
+
+    @media (max-width: 560px) {
+      .topbar { padding-inline: 1rem; }
+      .wrap, .hero-copy { width: min(100% - 2rem, var(--max)); }
+      .cta-row { flex-direction: column; align-items: stretch; }
+      .btn { justify-content: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="topbar-mark" href="https://github.com/linkwarden/linkwarden" target="_blank" rel="noopener">
+      <img src="https://raw.githubusercontent.com/linkwarden/linkwarden/main/assets/logo.png" alt="" width="22" height="22">
+      <span>linkwarden/linkwarden</span>
+    </a>
+    <a href="./">← All showcases</a>
+  </header>
+
+  <section class="hero" aria-label="Linkwarden hero">
+    <div class="hero-visual" aria-hidden="true">
+      <img src="https://raw.githubusercontent.com/linkwarden/linkwarden/main/assets/linkwarden-hero.png" alt="">
+      <div class="hero-veil"></div>
+    </div>
+    <div class="hero-copy">
+      <h1 class="brand">Linkwarden</h1>
+      <p class="lede">Bookmarks that outlive the pages they point to.</p>
+      <p class="sub">A self-hosted collaborative vault to collect, read, annotate, and fully preserve the web — so link rot never erases what you meant to keep.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/linkwarden/linkwarden" target="_blank" rel="noopener">View on GitHub</a>
+        <a class="btn btn-ghost" href="https://demo.linkwarden.app" target="_blank" rel="noopener">Launch demo</a>
+        <a class="btn btn-ghost" href="https://docs.linkwarden.app/self-hosting/installation" target="_blank" rel="noopener">Self-host docs</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="rot" id="rot">
+    <div class="wrap">
+      <p class="kicker">The problem</p>
+      <h2 class="section-title">Useful pages disappear.</h2>
+      <p class="section-lead">A bookmark is only a promise. Domains expire, redesigns wipe archives, and paywalls swallow essays you meant to revisit. Linkwarden treats every save as a preservation job — not a pointer you hope still works.</p>
+
+      <div class="rot-grid">
+        <div class="rot-copy">
+          <p>Ordinary bookmark managers store a URL and a title. When the original goes dark, so does your research trail. Linkwarden’s reason for existing is that gap: organize what you find <em>and</em> keep a recoverable copy under your control.</p>
+          <p>Optional Wayback Machine submission adds a public off-site snapshot when you want belt-and-suspenders archival — without forcing your library into someone else’s silo.</p>
+        </div>
+        <div class="rot-stage" aria-hidden="true">
+          <div class="url-chip">https://example.com/essay/that-mattered…</div>
+          <div class="rot-meta">
+            <div class="rot-row"><span>HTTP status</span><strong>404 Gone</strong></div>
+            <div class="rot-row"><span>Last crawl</span><strong>unknown</strong></div>
+            <div class="rot-row"><span>Your bookmark</span><strong>broken</strong></div>
+          </div>
+          <div class="rot-stamp">Link<br>Rot</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seal-band" id="preserve">
+    <div class="wrap">
+      <div class="seal-intro">
+        <p class="kicker">Triple seal</p>
+        <h2 class="section-title">Preserve every save three ways.</h2>
+        <p class="section-lead">On capture, Linkwarden seals the page as a screenshot, a PDF, and a single-file HTML archive — so you can browse, print, or re-read even after the live site is gone.</p>
+      </div>
+
+      <div class="formats">
+        <article class="format">
+          <div class="format-index">01</div>
+          <h3>Screenshot</h3>
+          <p>A visual freeze-frame of the page as it looked when you saved it — layout, media, and all.</p>
+          <svg class="format-glyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="8" y="14" width="48" height="36" rx="3" stroke="#3ecfbf" stroke-width="2"/>
+            <circle cx="32" cy="32" r="8" stroke="#3ecfbf" stroke-width="2"/>
+            <circle cx="46" cy="22" r="2.5" fill="#3ecfbf"/>
+          </svg>
+        </article>
+        <article class="format">
+          <div class="format-index">02</div>
+          <h3>PDF</h3>
+          <p>A portable document you can annotate offline, share with collaborators, or file beside notes.</p>
+          <svg class="format-glyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <path d="M18 10h22l12 12v32a2 2 0 0 1-2 2H18a2 2 0 0 1-2-2V12a2 2 0 0 1 2-2z" stroke="#3ecfbf" stroke-width="2"/>
+            <path d="M40 10v12h12" stroke="#3ecfbf" stroke-width="2"/>
+            <path d="M24 34h16M24 42h12" stroke="#3ecfbf" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </article>
+        <article class="format">
+          <div class="format-index">03</div>
+          <h3>Single HTML</h3>
+          <p>A self-contained capture for full-text search and a faithful re-open of the original markup.</p>
+          <svg class="format-glyph" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <path d="M20 20l-10 12 10 12M44 20l10 12-10 12M36 16l-8 32" stroke="#3ecfbf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="reader" id="read">
+    <div class="wrap reader-layout">
+      <div>
+        <p class="kicker">Read it later — keep it forever</p>
+        <h2 class="section-title">Annotate inside the vault.</h2>
+        <p class="section-lead">Linkwarden blends a calm reader view with archive reliability. Highlight passages, leave notes, and return months later — even if the original article has vanished from the open web.</p>
+      </div>
+      <div class="reader-panel">
+        <p class="reader-eyebrow">Reader view</p>
+        <h3>On building a library that does not trust the live web</h3>
+        <p>
+          The open web is generous and fragile at once. Saving a URL is optimism;
+          <span class="hl">saving the page itself is stewardship</span>.
+          Annotations turn a cold archive into a working notebook — highlights that still mean something when the source is gone.
+        </p>
+        <p class="note-pin">“Return to this paragraph when drafting the homelab docs.”</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="collab" id="organize">
+    <div class="wrap">
+      <p class="kicker">Collections &amp; crew</p>
+      <h2 class="section-title">Organize alone. Collaborate when it counts.</h2>
+      <p class="section-lead">Nest collections, tag liberally, search the full text of what you preserved, and invite others into shared shelves with per-member permissions — or publish a collection to the world.</p>
+
+      <div class="tree">
+        <article class="branch branch-a">
+          <span class="branch-tag">Structure</span>
+          <h3>Nested collections</h3>
+          <p>Shape research into trees — projects, topics, and sub-shelves — instead of one endless flat list.</p>
+        </article>
+        <article class="branch branch-b">
+          <span class="branch-tag">Intelligence</span>
+          <h3>Local AI tagging</h3>
+          <p>Optional auto-tags from page content, including local models via Ollama when you want the labels to stay home.</p>
+        </article>
+        <article class="branch branch-c">
+          <span class="branch-tag">Retrieval</span>
+          <h3>Full-text search</h3>
+          <p>Find ideas inside captured bodies — not just titles and URLs.</p>
+        </article>
+        <article class="branch branch-d">
+          <span class="branch-tag">Team</span>
+          <h3>Shared gathering</h3>
+          <p>Collaborate on a collection with customizable member permissions, then keep roles clear as the library grows.</p>
+          <div class="avatars" aria-hidden="true">
+            <span>A</span><span>R</span><span>M</span>
+          </div>
+        </article>
+        <article class="branch branch-e">
+          <span class="branch-tag">Reach</span>
+          <h3>Browser, phone, API</h3>
+          <p>Official extension, native iOS/Android apps, Floccus sync, RSS intake, and API keys for the rest of your stack.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="deploy" id="deploy">
+    <div class="wrap">
+      <p class="kicker">Your server or theirs</p>
+      <h2 class="section-title">Run it where you trust the disk.</h2>
+      <p class="section-lead">Self-host with Docker when you want the vault on your own hardware, or start on Linkwarden Cloud if you’d rather skip ops and fund the project directly. Either path keeps the same idea: your bookmarks should survive the web’s memory holes.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://docs.linkwarden.app/self-hosting/installation" target="_blank" rel="noopener">Installation guide</a>
+        <a class="btn btn-ghost" href="https://linkwarden.app" target="_blank" rel="noopener">Official site</a>
+        <a class="btn btn-ghost" href="https://github.com/linkwarden/linkwarden/releases" target="_blank" rel="noopener">Releases</a>
+      </div>
+      <p class="stack-note">Homelab path: <code>docker compose up</code> · TypeScript monorepo · AGPL</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Showcase audit for <a href="https://github.com/linkwarden/linkwarden" target="_blank" rel="noopener">linkwarden/linkwarden</a></span>
+    <a href="./">← Back to DuckWare showcases</a>
+  </footer>
+</body>
+</html>
