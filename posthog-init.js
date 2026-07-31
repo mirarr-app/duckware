@@ -1,4 +1,5 @@
 // PostHog Analytics Initialization for DuckWare
+// Loads array.js from api_host (reverse proxy) inside init — matching the official snippet.
 !(function (t, e) {
   var o, n, p, r;
   e.__SV ||
@@ -12,45 +13,42 @@
             t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
           });
       }
-      var l = e;
+      (p = t.createElement('script')).type = 'text/javascript';
+      p.crossOrigin = 'anonymous';
+      p.async = !0;
+      // Custom reverse-proxy hosts keep api_host as-is; us/eu.i.posthog.com map to *-assets.
+      p.src =
+        s.api_host.replace('.i.posthog.com', '-assets.i.posthog.com') +
+        '/static/array.js';
+      (r = t.getElementsByTagName('script')[0]).parentNode.insertBefore(p, r);
+      var u = e;
       for (
-        'undefined' != typeof a ? (l = e[a] = []) : (a = 'posthog'),
-          l.people = l.people || [],
-          l.toString = function () {
-            var t = 'posthog';
-            return 'undefined' !== a && (t += '.' + a), t;
-          },
-          l.toString = function (t) {
+        void 0 !== a ? (u = e[a] = []) : (a = 'posthog'),
+          u.people = u.people || [],
+          u.toString = function (t) {
             var e = 'posthog';
-            return 'undefined' !== a && (e += '.' + a), t ? e : e + ' (stub)';
+            return 'posthog' !== a && (e += '.' + a), t || (e += ' (stub)'), e;
           },
-          l.people.toString = function () {
-            return l.toString(1) + '.people (stub)';
+          u.people.toString = function () {
+            return u.toString(1) + '.people (stub)';
           },
-          p =
-            'capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group identify_group opt_in_capturing_v2 opt_out_capturing_v2 setup_daily_event_properties set_config'.split(
+          o =
+            'init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagResult isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug'.split(
               ' '
             ),
-          r = 0;
-        r < p.length;
-        r++
+          n = 0;
+        n < o.length;
+        n++
       )
-        g(l, p[r]);
+        g(u, o[n]);
       e._i.push([i, s, a]);
     }),
-    (e.__SV = 1.0),
-    (o = t.createElement('script')),
-    (n = t.getElementsByTagName('script')[0]),
-    (o.async = 1),
-    (o.src =
-      s.api_host.replace('.i.posthog.com', '-assets.i.posthog.com') +
-      '/static/array.js'),
-    (r = t.getElementsByTagName('script')[0]).parentNode.insertBefore(o, r));
+    (e.__SV = 1));
 })(document, window.posthog || []);
 
 posthog.init('phc_PPhGfg5Kf5N0ZRAGHi9OPPx2roAnQjGRqBaKjAUBblR', {
   api_host: 'https://pos.parsaoo.ir',
-  ui_host: 'https://us.i.posthog.com',
+  ui_host: 'https://us.posthog.com',
   person_profiles: 'identified_only',
   capture_pageview: true,
 });
