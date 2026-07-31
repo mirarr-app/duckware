@@ -67,7 +67,51 @@
       <!-- Showcases Grid (Ordered Descending) -->
       <div class="grid" style="grid-template-columns: 1fr; gap: var(--space-2xl); max-width: 900px; margin: 0 auto;">
 
-        <!-- Showcase Card 37: Linkwarden (LATEST on top) -->
+        <!-- Showcase Card 38: Colibrì (LATEST on top) -->
+        <a href="colibri.html" class="card-content showcase-list-card" data-tags="moe,inference,pure-c" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+          <div class="card-mockup" style="background: #030706; padding: 1.1rem 1rem; min-height: 180px; display: flex; align-items: center; justify-content: center;">
+            <div style="width: 100%; max-width: 360px; border: 1px solid rgba(95,215,215,0.28); background: linear-gradient(165deg,#0f211c,#06100e); font-family: 'IBM Plex Mono', ui-monospace, monospace; overflow: hidden;">
+              <div style="display:flex; gap:5px; align-items:center; justify-content:space-between; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:10px; color:#8aaba4; background:#0b1815;">
+                <span style="display:flex; gap:5px; align-items:center;">
+                  <img src="https://raw.githubusercontent.com/JustVugg/colibri/main/assets/colibri-icon.svg" alt="" width="14" height="14" style="image-rendering:pixelated;">
+                  <span style="margin-left:2px; color:#e7f7f2;">colibrì · MoE stream</span>
+                </span>
+                <span style="color:#5fd7d7;">744B</span>
+              </div>
+              <div style="padding:8px; background:radial-gradient(ellipse at 30% 20%, rgba(215,95,215,0.14), transparent 50%), radial-gradient(ellipse at 80% 70%, rgba(0,175,175,0.16), transparent 45%), #050c0a;">
+                <div style="display:grid; gap:4px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 7px; border:1px solid rgba(215,95,215,0.35); background:rgba(215,95,215,0.12); font-size:8px; color:#f0a4f0;"><span>VRAM</span><span style="color:#e7f7f2;">hot experts</span></div>
+                  <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 7px; border:1px solid rgba(0,175,175,0.35); background:rgba(0,175,175,0.12); font-size:8px; color:#5fd7d7;"><span>RAM</span><span style="color:#e7f7f2;">~9.9 GB dense</span></div>
+                  <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 7px; border:1px solid rgba(255,135,0,0.35); background:rgba(255,135,0,0.1); font-size:8px; color:#ffb45c;"><span>NVMe</span><span style="color:#e7f7f2;">19,456 experts</span></div>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:space-between; gap:8px; padding:7px 10px; font-size:9px; color:#8aaba4; border-top:1px solid rgba(255,255,255,0.05); background:#0b1815;">
+                <span>pure C · <span style="color:#5fd7d7;">zero deps</span></span>
+                <span style="color:#ff8700;">stream ≠ fit</span>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
+              <span>JustVugg/colibri</span>
+              <span>•</span>
+              <span style="color: var(--color-body-strong);">Showcase #38 (Latest)</span>
+            </div>
+            <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">
+              Colibrì: Frontier MoE on Your Hardware
+            </h3>
+            <p class="text-body-sm" style="color: var(--color-body); line-height: 1.6;">
+              Pure-C inference engine that streams Mixture-of-Experts weights from disk — run a 744B model on consumer machines without fitting everything in RAM.
+            </p>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">MoE</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Inference</span>
+              <span class="text-caption" style="background-color: var(--color-canvas); padding: var(--space-xxs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline);">Pure C</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Showcase Card 37: Linkwarden -->
         <a href="linkwarden.html" class="card-content showcase-list-card" data-tags="bookmarks,self-hosted,archive" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
           <div class="card-mockup" style="background: #06080e; padding: 1.1rem 1rem; min-height: 180px; display: flex; align-items: center; justify-content: center;">
             <div style="width: 100%; max-width: 360px; border: 1px solid rgba(62,207,191,0.28); background: linear-gradient(165deg,#131925,#0c1018); font-family: 'Manrope', ui-sans-serif, sans-serif; overflow: hidden;">
@@ -91,7 +135,7 @@
             <div class="text-code" style="color: var(--color-mute); display: flex; gap: var(--space-sm); align-items: center;">
               <span>linkwarden/linkwarden</span>
               <span>•</span>
-              <span style="color: var(--color-body-strong);">Showcase #37 (Latest)</span>
+              <span style="color: var(--color-body-strong);">Showcase #37</span>
             </div>
             <h3 class="text-display-sm" style="color: var(--color-ink); font-weight: 500;">
               Linkwarden: Self-Hosted Bookmark Archive
