@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colibrì Showcase — DuckWare</title>
+  <meta name="description" content="Run frontier MoE models on hardware you already own — pure C, zero deps, experts streamed from disk. Tiny engine, immense model.">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #030706;
+      --deep: #06100e;
+      --panel: #0b1815;
+      --panel-2: #0f211c;
+      --line: rgba(95, 215, 215, 0.18);
+      --mist: #8aaba4;
+      --ink: #e7f7f2;
+      --teal: #00afaf;
+      --cyan: #5fd7d7;
+      --wing: #d75fd7;
+      --nectar: #ff8700;
+      --leaf: #2fd67a;
+      --font-display: "Syne", system-ui, sans-serif;
+      --font-body: "Newsreader", Georgia, serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--void);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1.125rem;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+    button, .btn { font: inherit; cursor: pointer; border: 0; }
+
+    /* Atmosphere */
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 80% 50% at 15% 10%, rgba(215, 95, 215, 0.12), transparent 55%),
+        radial-gradient(ellipse 70% 45% at 85% 20%, rgba(0, 175, 175, 0.14), transparent 50%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(255, 135, 0, 0.07), transparent 45%),
+        linear-gradient(180deg, #020504 0%, #06110e 40%, #030806 100%);
+    }
+    .sky::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,0.35), transparent),
+        radial-gradient(1px 1px at 28% 42%, rgba(95,215,215,0.45), transparent),
+        radial-gradient(1.5px 1.5px at 61% 14%, rgba(215,95,215,0.4), transparent),
+        radial-gradient(1px 1px at 78% 36%, rgba(255,255,255,0.25), transparent),
+        radial-gradient(1px 1px at 88% 62%, rgba(95,215,215,0.35), transparent),
+        radial-gradient(1px 1px at 42% 72%, rgba(255,255,255,0.2), transparent),
+        radial-gradient(1.5px 1.5px at 8% 78%, rgba(255,135,0,0.35), transparent);
+      animation: twinkle 8s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.55; }
+      to { opacity: 1; }
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 2.5rem));
+      margin-inline: auto;
+    }
+
+    /* Top bar */
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 0 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: var(--mist);
+    }
+    .top a {
+      text-decoration: none;
+      color: var(--cyan);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .top a:hover { border-color: var(--cyan); color: var(--ink); }
+    .top-meta { display: flex; gap: 0.85rem; flex-wrap: wrap; align-items: center; }
+    .pill {
+      border: 1px solid var(--line);
+      background: rgba(11, 24, 21, 0.7);
+      padding: 0.28rem 0.55rem;
+      color: var(--mist);
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      min-height: min(92vh, 920px);
+      display: grid;
+      align-items: end;
+      padding: 2.5rem 0 4rem;
+      isolation: isolate;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2.5rem;
+      align-items: end;
+    }
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+    .brand-mark img {
+      width: min(280px, 70vw);
+      height: auto;
+      filter: drop-shadow(0 0 18px rgba(0, 175, 175, 0.35));
+      animation: floaty 4.5s ease-in-out infinite;
+    }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.6rem, 7vw, 5.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.15rem;
+      max-width: 12ch;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(110deg, var(--cyan), var(--leaf) 40%, var(--nectar) 75%, var(--wing));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-lead {
+      font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+      color: var(--mist);
+      max-width: 34ch;
+      margin-bottom: 1.75rem;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.85rem 1.15rem;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal), #178f8f);
+      color: #03110f;
+      font-weight: 600;
+      box-shadow: 0 0 0 1px rgba(95, 215, 215, 0.35), 0 10px 30px rgba(0, 175, 175, 0.25);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 0 1px rgba(95, 215, 215, 0.55), 0 14px 36px rgba(0, 175, 175, 0.35);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-ghost:hover {
+      border-color: var(--cyan);
+      background: rgba(95, 215, 215, 0.06);
+    }
+
+    /* Hierarchy stage */
+    .stage {
+      position: relative;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(15, 33, 28, 0.9), rgba(6, 16, 14, 0.95)),
+        repeating-linear-gradient(0deg, transparent, transparent 11px, rgba(95,215,215,0.04) 12px);
+      padding: 1rem;
+      min-height: 360px;
+      overflow: hidden;
+    }
+    .stage-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.85rem;
+    }
+    .tiers {
+      display: grid;
+      gap: 0.55rem;
+    }
+    .tier {
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 0.7rem 0.85rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.75rem;
+      align-items: center;
+      overflow: hidden;
+    }
+    .tier::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      transform: translateX(-100%);
+      animation: sweep 4.8s ease-in-out infinite;
+    }
+    .tier-vram { background: rgba(215, 95, 215, 0.12); border-color: rgba(215, 95, 215, 0.35); animation-delay: 0s; }
+    .tier-vram::before { animation-delay: 0s; }
+    .tier-ram { background: rgba(0, 175, 175, 0.12); border-color: rgba(0, 175, 175, 0.35); }
+    .tier-ram::before { animation-delay: 1.2s; }
+    .tier-disk { background: rgba(255, 135, 0, 0.1); border-color: rgba(255, 135, 0, 0.32); }
+    .tier-disk::before { animation-delay: 2.4s; }
+    @keyframes sweep {
+      0%, 35% { transform: translateX(-100%); }
+      55%, 100% { transform: translateX(100%); }
+    }
+    .tier-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+    .tier-vram .tier-tag { color: #f0a4f0; }
+    .tier-ram .tier-tag { color: var(--cyan); }
+    .tier-disk .tier-tag { color: #ffb45c; }
+    .tier-desc {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--mist);
+    }
+    .tier-stat {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink);
+    }
+    .stream-lane {
+      position: relative;
+      height: 54px;
+      margin: 0.75rem 0 0.35rem;
+      border: 1px dashed rgba(95, 215, 215, 0.2);
+      background: rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+    .packet {
+      position: absolute;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      margin-top: -5px;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+      animation: fly 3.2s linear infinite;
+    }
+    .packet:nth-child(2) { background: var(--wing); box-shadow: 0 0 12px var(--wing); animation-delay: -0.8s; animation-duration: 2.7s; }
+    .packet:nth-child(3) { background: var(--nectar); box-shadow: 0 0 12px var(--nectar); animation-delay: -1.5s; animation-duration: 3.6s; }
+    .packet:nth-child(4) { background: var(--leaf); box-shadow: 0 0 12px var(--leaf); animation-delay: -2.1s; animation-duration: 2.9s; }
+    .packet:nth-child(5) { background: var(--cyan); animation-delay: -0.3s; animation-duration: 4s; width: 7px; height: 7px; margin-top: -3.5px; }
+    @keyframes fly {
+      0% { left: -12px; opacity: 0; transform: translateY(8px); }
+      10% { opacity: 1; }
+      50% { transform: translateY(-6px); }
+      90% { opacity: 1; }
+      100% { left: calc(100% + 12px); opacity: 0; transform: translateY(4px); }
+    }
+    .stream-caption {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--mist);
+      letter-spacing: 0.06em;
+    }
+
+    /* Sections */
+    section {
+      padding: 5rem 0;
+      border-top: 1px solid rgba(95, 215, 215, 0.08);
+    }
+    .section-kicker {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--nectar);
+      margin-bottom: 0.85rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(1.9rem, 4.5vw, 3.1rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      max-width: 18ch;
+    }
+    .section-lead {
+      color: var(--mist);
+      max-width: 52ch;
+      margin-bottom: 2rem;
+    }
+
+    /* Cortex */
+    .cortex-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    .cortex {
+      display: grid;
+      grid-template-columns: repeat(32, 1fr);
+      gap: 3px;
+      padding: 1rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      aspect-ratio: 1.35 / 1;
+      position: relative;
+      overflow: hidden;
+    }
+    .cortex::after {
+      content: "19,456 experts · routing heat";
+      position: absolute;
+      left: 1rem;
+      bottom: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      color: rgba(231, 247, 242, 0.55);
+      background: rgba(3, 7, 6, 0.55);
+      padding: 0.2rem 0.4rem;
+    }
+    .cell {
+      aspect-ratio: 1;
+      background: rgba(0, 175, 175, 0.12);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .cell.on {
+      background: var(--cyan);
+      box-shadow: 0 0 8px rgba(95, 215, 215, 0.8);
+    }
+    .cell.hot {
+      background: #fff;
+      box-shadow: 0 0 10px rgba(255,255,255,0.9);
+    }
+    .cell.disk {
+      background: rgba(255, 135, 0, 0.28);
+    }
+    .cell.vram {
+      background: rgba(215, 95, 215, 0.45);
+    }
+    .cortex-copy h3 {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      margin-bottom: 0.75rem;
+    }
+    .cortex-copy p { color: var(--mist); margin-bottom: 1.1rem; }
+    .legend {
+      display: grid;
+      gap: 0.55rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--mist);
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .swatch {
+      width: 10px;
+      height: 10px;
+      display: inline-block;
+    }
+
+    /* Idea strip */
+    .idea {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    .math-panel {
+      border: 1px solid var(--line);
+      background: linear-gradient(160deg, rgba(15,33,28,0.95), rgba(6,16,14,0.98));
+      padding: 1.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+    .math-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: var(--mist);
+    }
+    .math-row strong { color: var(--ink); font-weight: 500; }
+    .math-row:last-child { border-bottom: 0; }
+    .math-highlight {
+      margin-top: 1rem;
+      padding: 0.85rem;
+      background: rgba(0, 175, 175, 0.1);
+      border-left: 3px solid var(--cyan);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    /* Media + terminal */
+    .split-media {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.25rem;
+    }
+    .shot {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      overflow: hidden;
+      position: relative;
+    }
+    .shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      min-height: 240px;
+      opacity: 0.92;
+      transition: transform 0.6s ease, opacity 0.3s;
+    }
+    .shot:hover img { transform: scale(1.03); opacity: 1; }
+    .shot-cap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0.7rem 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      background: linear-gradient(transparent, rgba(3,7,6,0.92));
+    }
+    .term {
+      border: 1px solid var(--line);
+      background: #050c0a;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+    }
+    .term-bar {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: var(--mist);
+      font-size: 0.68rem;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #334;
+    }
+    .dot.r { background: #ff5f56; }
+    .dot.y { background: #ffbd2e; }
+    .dot.g { background: #27c93f; }
+    .term-body {
+      padding: 0.9rem 0.95rem 1.1rem;
+      flex: 1;
+      line-height: 1.55;
+      color: #b7d4cc;
+    }
+    .term-body .ok { color: var(--leaf); }
+    .term-body .bird { color: var(--cyan); }
+    .term-body .prompt { color: var(--nectar); }
+    .term-body .out { color: #e8f5f0; }
+    .cursor {
+      display: inline-block;
+      width: 0.55ch;
+      height: 1.05em;
+      background: var(--cyan);
+      vertical-align: text-bottom;
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    .typed-line { overflow: hidden; white-space: nowrap; width: 0; animation: typein 1.4s steps(28) 0.6s forwards; }
+    @keyframes typein {
+      to { width: 100%; }
+    }
+
+    /* Strengths */
+    .strengths {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .strength {
+      border: 1px solid var(--line);
+      background: rgba(11, 24, 21, 0.65);
+      padding: 1.25rem 1.15rem 1.35rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .strength:hover {
+      border-color: rgba(95, 215, 215, 0.45);
+      transform: translateY(-3px);
+    }
+    .strength::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -40% auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,175,175,0.18), transparent 70%);
+      pointer-events: none;
+    }
+    .strength-num {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--wing);
+      letter-spacing: 0.12em;
+      margin-bottom: 0.65rem;
+    }
+    .strength h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      margin-bottom: 0.55rem;
+      letter-spacing: -0.02em;
+    }
+    .strength p {
+      color: var(--mist);
+      font-size: 1rem;
+    }
+
+    /* Ladder */
+    .ladder {
+      display: grid;
+      gap: 0.55rem;
+    }
+    .rung {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(90px, 0.4fr) minmax(70px, 0.25fr);
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(11,24,21,0.5);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+    .rung:hover { border-color: rgba(95,215,215,0.35); }
+    .bar-track {
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--teal), var(--nectar));
+      animation: grow 1.6s ease forwards;
+    }
+    .rung:nth-child(1) .bar-fill { --w: 100%; animation-delay: 0.1s; }
+    .rung:nth-child(2) .bar-fill { --w: 87%; animation-delay: 0.2s; background: linear-gradient(90deg, var(--cyan), var(--teal)); }
+    .rung:nth-child(3) .bar-fill { --w: 59%; animation-delay: 0.3s; }
+    .rung:nth-child(4) .bar-fill { --w: 36%; animation-delay: 0.4s; }
+    .rung:nth-child(5) .bar-fill { --w: 22%; animation-delay: 0.5s; }
+    .rung:nth-child(6) .bar-fill { --w: 13%; animation-delay: 0.6s; }
+    .rung:nth-child(7) .bar-fill { --w: 3%; animation-delay: 0.7s; background: linear-gradient(90deg, var(--nectar), #aa4a00); }
+    @keyframes grow {
+      to { width: var(--w); }
+    }
+    .toks { color: var(--cyan); text-align: right; white-space: nowrap; }
+    .rung-name { color: var(--mist); }
+    .rung-name strong { color: var(--ink); font-weight: 500; display: block; margin-bottom: 0.15rem; }
+
+    /* Models */
+    .models {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+    .model {
+      border: 1px solid var(--line);
+      padding: 1rem;
+      background: var(--panel);
+      min-height: 150px;
+    }
+    .model.active {
+      border-color: rgba(0, 175, 175, 0.55);
+      box-shadow: inset 0 0 0 1px rgba(0,175,175,0.15);
+    }
+    .model .tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--nectar);
+      margin-bottom: 0.55rem;
+    }
+    .model.active .tag { color: var(--cyan); }
+    .model h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      margin-bottom: 0.4rem;
+    }
+    .model p {
+      font-size: 0.95rem;
+      color: var(--mist);
+    }
+
+    /* CTA footer band */
+    .finale {
+      position: relative;
+      padding: 4.5rem 0 5rem;
+      text-align: center;
+      border-top: 1px solid rgba(95, 215, 215, 0.08);
+      overflow: hidden;
+    }
+    .finale::before {
+      content: "";
+      position: absolute;
+      inset: 20% 20%;
+      background: radial-gradient(circle, rgba(0,175,175,0.16), transparent 65%);
+      pointer-events: none;
+      animation: pulse 5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+    .finale h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      letter-spacing: -0.03em;
+      margin-bottom: 0.85rem;
+      position: relative;
+    }
+    .finale p {
+      color: var(--mist);
+      max-width: 42ch;
+      margin: 0 auto 1.75rem;
+      position: relative;
+    }
+    .finale .cta-row { justify-content: center; position: relative; }
+    .foot {
+      padding: 1.5rem 0 2.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--mist);
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(95, 215, 215, 0.08);
+    }
+    .foot a { color: var(--cyan); text-decoration: none; }
+    .foot a:hover { text-decoration: underline; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .cortex-layout,
+      .idea,
+      .split-media {
+        grid-template-columns: 1fr;
+      }
+      .strengths,
+      .models {
+        grid-template-columns: 1fr;
+      }
+      .hero { min-height: auto; padding-top: 1.5rem; }
+      .cortex { grid-template-columns: repeat(20, 1fr); }
+      .rung {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+      }
+      .toks { text-align: left; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+      .bar-fill { width: var(--w); }
+      .typed-line { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <header class="top">
+      <a href="./">← All showcases</a>
+      <div class="top-meta">
+        <span class="pill">Showcase #38</span>
+        <span class="pill">JustVugg/colibri</span>
+        <a href="https://github.com/JustVugg/colibri" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </header>
+
+    <section class="hero" style="border-top:0; padding-top:1.5rem;">
+      <div class="hero-grid">
+        <div>
+          <div class="brand-mark">
+            <img src="https://raw.githubusercontent.com/JustVugg/colibri/main/assets/colibri.svg" alt="colibrì" width="280" height="63">
+          </div>
+          <h1>Tiny engine,<br><em>immense</em> model.</h1>
+          <p class="hero-lead">
+            A pure-C MoE runtime that streams 19,456 experts from disk so a 744B frontier mind can live on hardware you already own.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="https://github.com/JustVugg/colibri" target="_blank" rel="noopener">Read the engine</a>
+            <a class="btn btn-ghost" href="https://justvugg.github.io/colibri/" target="_blank" rel="noopener">Project site</a>
+            <a class="btn btn-ghost" href="https://github.com/JustVugg/colibri/releases" target="_blank" rel="noopener">Releases</a>
+          </div>
+        </div>
+
+        <aside class="stage" aria-label="Memory hierarchy animation">
+          <div class="stage-label">Inference hierarchy · live staging</div>
+          <div class="tiers">
+            <div class="tier tier-vram">
+              <span class="tier-tag">VRAM</span>
+              <span class="tier-desc">hot experts · GPU tier</span>
+              <span class="tier-stat">fastest</span>
+            </div>
+            <div class="tier tier-ram">
+              <span class="tier-tag">RAM</span>
+              <span class="tier-desc">dense + pinned hot-store</span>
+              <span class="tier-stat">~9.9 GB</span>
+            </div>
+            <div class="tier tier-disk">
+              <span class="tier-tag">NVMe</span>
+              <span class="tier-desc">19,456 experts streamed</span>
+              <span class="tier-stat">~370 GB</span>
+            </div>
+          </div>
+          <div class="stream-lane" aria-hidden="true">
+            <span class="packet"></span>
+            <span class="packet"></span>
+            <span class="packet"></span>
+            <span class="packet"></span>
+            <span class="packet"></span>
+          </div>
+          <div class="stream-caption">experts · prefetch · dual-SSD striping · placement ≠ semantics</div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <p class="section-kicker">The living cortex</p>
+      <h2 class="section-title">Watch every expert fire.</h2>
+      <p class="section-lead">
+        Colibrì is not a black-box API wrapper. It is a microscope for Mixture-of-Experts inference: routing heat decides which specialists earn VRAM, which stay pinned in RAM, and which stream from NVMe — without quietly changing the model.
+      </p>
+      <div class="cortex-layout">
+        <div class="cortex" id="cortex" aria-hidden="true"></div>
+        <div class="cortex-copy">
+          <h3>A JIT — but for weights</h3>
+          <p>
+            GLM-5.2 activates ~40B parameters per token, and only ~11&nbsp;GB of those change from token to token. The dense spine stays resident; the routed experts are staged on demand with a per-layer LRU, a learned hot-store, and one-layer-ahead prefetch.
+          </p>
+          <p>
+            Insufficient fast memory may slow you down. It must never redefine precision or router semantics. That honesty is the research stance.
+          </p>
+          <div class="legend">
+            <span><i class="swatch" style="background:#fff; box-shadow:0 0 8px #fff;"></i> routed this turn</span>
+            <span><i class="swatch" style="background:var(--cyan);"></i> warm / RAM-resident</span>
+            <span><i class="swatch" style="background:rgba(215,95,215,0.7);"></i> VRAM tier</span>
+            <span><i class="swatch" style="background:rgba(255,135,0,0.55);"></i> streaming from disk</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <p class="section-kicker">What it actually is</p>
+      <h2 class="section-title">Frontier MoE, hummingbird rations.</h2>
+      <div class="idea">
+        <div>
+          <p class="section-lead" style="margin-bottom:1rem;">
+            Named for a bird that weighs grams and visits a thousand flowers a day, Colibrì keeps a 744-billion-parameter giant alive on 25&nbsp;GB of RAM, twelve cores, and a lot of disk patience — or scales up to full expert residency on multi-GPU hosts.
+          </p>
+          <p style="color:var(--mist); margin-bottom:1rem;">
+            The runtime path is deliberately tiny: a single C file plus small headers. No BLAS, no Python at inference time, no GPU required. Optional CUDA and Metal backends share one placement model with the CPU path.
+          </p>
+          <p style="color:var(--mist);">
+            Experimental by design. Optimizations graduate only when end-to-end measurements — throughput, TTFT, quality, correctness — earn them.
+          </p>
+        </div>
+        <div class="math-panel">
+          <div class="math-row"><span>Model</span><strong>GLM-5.2 · 744B MoE</strong></div>
+          <div class="math-row"><span>Active / token</span><strong>~40B params</strong></div>
+          <div class="math-row"><span>Routed experts</span><strong>19,456 · ~19 MB each (int4)</strong></div>
+          <div class="math-row"><span>Dense resident</span><strong>~9.9 GB RAM @ int4</strong></div>
+          <div class="math-row"><span>Engine</span><strong>pure C · zero deps</strong></div>
+          <div class="math-highlight">
+            Weights are not state to hold. They are data to stage across VRAM / RAM / NVMe when the router proves they are needed.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <p class="section-kicker">See it running</p>
+      <h2 class="section-title">Dashboard, brain, chat.</h2>
+      <div class="split-media">
+        <figure class="shot">
+          <img src="https://raw.githubusercontent.com/JustVugg/colibri/main/docs/media/colibri-dashboard.png" alt="Colibrì web dashboard showing token metrics and memory tier bar" loading="lazy">
+          <figcaption class="shot-cap">./coli web — live tokens, tier bar, mini-brain</figcaption>
+        </figure>
+        <div class="term" aria-label="Sample coli chat session">
+          <div class="term-bar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span style="margin-left:0.4rem;">coli chat · streaming CPU</span>
+          </div>
+          <div class="term-body">
+            <div><span class="bird">🐦</span> colibri v1.1.0 — GLM-5.2 · 744B MoE · int4</div>
+            <div class="ok">✓ ready in 32s · resident 9.9 GB</div>
+            <div style="margin-top:0.85rem;"><span class="prompt">›</span> <span class="typed-line">ciao!</span></div>
+            <div class="out" style="margin-top:0.55rem;">◆ Ciao! Come posso aiutarti oggi?</div>
+            <div style="margin-top:0.9rem;"><span class="prompt">›</span> <span class="cursor"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="split-media" style="margin-top:1.25rem;">
+        <figure class="shot">
+          <img src="https://raw.githubusercontent.com/JustVugg/colibri/main/docs/media/colibri-brain.png" alt="Colibrì brain page showing experts as a living cortex" loading="lazy">
+          <figcaption class="shot-cap">Brain — experts as cortex; color = tier, flash = routed</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="https://raw.githubusercontent.com/JustVugg/colibri/main/docs/media/colibri-atlas.png" alt="Colibrì expert atlas visualized as a 3D galaxy" loading="lazy">
+          <figcaption class="shot-cap">Atlas — measured routing affinity galaxy</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <p class="section-kicker">Why it stands out</p>
+      <h2 class="section-title">Three bets that stick.</h2>
+      <div class="strengths">
+        <article class="strength">
+          <div class="strength-num">01 · HIERARCHY</div>
+          <h3>Placement, not fitting</h3>
+          <p>VRAM, RAM, and NVMe are tiers for the same weights. Limited fast memory changes speed — never silently changes the model you think you are running.</p>
+        </article>
+        <article class="strength">
+          <div class="strength-num">02 · STREAMING</div>
+          <h3>I/O is the engine</h3>
+          <p>Batched expert unions, overlapped reads, O_DIRECT, dual-SSD striping, and router lookahead treat storage latency as a first-class problem instead of pretending it is free.</p>
+        </article>
+        <article class="strength">
+          <div class="strength-num">03 · HONESTY</div>
+          <h3>Measure or it did not happen</h3>
+          <p>Token-exact forward validation, published benchmarks from community machines, and speculation that can be turned off when acceptance does not repay verification.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <p class="section-kicker">Same engine · any hardware</p>
+      <h2 class="section-title">Hardware only moves the experts.</h2>
+      <p class="section-lead">
+        From a cold 25&nbsp;GB laptop floor to full residency on 6× RTX&nbsp;5090 — decode speed changes; the int4 container and router semantics stay put.
+      </p>
+      <div class="ladder">
+        <div class="rung">
+          <div class="rung-name"><strong>6× RTX 5090 · full residency</strong>all experts in VRAM + RAM · disk 0</div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
+          <div class="toks">~9 tok/s</div>
+        </div>
+        <div class="rung">
+          <div class="rung-name"><strong>Graviton4 · 512 GB RAM</strong>98% pinned · CPU-only</div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
+          <div class="toks">8.0 tok/s</div>
+        </div>
+        <div class="rung">
+          <div class="rung-name"><strong>2× Xeon Gold · 1 TB DDR5</strong>every expert pinned</div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
+          <div class="toks">5.42 tok/s</div>
+        </div>
+        <div class="rung">
+          <div class="rung-name"><strong>DGX Spark GB10</strong>unified memory + CACHE_ROUTE</div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
+          <div class="toks">3.33 tok/s</div>
+        </div>
+        <div class="rung">
+          <div class="rung-name"><strong>MacBook Pro M5 Max · Metal</strong>Metal tier + warm pin</div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
+          <div class="toks">2.0 tok/s</div>
+        </div>
+        <div class="rung">
+          <div class="rung-name"><strong>Ryzen 9 + RTX 5090 + Gen5</strong>28 GB VRAM tier + disk stream</div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
+          <div class="toks">1.23 tok/s</div>
+        </div>
+        <div class="rung">
+          <div class="rung-name"><strong>25 GB cold laptop · proven floor</strong>streamed from NVMe</div>
+          <div class="bar-track"><div class="bar-fill"></div></div>
+          <div class="toks">0.05–0.1</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <p class="section-kicker">Model families</p>
+      <h2 class="section-title">One launcher, sibling engines.</h2>
+      <p class="section-lead">
+        <code style="font-family:var(--font-mono);font-size:0.9em;color:var(--cyan);">coli</code> reads <code style="font-family:var(--font-mono);font-size:0.9em;color:var(--cyan);">config.json</code>, picks the matching C binary, and keeps the same chat / serve / web front end.
+      </p>
+      <div class="models">
+        <article class="model active">
+          <div class="tag">Reference</div>
+          <h3>GLM-5.2</h3>
+          <p>744B / 40B active · int4 gs64 container with int8 MTP head.</p>
+        </article>
+        <article class="model">
+          <div class="tag">Sibling</div>
+          <h3>Inkling</h3>
+          <p>975B reasoning MoE — mixed-precision staging for consumer boxes.</p>
+        </article>
+        <article class="model">
+          <div class="tag">Sibling</div>
+          <h3>Kimi K3</h3>
+          <p>2.8T / 104B — native MXFP4 experts streamed from original shards.</p>
+        </article>
+        <article class="model">
+          <div class="tag">Research</div>
+          <h3>OLMoE</h3>
+          <p>7B / 1B workhorse for quantization and quality ablations.</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <div class="finale">
+    <div class="wrap">
+      <h2>Come build the microscope.</h2>
+      <p>
+        Run a datapoint on your machine, open an experiment issue, or dig into the single-file engine. Negative results welcome — unexplained fast numbers are not.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://github.com/JustVugg/colibri" target="_blank" rel="noopener">Star / clone on GitHub</a>
+        <a class="btn btn-ghost" href="https://github.com/JustVugg/colibri/blob/main/docs/quickstart.md" target="_blank" rel="noopener">Quick start</a>
+        <a class="btn btn-ghost" href="https://github.com/JustVugg/colibri/blob/main/docs/benchmarks.md" target="_blank" rel="noopener">Benchmarks</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <footer class="foot">
+      <span>DuckWare showcase #38 · curated 2026-07-31 · Apache-2.0 engine</span>
+      <span><a href="./">Catalog</a> · <a href="https://github.com/JustVugg/colibri" target="_blank" rel="noopener">JustVugg/colibri</a></span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var cortex = document.getElementById("cortex");
+      if (!cortex) return;
+      var cells = [];
+      var count = window.matchMedia("(max-width: 900px)").matches ? 240 : 416;
+      var frag = document.createDocumentFragment();
+      for (var i = 0; i < count; i++) {
+        var c = document.createElement("span");
+        c.className = "cell";
+        var roll = Math.random();
+        if (roll > 0.82) c.classList.add("disk");
+        else if (roll > 0.7) c.classList.add("vram");
+        else if (roll > 0.45) c.classList.add("on");
+        frag.appendChild(c);
+        cells.push(c);
+      }
+      cortex.appendChild(frag);
+
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) return;
+
+      function flash() {
+        var n = 6 + Math.floor(Math.random() * 10);
+        for (var i = 0; i < n; i++) {
+          var cell = cells[Math.floor(Math.random() * cells.length)];
+          cell.classList.add("hot");
+          (function (el) {
+            setTimeout(function () { el.classList.remove("hot"); }, 180 + Math.random() * 420);
+          })(cell);
+        }
+      }
+      setInterval(flash, 520);
+
+      function drift() {
+        var cell = cells[Math.floor(Math.random() * cells.length)];
+        cell.classList.remove("on", "disk", "vram");
+        var r = Math.random();
+        if (r > 0.75) cell.classList.add("disk");
+        else if (r > 0.55) cell.classList.add("vram");
+        else if (r > 0.25) cell.classList.add("on");
+      }
+      setInterval(drift, 160);
+    })();
+
+    (function () {
+      var nodes = document.querySelectorAll(".reveal");
+      if (!("IntersectionObserver" in window)) {
+        nodes.forEach(function (n) { n.classList.add("in"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      nodes.forEach(function (n) { io.observe(n); });
+    })();
+  </script>
+</body>
+</html>
